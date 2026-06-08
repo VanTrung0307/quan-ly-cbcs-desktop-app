@@ -12,7 +12,6 @@
     <Folder Include="Forms\Auth\" />
     <Folder Include="Forms\Dashboard\" />
     <Folder Include="Forms\System\" />
-    <Folder Include="Forms\Personnel\" />
     <Folder Include="DTOs\" />
   </ItemGroup>
 
