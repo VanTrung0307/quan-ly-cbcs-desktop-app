@@ -1,0 +1,947 @@
+﻿namespace QuanLyCBCS.Forms.Personnel
+{
+    partial class FrmPersonnelDetail
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            tabMain = new TabControl();
+            tabPage1 = new TabPage();
+            lblSoDienThoai = new Label();
+            txtSoDienThoai = new TextBox();
+            lblNgayCap = new Label();
+            dtNgayCapCCCD = new DateTimePicker();
+            lblCCCD = new Label();
+            txtCCCD = new TextBox();
+            lblNoiSinh = new Label();
+            txtNoiSinh = new TextBox();
+            lblNgaySinh = new Label();
+            dtNgaySinh = new DateTimePicker();
+            lblGioiTinh = new Label();
+            cboGioiTinh = new ComboBox();
+            lblType = new Label();
+            cboPersonnelType = new ComboBox();
+            txtHoTen = new TextBox();
+            lblHoTen = new Label();
+            txtSoHieu = new TextBox();
+            lblSoHieu = new Label();
+            tabPage2 = new TabPage();
+            txtHKTTCu = new TextBox();
+            lblHKTTCu = new Label();
+            txtHKTTMoi = new TextBox();
+            lblHKTTMoi = new Label();
+            txtTinhCu = new TextBox();
+            lblTinhCu = new Label();
+            txtTinhMoi = new TextBox();
+            lblTinhMoi = new Label();
+            textBox1 = new TextBox();
+            lblQueQuanCu = new Label();
+            txtQueQuanMoi = new TextBox();
+            lblQueQuanMoi = new Label();
+            tabPage3 = new TabPage();
+            txtHeSoLuong = new TextBox();
+            lblHeSoLuong = new Label();
+            lblNgayBoNhiem = new Label();
+            dtNgayBoNhiem = new DateTimePicker();
+            txtChucVu = new TextBox();
+            lblChucVu = new Label();
+            lblThangNamNhanCongTac = new Label();
+            dtThangNamNhanCongTac = new DateTimePicker();
+            lblThangNamVaoNganh = new Label();
+            dtThangNamVaoNganh = new DateTimePicker();
+            lblNgayNhanCapBac = new Label();
+            dtNgayNhanCapBac = new DateTimePicker();
+            txtCapBacHam = new TextBox();
+            lblCapBacHam = new Label();
+            txtViTriCongTac = new TextBox();
+            lblViTriCongTac = new Label();
+            txtDonVi = new TextBox();
+            lblDonVi = new Label();
+            tabPage4 = new TabPage();
+            lblThangNamTotNghiep = new Label();
+            dtThangNamTotNghiep = new DateTimePicker();
+            txtTrinhDoLyLuanChinhTri = new TextBox();
+            lblTrinhDoLyLuanChinhTri = new Label();
+            txtChuyenNganhDaoTao = new TextBox();
+            lblChuyenNganhDaoTao = new Label();
+            txtTrinhDoChuyenMon = new TextBox();
+            lblTrinhDoChuyenMon = new Label();
+            txtTrinhDoVanHoa = new TextBox();
+            lblTrinhDoVanHoa = new Label();
+            txtTrinhDoNgoaiNgu = new TextBox();
+            lblTrinhDoNgoaiNgu = new Label();
+            txtTrinhDoTinHoc = new TextBox();
+            lblTrinhDoTinHoc = new Label();
+            tabPage5 = new TabPage();
+            lblDangChinhThuc = new Label();
+            dtDangChinhThuc = new DateTimePicker();
+            lblDangDuBi = new Label();
+            dtDangDuBi = new DateTimePicker();
+            chkDangVien = new CheckBox();
+            tabPage6 = new TabPage();
+            btnSave = new Button();
+            btnCancel = new Button();
+            tabMain.SuspendLayout();
+            tabPage1.SuspendLayout();
+            tabPage2.SuspendLayout();
+            tabPage3.SuspendLayout();
+            tabPage4.SuspendLayout();
+            tabPage5.SuspendLayout();
+            SuspendLayout();
+            // 
+            // tabMain
+            // 
+            tabMain.Controls.Add(tabPage1);
+            tabMain.Controls.Add(tabPage2);
+            tabMain.Controls.Add(tabPage3);
+            tabMain.Controls.Add(tabPage4);
+            tabMain.Controls.Add(tabPage5);
+            tabMain.Controls.Add(tabPage6);
+            tabMain.Dock = DockStyle.Fill;
+            tabMain.Location = new Point(0, 0);
+            tabMain.Name = "tabMain";
+            tabMain.SelectedIndex = 0;
+            tabMain.Size = new Size(800, 509);
+            tabMain.TabIndex = 0;
+            // 
+            // tabPage1
+            // 
+            tabPage1.Controls.Add(lblSoDienThoai);
+            tabPage1.Controls.Add(txtSoDienThoai);
+            tabPage1.Controls.Add(lblNgayCap);
+            tabPage1.Controls.Add(dtNgayCapCCCD);
+            tabPage1.Controls.Add(lblCCCD);
+            tabPage1.Controls.Add(txtCCCD);
+            tabPage1.Controls.Add(lblNoiSinh);
+            tabPage1.Controls.Add(txtNoiSinh);
+            tabPage1.Controls.Add(lblNgaySinh);
+            tabPage1.Controls.Add(dtNgaySinh);
+            tabPage1.Controls.Add(lblGioiTinh);
+            tabPage1.Controls.Add(cboGioiTinh);
+            tabPage1.Controls.Add(lblType);
+            tabPage1.Controls.Add(cboPersonnelType);
+            tabPage1.Controls.Add(txtHoTen);
+            tabPage1.Controls.Add(lblHoTen);
+            tabPage1.Controls.Add(txtSoHieu);
+            tabPage1.Controls.Add(lblSoHieu);
+            tabPage1.Location = new Point(4, 29);
+            tabPage1.Name = "tabPage1";
+            tabPage1.Padding = new Padding(3);
+            tabPage1.Size = new Size(792, 476);
+            tabPage1.TabIndex = 0;
+            tabPage1.Text = "Thông tin cơ bản";
+            tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // lblSoDienThoai
+            // 
+            lblSoDienThoai.AutoSize = true;
+            lblSoDienThoai.Location = new Point(414, 275);
+            lblSoDienThoai.Name = "lblSoDienThoai";
+            lblSoDienThoai.Size = new Size(102, 20);
+            lblSoDienThoai.TabIndex = 17;
+            lblSoDienThoai.Text = "Số Điện Thoại";
+            // 
+            // txtSoDienThoai
+            // 
+            txtSoDienThoai.Location = new Point(522, 272);
+            txtSoDienThoai.Name = "txtSoDienThoai";
+            txtSoDienThoai.Size = new Size(231, 27);
+            txtSoDienThoai.TabIndex = 16;
+            // 
+            // lblNgayCap
+            // 
+            lblNgayCap.AutoSize = true;
+            lblNgayCap.Location = new Point(414, 206);
+            lblNgayCap.Name = "lblNgayCap";
+            lblNgayCap.Size = new Size(72, 20);
+            lblNgayCap.TabIndex = 15;
+            lblNgayCap.Text = "Ngày cấp";
+            // 
+            // dtNgayCapCCCD
+            // 
+            dtNgayCapCCCD.CustomFormat = "dd/MM/yyyy";
+            dtNgayCapCCCD.Format = DateTimePickerFormat.Custom;
+            dtNgayCapCCCD.Location = new Point(522, 202);
+            dtNgayCapCCCD.Name = "dtNgayCapCCCD";
+            dtNgayCapCCCD.Size = new Size(198, 27);
+            dtNgayCapCCCD.TabIndex = 14;
+            // 
+            // lblCCCD
+            // 
+            lblCCCD.AutoSize = true;
+            lblCCCD.Location = new Point(414, 140);
+            lblCCCD.Name = "lblCCCD";
+            lblCCCD.Size = new Size(47, 20);
+            lblCCCD.TabIndex = 13;
+            lblCCCD.Text = "CCCD";
+            // 
+            // txtCCCD
+            // 
+            txtCCCD.Location = new Point(522, 137);
+            txtCCCD.Name = "txtCCCD";
+            txtCCCD.Size = new Size(231, 27);
+            txtCCCD.TabIndex = 12;
+            // 
+            // lblNoiSinh
+            // 
+            lblNoiSinh.AutoSize = true;
+            lblNoiSinh.Location = new Point(414, 79);
+            lblNoiSinh.Name = "lblNoiSinh";
+            lblNoiSinh.Size = new Size(63, 20);
+            lblNoiSinh.TabIndex = 11;
+            lblNoiSinh.Text = "Nơi sinh";
+            // 
+            // txtNoiSinh
+            // 
+            txtNoiSinh.Location = new Point(522, 72);
+            txtNoiSinh.Name = "txtNoiSinh";
+            txtNoiSinh.Size = new Size(231, 27);
+            txtNoiSinh.TabIndex = 10;
+            // 
+            // lblNgaySinh
+            // 
+            lblNgaySinh.AutoSize = true;
+            lblNgaySinh.Location = new Point(22, 344);
+            lblNgaySinh.Name = "lblNgaySinh";
+            lblNgaySinh.Size = new Size(74, 20);
+            lblNgaySinh.TabIndex = 9;
+            lblNgaySinh.Text = "Ngày sinh";
+            // 
+            // dtNgaySinh
+            // 
+            dtNgaySinh.CustomFormat = "dd/MM/yyyy";
+            dtNgaySinh.Format = DateTimePickerFormat.Custom;
+            dtNgaySinh.Location = new Point(103, 339);
+            dtNgaySinh.Name = "dtNgaySinh";
+            dtNgaySinh.Size = new Size(198, 27);
+            dtNgaySinh.TabIndex = 8;
+            // 
+            // lblGioiTinh
+            // 
+            lblGioiTinh.AutoSize = true;
+            lblGioiTinh.Location = new Point(22, 275);
+            lblGioiTinh.Name = "lblGioiTinh";
+            lblGioiTinh.Size = new Size(65, 20);
+            lblGioiTinh.TabIndex = 7;
+            lblGioiTinh.Text = "Giới tính";
+            // 
+            // cboGioiTinh
+            // 
+            cboGioiTinh.FormattingEnabled = true;
+            cboGioiTinh.Items.AddRange(new object[] { "Nam", "Nữ" });
+            cboGioiTinh.Location = new Point(103, 272);
+            cboGioiTinh.Name = "cboGioiTinh";
+            cboGioiTinh.Size = new Size(151, 28);
+            cboGioiTinh.TabIndex = 6;
+            // 
+            // lblType
+            // 
+            lblType.AutoSize = true;
+            lblType.Location = new Point(22, 209);
+            lblType.Name = "lblType";
+            lblType.Size = new Size(37, 20);
+            lblType.TabIndex = 5;
+            lblType.Text = "Loại";
+            // 
+            // cboPersonnelType
+            // 
+            cboPersonnelType.FormattingEnabled = true;
+            cboPersonnelType.Items.AddRange(new object[] { "Chiến sĩ", "Cán bộ" });
+            cboPersonnelType.Location = new Point(103, 206);
+            cboPersonnelType.Name = "cboPersonnelType";
+            cboPersonnelType.Size = new Size(151, 28);
+            cboPersonnelType.TabIndex = 4;
+            // 
+            // txtHoTen
+            // 
+            txtHoTen.Location = new Point(103, 137);
+            txtHoTen.Name = "txtHoTen";
+            txtHoTen.Size = new Size(198, 27);
+            txtHoTen.TabIndex = 3;
+            // 
+            // lblHoTen
+            // 
+            lblHoTen.AutoSize = true;
+            lblHoTen.Location = new Point(22, 140);
+            lblHoTen.Name = "lblHoTen";
+            lblHoTen.Size = new Size(75, 20);
+            lblHoTen.TabIndex = 2;
+            lblHoTen.Text = "Họ và Tên";
+            // 
+            // txtSoHieu
+            // 
+            txtSoHieu.Location = new Point(103, 72);
+            txtSoHieu.Name = "txtSoHieu";
+            txtSoHieu.Size = new Size(198, 27);
+            txtSoHieu.TabIndex = 1;
+            // 
+            // lblSoHieu
+            // 
+            lblSoHieu.AutoSize = true;
+            lblSoHieu.Location = new Point(22, 79);
+            lblSoHieu.Name = "lblSoHieu";
+            lblSoHieu.Size = new Size(58, 20);
+            lblSoHieu.TabIndex = 0;
+            lblSoHieu.Text = "Số hiệu";
+            // 
+            // tabPage2
+            // 
+            tabPage2.Controls.Add(txtHKTTCu);
+            tabPage2.Controls.Add(lblHKTTCu);
+            tabPage2.Controls.Add(txtHKTTMoi);
+            tabPage2.Controls.Add(lblHKTTMoi);
+            tabPage2.Controls.Add(txtTinhCu);
+            tabPage2.Controls.Add(lblTinhCu);
+            tabPage2.Controls.Add(txtTinhMoi);
+            tabPage2.Controls.Add(lblTinhMoi);
+            tabPage2.Controls.Add(textBox1);
+            tabPage2.Controls.Add(lblQueQuanCu);
+            tabPage2.Controls.Add(txtQueQuanMoi);
+            tabPage2.Controls.Add(lblQueQuanMoi);
+            tabPage2.Location = new Point(4, 29);
+            tabPage2.Name = "tabPage2";
+            tabPage2.Padding = new Padding(3);
+            tabPage2.Size = new Size(792, 476);
+            tabPage2.TabIndex = 1;
+            tabPage2.Text = "Địa chỉ";
+            tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // txtHKTTCu
+            // 
+            txtHKTTCu.Location = new Point(421, 311);
+            txtHKTTCu.Multiline = true;
+            txtHKTTCu.Name = "txtHKTTCu";
+            txtHKTTCu.Size = new Size(339, 129);
+            txtHKTTCu.TabIndex = 13;
+            // 
+            // lblHKTTCu
+            // 
+            lblHKTTCu.AutoSize = true;
+            lblHKTTCu.Location = new Point(421, 288);
+            lblHKTTCu.Name = "lblHKTTCu";
+            lblHKTTCu.Size = new Size(145, 20);
+            lblHKTTCu.TabIndex = 12;
+            lblHKTTCu.Text = "HKTT (sau sáp nhập)";
+            // 
+            // txtHKTTMoi
+            // 
+            txtHKTTMoi.Location = new Point(18, 311);
+            txtHKTTMoi.Multiline = true;
+            txtHKTTMoi.Name = "txtHKTTMoi";
+            txtHKTTMoi.Size = new Size(339, 129);
+            txtHKTTMoi.TabIndex = 11;
+            // 
+            // lblHKTTMoi
+            // 
+            lblHKTTMoi.AutoSize = true;
+            lblHKTTMoi.Location = new Point(18, 288);
+            lblHKTTMoi.Name = "lblHKTTMoi";
+            lblHKTTMoi.Size = new Size(145, 20);
+            lblHKTTMoi.TabIndex = 10;
+            lblHKTTMoi.Text = "HKTT (sau sáp nhập)";
+            // 
+            // txtTinhCu
+            // 
+            txtTinhCu.Location = new Point(421, 220);
+            txtTinhCu.Name = "txtTinhCu";
+            txtTinhCu.Size = new Size(339, 27);
+            txtTinhCu.TabIndex = 9;
+            // 
+            // lblTinhCu
+            // 
+            lblTinhCu.AutoSize = true;
+            lblTinhCu.Location = new Point(421, 197);
+            lblTinhCu.Name = "lblTinhCu";
+            lblTinhCu.Size = new Size(150, 20);
+            lblTinhCu.TabIndex = 8;
+            lblTinhCu.Text = "Tỉnh (trước sáp nhập)";
+            // 
+            // txtTinhMoi
+            // 
+            txtTinhMoi.Location = new Point(18, 220);
+            txtTinhMoi.Name = "txtTinhMoi";
+            txtTinhMoi.Size = new Size(339, 27);
+            txtTinhMoi.TabIndex = 7;
+            // 
+            // lblTinhMoi
+            // 
+            lblTinhMoi.AutoSize = true;
+            lblTinhMoi.Location = new Point(18, 197);
+            lblTinhMoi.Name = "lblTinhMoi";
+            lblTinhMoi.Size = new Size(137, 20);
+            lblTinhMoi.TabIndex = 6;
+            lblTinhMoi.Text = "Tỉnh (sau sáp nhập)";
+            // 
+            // textBox1
+            // 
+            textBox1.Location = new Point(421, 45);
+            textBox1.Multiline = true;
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(339, 129);
+            textBox1.TabIndex = 5;
+            // 
+            // lblQueQuanCu
+            // 
+            lblQueQuanCu.AutoSize = true;
+            lblQueQuanCu.Location = new Point(421, 22);
+            lblQueQuanCu.Name = "lblQueQuanCu";
+            lblQueQuanCu.Size = new Size(186, 20);
+            lblQueQuanCu.TabIndex = 4;
+            lblQueQuanCu.Text = "Quê quán (trước sáp nhập)";
+            // 
+            // txtQueQuanMoi
+            // 
+            txtQueQuanMoi.Location = new Point(18, 45);
+            txtQueQuanMoi.Multiline = true;
+            txtQueQuanMoi.Name = "txtQueQuanMoi";
+            txtQueQuanMoi.Size = new Size(339, 129);
+            txtQueQuanMoi.TabIndex = 3;
+            // 
+            // lblQueQuanMoi
+            // 
+            lblQueQuanMoi.AutoSize = true;
+            lblQueQuanMoi.Location = new Point(18, 22);
+            lblQueQuanMoi.Name = "lblQueQuanMoi";
+            lblQueQuanMoi.Size = new Size(173, 20);
+            lblQueQuanMoi.TabIndex = 2;
+            lblQueQuanMoi.Text = "Quê quán (sau sáp nhập)";
+            // 
+            // tabPage3
+            // 
+            tabPage3.Controls.Add(txtHeSoLuong);
+            tabPage3.Controls.Add(lblHeSoLuong);
+            tabPage3.Controls.Add(lblNgayBoNhiem);
+            tabPage3.Controls.Add(dtNgayBoNhiem);
+            tabPage3.Controls.Add(txtChucVu);
+            tabPage3.Controls.Add(lblChucVu);
+            tabPage3.Controls.Add(lblThangNamNhanCongTac);
+            tabPage3.Controls.Add(dtThangNamNhanCongTac);
+            tabPage3.Controls.Add(lblThangNamVaoNganh);
+            tabPage3.Controls.Add(dtThangNamVaoNganh);
+            tabPage3.Controls.Add(lblNgayNhanCapBac);
+            tabPage3.Controls.Add(dtNgayNhanCapBac);
+            tabPage3.Controls.Add(txtCapBacHam);
+            tabPage3.Controls.Add(lblCapBacHam);
+            tabPage3.Controls.Add(txtViTriCongTac);
+            tabPage3.Controls.Add(lblViTriCongTac);
+            tabPage3.Controls.Add(txtDonVi);
+            tabPage3.Controls.Add(lblDonVi);
+            tabPage3.Location = new Point(4, 29);
+            tabPage3.Name = "tabPage3";
+            tabPage3.Padding = new Padding(3);
+            tabPage3.Size = new Size(792, 476);
+            tabPage3.TabIndex = 2;
+            tabPage3.Text = "Công tác";
+            tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // txtHeSoLuong
+            // 
+            txtHeSoLuong.Location = new Point(556, 284);
+            txtHeSoLuong.Name = "txtHeSoLuong";
+            txtHeSoLuong.Size = new Size(84, 27);
+            txtHeSoLuong.TabIndex = 27;
+            // 
+            // lblHeSoLuong
+            // 
+            lblHeSoLuong.AutoSize = true;
+            lblHeSoLuong.Location = new Point(460, 287);
+            lblHeSoLuong.Name = "lblHeSoLuong";
+            lblHeSoLuong.Size = new Size(90, 20);
+            lblHeSoLuong.TabIndex = 26;
+            lblHeSoLuong.Text = "Hệ số lương";
+            // 
+            // lblNgayBoNhiem
+            // 
+            lblNgayBoNhiem.AutoSize = true;
+            lblNgayBoNhiem.Location = new Point(460, 204);
+            lblNgayBoNhiem.Name = "lblNgayBoNhiem";
+            lblNgayBoNhiem.Size = new Size(111, 20);
+            lblNgayBoNhiem.TabIndex = 25;
+            lblNgayBoNhiem.Text = "Ngày bổ nhiệm";
+            // 
+            // dtNgayBoNhiem
+            // 
+            dtNgayBoNhiem.CustomFormat = "dd/MM/yyyy";
+            dtNgayBoNhiem.Format = DateTimePickerFormat.Custom;
+            dtNgayBoNhiem.Location = new Point(460, 229);
+            dtNgayBoNhiem.Name = "dtNgayBoNhiem";
+            dtNgayBoNhiem.Size = new Size(198, 27);
+            dtNgayBoNhiem.TabIndex = 24;
+            // 
+            // txtChucVu
+            // 
+            txtChucVu.Location = new Point(556, 135);
+            txtChucVu.Name = "txtChucVu";
+            txtChucVu.Size = new Size(198, 27);
+            txtChucVu.TabIndex = 23;
+            // 
+            // lblChucVu
+            // 
+            lblChucVu.AutoSize = true;
+            lblChucVu.Location = new Point(460, 141);
+            lblChucVu.Name = "lblChucVu";
+            lblChucVu.Size = new Size(61, 20);
+            lblChucVu.TabIndex = 22;
+            lblChucVu.Text = "Chức vụ";
+            // 
+            // lblThangNamNhanCongTac
+            // 
+            lblThangNamNhanCongTac.AutoSize = true;
+            lblThangNamNhanCongTac.Location = new Point(460, 67);
+            lblThangNamNhanCongTac.Name = "lblThangNamNhanCongTac";
+            lblThangNamNhanCongTac.Size = new Size(180, 20);
+            lblThangNamNhanCongTac.TabIndex = 21;
+            lblThangNamNhanCongTac.Text = "Tháng năm nhận công tác";
+            // 
+            // dtThangNamNhanCongTac
+            // 
+            dtThangNamNhanCongTac.CustomFormat = "MM/yyyy";
+            dtThangNamNhanCongTac.Format = DateTimePickerFormat.Custom;
+            dtThangNamNhanCongTac.Location = new Point(460, 90);
+            dtThangNamNhanCongTac.Name = "dtThangNamNhanCongTac";
+            dtThangNamNhanCongTac.Size = new Size(198, 27);
+            dtThangNamNhanCongTac.TabIndex = 20;
+            // 
+            // lblThangNamVaoNganh
+            // 
+            lblThangNamVaoNganh.AutoSize = true;
+            lblThangNamVaoNganh.Location = new Point(38, 335);
+            lblThangNamVaoNganh.Name = "lblThangNamVaoNganh";
+            lblThangNamVaoNganh.Size = new Size(156, 20);
+            lblThangNamVaoNganh.TabIndex = 19;
+            lblThangNamVaoNganh.Text = "Tháng năm vào ngành";
+            // 
+            // dtThangNamVaoNganh
+            // 
+            dtThangNamVaoNganh.CustomFormat = "MM/yyyy";
+            dtThangNamVaoNganh.Format = DateTimePickerFormat.Custom;
+            dtThangNamVaoNganh.Location = new Point(201, 332);
+            dtThangNamVaoNganh.Name = "dtThangNamVaoNganh";
+            dtThangNamVaoNganh.Size = new Size(198, 27);
+            dtThangNamVaoNganh.TabIndex = 18;
+            // 
+            // lblNgayNhanCapBac
+            // 
+            lblNgayNhanCapBac.AutoSize = true;
+            lblNgayNhanCapBac.Location = new Point(38, 270);
+            lblNgayNhanCapBac.Name = "lblNgayNhanCapBac";
+            lblNgayNhanCapBac.Size = new Size(136, 20);
+            lblNgayNhanCapBac.TabIndex = 17;
+            lblNgayNhanCapBac.Text = "Ngày nhận cấp bậc";
+            // 
+            // dtNgayNhanCapBac
+            // 
+            dtNgayNhanCapBac.CustomFormat = "dd/MM/yyyy";
+            dtNgayNhanCapBac.Format = DateTimePickerFormat.Custom;
+            dtNgayNhanCapBac.Location = new Point(201, 267);
+            dtNgayNhanCapBac.Name = "dtNgayNhanCapBac";
+            dtNgayNhanCapBac.Size = new Size(198, 27);
+            dtNgayNhanCapBac.TabIndex = 16;
+            // 
+            // txtCapBacHam
+            // 
+            txtCapBacHam.Location = new Point(201, 200);
+            txtCapBacHam.Name = "txtCapBacHam";
+            txtCapBacHam.Size = new Size(198, 27);
+            txtCapBacHam.TabIndex = 7;
+            // 
+            // lblCapBacHam
+            // 
+            lblCapBacHam.AutoSize = true;
+            lblCapBacHam.Location = new Point(38, 205);
+            lblCapBacHam.Name = "lblCapBacHam";
+            lblCapBacHam.Size = new Size(96, 20);
+            lblCapBacHam.TabIndex = 6;
+            lblCapBacHam.Text = "Cấp bậc hàm";
+            // 
+            // txtViTriCongTac
+            // 
+            txtViTriCongTac.Location = new Point(201, 135);
+            txtViTriCongTac.Name = "txtViTriCongTac";
+            txtViTriCongTac.Size = new Size(198, 27);
+            txtViTriCongTac.TabIndex = 5;
+            // 
+            // lblViTriCongTac
+            // 
+            lblViTriCongTac.AutoSize = true;
+            lblViTriCongTac.Location = new Point(38, 140);
+            lblViTriCongTac.Name = "lblViTriCongTac";
+            lblViTriCongTac.Size = new Size(101, 20);
+            lblViTriCongTac.TabIndex = 4;
+            lblViTriCongTac.Text = "Vị trí công tác";
+            // 
+            // txtDonVi
+            // 
+            txtDonVi.Location = new Point(201, 67);
+            txtDonVi.Name = "txtDonVi";
+            txtDonVi.Size = new Size(198, 27);
+            txtDonVi.TabIndex = 3;
+            // 
+            // lblDonVi
+            // 
+            lblDonVi.AutoSize = true;
+            lblDonVi.Location = new Point(38, 72);
+            lblDonVi.Name = "lblDonVi";
+            lblDonVi.Size = new Size(52, 20);
+            lblDonVi.TabIndex = 2;
+            lblDonVi.Text = "Đơn vị";
+            // 
+            // tabPage4
+            // 
+            tabPage4.Controls.Add(lblThangNamTotNghiep);
+            tabPage4.Controls.Add(dtThangNamTotNghiep);
+            tabPage4.Controls.Add(txtTrinhDoLyLuanChinhTri);
+            tabPage4.Controls.Add(lblTrinhDoLyLuanChinhTri);
+            tabPage4.Controls.Add(txtChuyenNganhDaoTao);
+            tabPage4.Controls.Add(lblChuyenNganhDaoTao);
+            tabPage4.Controls.Add(txtTrinhDoChuyenMon);
+            tabPage4.Controls.Add(lblTrinhDoChuyenMon);
+            tabPage4.Controls.Add(txtTrinhDoVanHoa);
+            tabPage4.Controls.Add(lblTrinhDoVanHoa);
+            tabPage4.Controls.Add(txtTrinhDoNgoaiNgu);
+            tabPage4.Controls.Add(lblTrinhDoNgoaiNgu);
+            tabPage4.Controls.Add(txtTrinhDoTinHoc);
+            tabPage4.Controls.Add(lblTrinhDoTinHoc);
+            tabPage4.Location = new Point(4, 29);
+            tabPage4.Name = "tabPage4";
+            tabPage4.Padding = new Padding(3);
+            tabPage4.Size = new Size(792, 476);
+            tabPage4.TabIndex = 3;
+            tabPage4.Text = "Đào tạo";
+            tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // lblThangNamTotNghiep
+            // 
+            lblThangNamTotNghiep.AutoSize = true;
+            lblThangNamTotNghiep.Location = new Point(447, 176);
+            lblThangNamTotNghiep.Name = "lblThangNamTotNghiep";
+            lblThangNamTotNghiep.Size = new Size(156, 20);
+            lblThangNamTotNghiep.TabIndex = 21;
+            lblThangNamTotNghiep.Text = "Tháng năm tốt nghiệp";
+            // 
+            // dtThangNamTotNghiep
+            // 
+            dtThangNamTotNghiep.CustomFormat = "MM/yyyy";
+            dtThangNamTotNghiep.Format = DateTimePickerFormat.Custom;
+            dtThangNamTotNghiep.Location = new Point(447, 199);
+            dtThangNamTotNghiep.Name = "dtThangNamTotNghiep";
+            dtThangNamTotNghiep.Size = new Size(198, 27);
+            dtThangNamTotNghiep.TabIndex = 20;
+            // 
+            // txtTrinhDoLyLuanChinhTri
+            // 
+            txtTrinhDoLyLuanChinhTri.Location = new Point(447, 275);
+            txtTrinhDoLyLuanChinhTri.Name = "txtTrinhDoLyLuanChinhTri";
+            txtTrinhDoLyLuanChinhTri.Size = new Size(299, 27);
+            txtTrinhDoLyLuanChinhTri.TabIndex = 15;
+            // 
+            // lblTrinhDoLyLuanChinhTri
+            // 
+            lblTrinhDoLyLuanChinhTri.AutoSize = true;
+            lblTrinhDoLyLuanChinhTri.Location = new Point(447, 252);
+            lblTrinhDoLyLuanChinhTri.Name = "lblTrinhDoLyLuanChinhTri";
+            lblTrinhDoLyLuanChinhTri.Size = new Size(111, 20);
+            lblTrinhDoLyLuanChinhTri.TabIndex = 14;
+            lblTrinhDoLyLuanChinhTri.Text = "Lý luận chính trị";
+            // 
+            // txtChuyenNganhDaoTao
+            // 
+            txtChuyenNganhDaoTao.Location = new Point(447, 120);
+            txtChuyenNganhDaoTao.Name = "txtChuyenNganhDaoTao";
+            txtChuyenNganhDaoTao.Size = new Size(299, 27);
+            txtChuyenNganhDaoTao.TabIndex = 13;
+            // 
+            // lblChuyenNganhDaoTao
+            // 
+            lblChuyenNganhDaoTao.AutoSize = true;
+            lblChuyenNganhDaoTao.Location = new Point(447, 97);
+            lblChuyenNganhDaoTao.Name = "lblChuyenNganhDaoTao";
+            lblChuyenNganhDaoTao.Size = new Size(158, 20);
+            lblChuyenNganhDaoTao.TabIndex = 12;
+            lblChuyenNganhDaoTao.Text = "Chuyên ngành đào tạo";
+            // 
+            // txtTrinhDoChuyenMon
+            // 
+            txtTrinhDoChuyenMon.Location = new Point(185, 286);
+            txtTrinhDoChuyenMon.Name = "txtTrinhDoChuyenMon";
+            txtTrinhDoChuyenMon.Size = new Size(198, 27);
+            txtTrinhDoChuyenMon.TabIndex = 11;
+            // 
+            // lblTrinhDoChuyenMon
+            // 
+            lblTrinhDoChuyenMon.AutoSize = true;
+            lblTrinhDoChuyenMon.Location = new Point(27, 289);
+            lblTrinhDoChuyenMon.Name = "lblTrinhDoChuyenMon";
+            lblTrinhDoChuyenMon.Size = new Size(91, 20);
+            lblTrinhDoChuyenMon.TabIndex = 10;
+            lblTrinhDoChuyenMon.Text = "Chuyên môn";
+            // 
+            // txtTrinhDoVanHoa
+            // 
+            txtTrinhDoVanHoa.Location = new Point(185, 218);
+            txtTrinhDoVanHoa.Name = "txtTrinhDoVanHoa";
+            txtTrinhDoVanHoa.Size = new Size(198, 27);
+            txtTrinhDoVanHoa.TabIndex = 9;
+            // 
+            // lblTrinhDoVanHoa
+            // 
+            lblTrinhDoVanHoa.AutoSize = true;
+            lblTrinhDoVanHoa.Location = new Point(27, 221);
+            lblTrinhDoVanHoa.Name = "lblTrinhDoVanHoa";
+            lblTrinhDoVanHoa.Size = new Size(119, 20);
+            lblTrinhDoVanHoa.TabIndex = 8;
+            lblTrinhDoVanHoa.Text = "Trình độ văn hoá";
+            // 
+            // txtTrinhDoNgoaiNgu
+            // 
+            txtTrinhDoNgoaiNgu.Location = new Point(185, 155);
+            txtTrinhDoNgoaiNgu.Name = "txtTrinhDoNgoaiNgu";
+            txtTrinhDoNgoaiNgu.Size = new Size(198, 27);
+            txtTrinhDoNgoaiNgu.TabIndex = 7;
+            // 
+            // lblTrinhDoNgoaiNgu
+            // 
+            lblTrinhDoNgoaiNgu.AutoSize = true;
+            lblTrinhDoNgoaiNgu.Location = new Point(27, 158);
+            lblTrinhDoNgoaiNgu.Name = "lblTrinhDoNgoaiNgu";
+            lblTrinhDoNgoaiNgu.Size = new Size(135, 20);
+            lblTrinhDoNgoaiNgu.TabIndex = 6;
+            lblTrinhDoNgoaiNgu.Text = "Trình độ ngoại ngữ";
+            // 
+            // txtTrinhDoTinHoc
+            // 
+            txtTrinhDoTinHoc.Location = new Point(185, 94);
+            txtTrinhDoTinHoc.Name = "txtTrinhDoTinHoc";
+            txtTrinhDoTinHoc.Size = new Size(198, 27);
+            txtTrinhDoTinHoc.TabIndex = 5;
+            // 
+            // lblTrinhDoTinHoc
+            // 
+            lblTrinhDoTinHoc.AutoSize = true;
+            lblTrinhDoTinHoc.Location = new Point(27, 97);
+            lblTrinhDoTinHoc.Name = "lblTrinhDoTinHoc";
+            lblTrinhDoTinHoc.Size = new Size(112, 20);
+            lblTrinhDoTinHoc.TabIndex = 4;
+            lblTrinhDoTinHoc.Text = "Trình độ tin học";
+            // 
+            // tabPage5
+            // 
+            tabPage5.Controls.Add(btnCancel);
+            tabPage5.Controls.Add(btnSave);
+            tabPage5.Controls.Add(lblDangChinhThuc);
+            tabPage5.Controls.Add(dtDangChinhThuc);
+            tabPage5.Controls.Add(lblDangDuBi);
+            tabPage5.Controls.Add(dtDangDuBi);
+            tabPage5.Controls.Add(chkDangVien);
+            tabPage5.Location = new Point(4, 29);
+            tabPage5.Name = "tabPage5";
+            tabPage5.Padding = new Padding(3);
+            tabPage5.Size = new Size(792, 476);
+            tabPage5.TabIndex = 4;
+            tabPage5.Text = "Đảng";
+            tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // lblDangChinhThuc
+            // 
+            lblDangChinhThuc.AutoSize = true;
+            lblDangChinhThuc.Location = new Point(63, 162);
+            lblDangChinhThuc.Name = "lblDangChinhThuc";
+            lblDangChinhThuc.Size = new Size(148, 20);
+            lblDangChinhThuc.TabIndex = 13;
+            lblDangChinhThuc.Text = "Đảng viên chính thức";
+            // 
+            // dtDangChinhThuc
+            // 
+            dtDangChinhThuc.CustomFormat = "dd/MM/yyyy";
+            dtDangChinhThuc.Enabled = false;
+            dtDangChinhThuc.Format = DateTimePickerFormat.Custom;
+            dtDangChinhThuc.Location = new Point(217, 157);
+            dtDangChinhThuc.Name = "dtDangChinhThuc";
+            dtDangChinhThuc.Size = new Size(198, 27);
+            dtDangChinhThuc.TabIndex = 12;
+            // 
+            // lblDangDuBi
+            // 
+            lblDangDuBi.AutoSize = true;
+            lblDangDuBi.Location = new Point(63, 119);
+            lblDangDuBi.Name = "lblDangDuBi";
+            lblDangDuBi.Size = new Size(115, 20);
+            lblDangDuBi.TabIndex = 11;
+            lblDangDuBi.Text = "Đảng viên dự bị";
+            // 
+            // dtDangDuBi
+            // 
+            dtDangDuBi.CustomFormat = "dd/MM/yyyy";
+            dtDangDuBi.Enabled = false;
+            dtDangDuBi.Format = DateTimePickerFormat.Custom;
+            dtDangDuBi.Location = new Point(217, 114);
+            dtDangDuBi.Name = "dtDangDuBi";
+            dtDangDuBi.Size = new Size(198, 27);
+            dtDangDuBi.TabIndex = 10;
+            // 
+            // chkDangVien
+            // 
+            chkDangVien.AutoSize = true;
+            chkDangVien.Location = new Point(61, 73);
+            chkDangVien.Name = "chkDangVien";
+            chkDangVien.Size = new Size(98, 24);
+            chkDangVien.TabIndex = 0;
+            chkDangVien.Text = "Đảng viên";
+            chkDangVien.UseVisualStyleBackColor = true;
+            chkDangVien.CheckedChanged += chkDangVien_CheckedChanged;
+            // 
+            // tabPage6
+            // 
+            tabPage6.Location = new Point(4, 29);
+            tabPage6.Name = "tabPage6";
+            tabPage6.Padding = new Padding(3);
+            tabPage6.Size = new Size(792, 476);
+            tabPage6.TabIndex = 5;
+            tabPage6.Text = "Khác";
+            tabPage6.UseVisualStyleBackColor = true;
+            // 
+            // btnSave
+            // 
+            btnSave.Location = new Point(460, 246);
+            btnSave.Name = "btnSave";
+            btnSave.Size = new Size(94, 29);
+            btnSave.TabIndex = 14;
+            btnSave.Text = "Lưu";
+            btnSave.UseVisualStyleBackColor = true;
+            // 
+            // btnCancel
+            // 
+            btnCancel.Location = new Point(589, 246);
+            btnCancel.Name = "btnCancel";
+            btnCancel.Size = new Size(94, 29);
+            btnCancel.TabIndex = 15;
+            btnCancel.Text = "Huỷ";
+            btnCancel.UseVisualStyleBackColor = true;
+            // 
+            // FrmPersonnelDetail
+            // 
+            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(800, 509);
+            Controls.Add(tabMain);
+            Name = "FrmPersonnelDetail";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Thông tin CBCS";
+            WindowState = FormWindowState.Maximized;
+            tabMain.ResumeLayout(false);
+            tabPage1.ResumeLayout(false);
+            tabPage1.PerformLayout();
+            tabPage2.ResumeLayout(false);
+            tabPage2.PerformLayout();
+            tabPage3.ResumeLayout(false);
+            tabPage3.PerformLayout();
+            tabPage4.ResumeLayout(false);
+            tabPage4.PerformLayout();
+            tabPage5.ResumeLayout(false);
+            tabPage5.PerformLayout();
+            ResumeLayout(false);
+        }
+
+        #endregion
+
+        private TabControl tabMain;
+        private TabPage tabPage1;
+        private TabPage tabPage2;
+        private TabPage tabPage3;
+        private TabPage tabPage4;
+        private TabPage tabPage5;
+        private TabPage tabPage6;
+        private TextBox txtHoTen;
+        private Label lblHoTen;
+        private TextBox txtSoHieu;
+        private Label lblSoHieu;
+        private ComboBox cboPersonnelType;
+        private Label lblType;
+        private Label lblGioiTinh;
+        private ComboBox cboGioiTinh;
+        private DateTimePicker dtNgaySinh;
+        private Label lblNgaySinh;
+        private TextBox txtNoiSinh;
+        private Label lblNoiSinh;
+        private Label lblCCCD;
+        private TextBox txtCCCD;
+        private Label lblNgayCap;
+        private DateTimePicker dtNgayCapCCCD;
+        private Label lblSoDienThoai;
+        private TextBox txtSoDienThoai;
+        private TextBox txtQueQuanMoi;
+        private Label lblQueQuanMoi;
+        private TextBox textBox1;
+        private Label lblQueQuanCu;
+        private TextBox txtHKTTCu;
+        private Label lblHKTTCu;
+        private TextBox txtHKTTMoi;
+        private Label lblHKTTMoi;
+        private TextBox txtTinhCu;
+        private Label lblTinhCu;
+        private TextBox txtTinhMoi;
+        private Label lblTinhMoi;
+        private TextBox txtCapBacHam;
+        private Label lblCapBacHam;
+        private TextBox txtViTriCongTac;
+        private Label lblViTriCongTac;
+        private TextBox txtDonVi;
+        private Label lblDonVi;
+        private TextBox txtHeSoLuong;
+        private Label lblHeSoLuong;
+        private Label lblNgayBoNhiem;
+        private DateTimePicker dtNgayBoNhiem;
+        private TextBox txtChucVu;
+        private Label lblChucVu;
+        private Label lblThangNamNhanCongTac;
+        private DateTimePicker dtThangNamNhanCongTac;
+        private Label lblThangNamVaoNganh;
+        private DateTimePicker dtThangNamVaoNganh;
+        private Label lblNgayNhanCapBac;
+        private DateTimePicker dtNgayNhanCapBac;
+        private TextBox txtTrinhDoLyLuanChinhTri;
+        private Label lblTrinhDoLyLuanChinhTri;
+        private TextBox txtChuyenNganhDaoTao;
+        private Label lblChuyenNganhDaoTao;
+        private TextBox txtTrinhDoChuyenMon;
+        private Label lblTrinhDoChuyenMon;
+        private TextBox txtTrinhDoVanHoa;
+        private Label lblTrinhDoVanHoa;
+        private TextBox txtTrinhDoNgoaiNgu;
+        private Label lblTrinhDoNgoaiNgu;
+        private TextBox txtTrinhDoTinHoc;
+        private Label lblTrinhDoTinHoc;
+        private Label lblThangNamTotNghiep;
+        private DateTimePicker dtThangNamTotNghiep;
+        private CheckBox chkDangVien;
+        private Label lblDangChinhThuc;
+        private DateTimePicker dtDangChinhThuc;
+        private Label lblDangDuBi;
+        private DateTimePicker dtDangDuBi;
+        private Button btnCancel;
+        private Button btnSave;
+    }
+}
