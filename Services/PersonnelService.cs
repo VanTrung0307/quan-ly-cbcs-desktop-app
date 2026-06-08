@@ -17,11 +17,61 @@ public class PersonnelService
     // =========================
     // GET ALL
     // =========================
-
     public async Task<List<Personnel>>
-        GetAllAsync()
+    GetAllAsync()
     {
         return await _db.Personnel
+            .OrderBy(x => x.HoTen)
+            .ToListAsync();
+    }
+
+    public async Task<List<Personnel>>
+    SearchAsync(string keyword)
+    {
+        if (string.IsNullOrWhiteSpace(keyword))
+        {
+            return await GetAllAsync();
+        }
+
+        string keywordLower =
+            keyword.ToLower();
+
+        string keywordKhongDau =
+            VietnameseHelper
+            .RemoveVietnameseSigns(keywordLower);
+
+        return await _db.Personnel
+            .Where(x =>
+
+                // Search có dấu
+                x.HoTen.ToLower()
+                    .Contains(keywordLower)
+
+                ||
+
+                // Search không dấu
+                x.HoTenKhongDau
+                    .ToLower()
+                    .Contains(keywordKhongDau)
+
+                ||
+
+                // Search số hiệu
+                x.SoHieu.ToLower()
+                    .Contains(keywordLower)
+
+                ||
+
+                // Search CCCD
+                (x.CCCD != null &&
+                 x.CCCD.Contains(keyword))
+
+                ||
+
+                // Search số điện thoại
+                (x.SoDienThoai != null &&
+                 x.SoDienThoai.Contains(keyword))
+            )
             .OrderBy(x => x.HoTen)
             .ToListAsync();
     }
@@ -95,28 +145,6 @@ public class PersonnelService
         _db.Personnel.Remove(personnel);
 
         await _db.SaveChangesAsync();
-    }
-
-    // =========================
-    // SEARCH
-    // =========================
-
-    public async Task<List<Personnel>>
-        SearchAsync(string keyword)
-    {
-        keyword =
-            VietnameseHelper
-            .RemoveVietnameseSigns(
-                keyword);
-
-        return await _db.Personnel
-            .Where(x =>
-                x.HoTenKhongDau
-                    .Contains(keyword)
-                ||
-                x.SoHieu
-                    .Contains(keyword))
-            .ToListAsync();
     }
 
     // =========================
