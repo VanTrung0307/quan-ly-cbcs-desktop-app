@@ -33,9 +33,38 @@ namespace QuanLyCBCS.Migrations
                     b.Property<string>("CCCD")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("CapBacHam")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ChucVu")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ChuyenNganhDaoTao")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("DangVien")
+                        .HasColumnType("bit");
+
                     b.Property<string>("DonVi")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GioiTinh")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HKTTCu")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HKTTMoi")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("HeSoLuong")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
 
                     b.Property<string>("HoTen")
                         .IsRequired()
@@ -45,17 +74,77 @@ namespace QuanLyCBCS.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("NgayBoNhiem")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("NgayCapCCCD")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("NgayNhanCapBac")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("NgaySinh")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("NgayVaoDangChinhThuc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("NgayVaoDangDuBi")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NoiSinh")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("PersonnelType")
                         .HasColumnType("int");
+
+                    b.Property<string>("QueQuanCu")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("QueQuanMoi")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SoDienThoai")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SoHieu")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ThangNamNhanCongTac")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ThangNamTotNghiep")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ThangNamVaoNganh")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TinhCu")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TinhMoi")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TrinhDoChuyenMon")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TrinhDoLyLuanChinhTri")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TrinhDoNgoaiNgu")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TrinhDoTinHoc")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TrinhDoVanHoa")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ViTriCongTac")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("PersonnelID");

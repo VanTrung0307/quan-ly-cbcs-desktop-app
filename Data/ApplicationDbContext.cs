@@ -16,4 +16,12 @@ public class ApplicationDbContext : DbContext
               Trusted_Connection=True;
               TrustServerCertificate=True");
     }
+
+    protected override void OnModelCreating(
+        ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Personnel>()
+            .Property(x => x.HeSoLuong)
+            .HasPrecision(5, 2);
+    }
 }

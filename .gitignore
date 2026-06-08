@@ -1,0 +1,29 @@
+# Build
+bin/
+obj/
+
+# Visual Studio
+.vs/
+
+# User files
+*.user
+*.suo
+
+# SQL
+*.mdf
+*.ldf
+
+# Logs
+*.log
+
+# Publish
+publish/
+
+# Rider
+.idea/
+
+# ReSharper
+_ReSharper*/
+
+# NuGet
+packages/
