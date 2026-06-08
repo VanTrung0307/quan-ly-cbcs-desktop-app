@@ -13,7 +13,6 @@
     <Folder Include="Forms\Dashboard\" />
     <Folder Include="Forms\System\" />
     <Folder Include="Forms\Personnel\" />
-    <Folder Include="Helpers\" />
     <Folder Include="DTOs\" />
   </ItemGroup>
 
