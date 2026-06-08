@@ -1,7 +1,7 @@
 ﻿using QuanLyCBCS.Services;
 using QuanLyCBCS.Models;
 
-namespace QuanLyCBCS.Forms.Personnel
+namespace QuanLyCBCS.Forms.PersonnelForms
 {
     public partial class FrmPersonnelList : Form
     {

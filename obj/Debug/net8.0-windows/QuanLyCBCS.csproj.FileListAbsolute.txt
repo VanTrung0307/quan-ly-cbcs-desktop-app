@@ -128,5 +128,5 @@ E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.pdb
 E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.genruntimeconfig.cache
 E:\QuanLyCBCS\obj\Debug\net8.0-windows\ref\QuanLyCBCS.dll
 E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.sourcelink.json
-E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.Personnel.FrmPersonnelList.resources
-E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.Personnel.FrmPersonnelDetail.resources
+E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.PersonnelForms.FrmPersonnelDetail.resources
+E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.PersonnelForms.FrmPersonnelList.resources

@@ -1,4 +1,4 @@
-using QuanLyCBCS.Forms.Personnel;
+using QuanLyCBCS.Forms.PersonnelForms;
 
 namespace QuanLyCBCS
 {

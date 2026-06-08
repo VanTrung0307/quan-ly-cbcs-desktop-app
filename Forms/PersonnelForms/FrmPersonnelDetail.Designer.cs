@@ -1,4 +1,4 @@
-﻿namespace QuanLyCBCS.Forms.Personnel
+﻿namespace QuanLyCBCS.Forms.PersonnelForms
 {
     partial class FrmPersonnelDetail
     {
@@ -57,7 +57,7 @@
             lblTinhCu = new Label();
             txtTinhMoi = new TextBox();
             lblTinhMoi = new Label();
-            textBox1 = new TextBox();
+            txtQueQuanCu = new TextBox();
             lblQueQuanCu = new Label();
             txtQueQuanMoi = new TextBox();
             lblQueQuanMoi = new Label();
@@ -96,14 +96,14 @@
             txtTrinhDoTinHoc = new TextBox();
             lblTrinhDoTinHoc = new Label();
             tabPage5 = new TabPage();
+            btnCancel = new Button();
+            btnSave = new Button();
             lblDangChinhThuc = new Label();
             dtDangChinhThuc = new DateTimePicker();
             lblDangDuBi = new Label();
             dtDangDuBi = new DateTimePicker();
             chkDangVien = new CheckBox();
             tabPage6 = new TabPage();
-            btnSave = new Button();
-            btnCancel = new Button();
             tabMain.SuspendLayout();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
@@ -317,7 +317,7 @@
             tabPage2.Controls.Add(lblTinhCu);
             tabPage2.Controls.Add(txtTinhMoi);
             tabPage2.Controls.Add(lblTinhMoi);
-            tabPage2.Controls.Add(textBox1);
+            tabPage2.Controls.Add(txtQueQuanCu);
             tabPage2.Controls.Add(lblQueQuanCu);
             tabPage2.Controls.Add(txtQueQuanMoi);
             tabPage2.Controls.Add(lblQueQuanMoi);
@@ -395,13 +395,13 @@
             lblTinhMoi.TabIndex = 6;
             lblTinhMoi.Text = "Tỉnh (sau sáp nhập)";
             // 
-            // textBox1
+            // txtQueQuanCu
             // 
-            textBox1.Location = new Point(421, 45);
-            textBox1.Multiline = true;
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(339, 129);
-            textBox1.TabIndex = 5;
+            txtQueQuanCu.Location = new Point(421, 45);
+            txtQueQuanCu.Multiline = true;
+            txtQueQuanCu.Name = "txtQueQuanCu";
+            txtQueQuanCu.Size = new Size(339, 129);
+            txtQueQuanCu.TabIndex = 5;
             // 
             // lblQueQuanCu
             // 
@@ -764,6 +764,25 @@
             tabPage5.Text = "Đảng";
             tabPage5.UseVisualStyleBackColor = true;
             // 
+            // btnCancel
+            // 
+            btnCancel.Location = new Point(589, 246);
+            btnCancel.Name = "btnCancel";
+            btnCancel.Size = new Size(94, 29);
+            btnCancel.TabIndex = 15;
+            btnCancel.Text = "Huỷ";
+            btnCancel.UseVisualStyleBackColor = true;
+            // 
+            // btnSave
+            // 
+            btnSave.Location = new Point(460, 246);
+            btnSave.Name = "btnSave";
+            btnSave.Size = new Size(94, 29);
+            btnSave.TabIndex = 14;
+            btnSave.Text = "Lưu";
+            btnSave.UseVisualStyleBackColor = true;
+            btnSave.Click += this.btnSave_Click;
+            // 
             // lblDangChinhThuc
             // 
             lblDangChinhThuc.AutoSize = true;
@@ -823,24 +842,6 @@
             tabPage6.Text = "Khác";
             tabPage6.UseVisualStyleBackColor = true;
             // 
-            // btnSave
-            // 
-            btnSave.Location = new Point(460, 246);
-            btnSave.Name = "btnSave";
-            btnSave.Size = new Size(94, 29);
-            btnSave.TabIndex = 14;
-            btnSave.Text = "Lưu";
-            btnSave.UseVisualStyleBackColor = true;
-            // 
-            // btnCancel
-            // 
-            btnCancel.Location = new Point(589, 246);
-            btnCancel.Name = "btnCancel";
-            btnCancel.Size = new Size(94, 29);
-            btnCancel.TabIndex = 15;
-            btnCancel.Text = "Huỷ";
-            btnCancel.UseVisualStyleBackColor = true;
-            // 
             // FrmPersonnelDetail
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -894,7 +895,7 @@
         private TextBox txtSoDienThoai;
         private TextBox txtQueQuanMoi;
         private Label lblQueQuanMoi;
-        private TextBox textBox1;
+        private TextBox txtQueQuanCu;
         private Label lblQueQuanCu;
         private TextBox txtHKTTCu;
         private Label lblHKTTCu;

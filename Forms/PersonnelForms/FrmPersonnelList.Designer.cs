@@ -1,4 +1,4 @@
-﻿namespace QuanLyCBCS.Forms.Personnel
+﻿namespace QuanLyCBCS.Forms.PersonnelForms
 {
     partial class FrmPersonnelList
     {
