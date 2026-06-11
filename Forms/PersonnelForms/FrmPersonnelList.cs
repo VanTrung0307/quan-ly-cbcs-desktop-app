@@ -289,6 +289,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
+            dgvPersonnel.DataSource = null;
+
             dgvPersonnel.DataSource =
                 await _service.SearchAsync(
                     txtSearch.Text);

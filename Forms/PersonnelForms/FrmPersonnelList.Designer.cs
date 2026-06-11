@@ -45,6 +45,7 @@
             txtSearch.PlaceholderText = "Tìm kiếm CBCS...";
             txtSearch.Size = new Size(273, 32);
             txtSearch.TabIndex = 0;
+            txtSearch.TextChanged += txtSearch_TextChanged;
             // 
             // btnAdd
             // 

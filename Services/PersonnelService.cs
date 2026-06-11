@@ -26,7 +26,7 @@ public class PersonnelService
     }
 
     public async Task<List<Personnel>>
-    SearchAsync(string keyword)
+SearchAsync(string keyword)
     {
         if (string.IsNullOrWhiteSpace(keyword))
         {
@@ -34,41 +34,49 @@ public class PersonnelService
         }
 
         string keywordLower =
-            keyword.ToLower();
+            keyword.Trim().ToLower();
 
         string keywordKhongDau =
             VietnameseHelper
             .RemoveVietnameseSigns(keywordLower);
 
         return await _db.Personnel
+            .AsNoTracking()
             .Where(x =>
 
-                // Search có dấu
-                x.HoTen.ToLower()
-                    .Contains(keywordLower)
+                // Họ tên có dấu
+
+                (x.HoTen != null &&
+                 x.HoTen.ToLower()
+                 .Contains(keywordLower))
 
                 ||
 
-                // Search không dấu
-                x.HoTenKhongDau
-                    .ToLower()
-                    .Contains(keywordKhongDau)
+                // Họ tên không dấu
+
+                (x.HoTenKhongDau != null &&
+                 x.HoTenKhongDau.ToLower()
+                 .Contains(keywordKhongDau))
 
                 ||
 
-                // Search số hiệu
-                x.SoHieu.ToLower()
-                    .Contains(keywordLower)
+                // Số hiệu
+
+                (x.SoHieu != null &&
+                 x.SoHieu.ToLower()
+                 .Contains(keywordLower))
 
                 ||
 
-                // Search CCCD
+                // CCCD
+
                 (x.CCCD != null &&
                  x.CCCD.Contains(keyword))
 
                 ||
 
-                // Search số điện thoại
+                // SĐT
+
                 (x.SoDienThoai != null &&
                  x.SoDienThoai.Contains(keyword))
             )
