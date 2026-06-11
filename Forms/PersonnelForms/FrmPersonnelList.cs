@@ -21,13 +21,35 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
         private async Task LoadPersonnelAsync()
         {
-
             dgvPersonnel.DataSource = null;
 
             dgvPersonnel.DataSource =
                 await _service.GetAllAsync();
 
             CustomizeDataGridView();
+
+            if (!dgvPersonnel.Columns.Contains("STT"))
+            {
+                DataGridViewTextBoxColumn sttColumn =
+                    new DataGridViewTextBoxColumn();
+
+                sttColumn.Name = "STT";
+                sttColumn.HeaderText = "STT";
+                sttColumn.Width = 60;
+
+                dgvPersonnel.Columns.Insert(
+                    0,
+                    sttColumn);
+            }
+
+            for (int i = 0;
+                 i < dgvPersonnel.Rows.Count;
+                 i++)
+            {
+                dgvPersonnel.Rows[i]
+                    .Cells["STT"]
+                    .Value = i + 1;
+            }
         }
 
         private void CustomizeDataGridView()
@@ -75,9 +97,14 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             // ==========================
             // ĐỔI TÊN CỘT
             // ==========================
-
             if (dgvPersonnel.Columns["PersonnelID"] != null)
-                dgvPersonnel.Columns["PersonnelID"].HeaderText = "ID";
+            {
+                dgvPersonnel.Columns["PersonnelID"]
+                    .Visible = false;
+            }
+
+            //if (dgvPersonnel.Columns["PersonnelID"] != null)
+            //    dgvPersonnel.Columns["PersonnelID"].HeaderText = "STT";
 
             if (dgvPersonnel.Columns["SoHieu"] != null)
                 dgvPersonnel.Columns["SoHieu"].HeaderText = "Số hiệu";
@@ -146,11 +173,12 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             string[] hiddenColumns =
             {
-        "HoTenKhongDau",
-        "PersonnelType",
-        "CreatedAt",
-        "UpdatedAt"
-    };
+                "PersonnelID",
+                "HoTenKhongDau",
+                "PersonnelType",
+                "CreatedAt",
+                "UpdatedAt"
+            };
 
             foreach (string column in hiddenColumns)
             {
@@ -167,13 +195,13 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             string[] fullDateColumns =
             {
-        "NgaySinh",
-        "NgayCapCCCD",
-        "NgayNhanCapBac",
-        "NgayBoNhiem",
-        "NgayVaoDangDuBi",
-        "NgayVaoDangChinhThuc"
-    };
+                "NgaySinh",
+                "NgayCapCCCD",
+                "NgayNhanCapBac",
+                "NgayBoNhiem",
+                "NgayVaoDangDuBi",
+                "NgayVaoDangChinhThuc"
+            };
 
             foreach (string column in fullDateColumns)
             {
@@ -214,7 +242,6 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             string[] visibleColumns =
             {
-        "PersonnelID",
         "SoHieu",
         "HoTen",
         "DonVi",
