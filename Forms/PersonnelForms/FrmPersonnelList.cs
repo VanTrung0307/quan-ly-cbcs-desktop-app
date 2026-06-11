@@ -395,5 +395,29 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 await LoadPersonnelAsync();
             }
         }
+
+        private async void btnExport_Click(
+            object sender,
+            EventArgs e)
+        {
+            var list =
+                await _service.GetAllAsync();
+
+            ExcelExportService excel =
+                new ExcelExportService();
+
+            string filePath =
+                Path.Combine(
+                    Environment.GetFolderPath(
+                        Environment.SpecialFolder.Desktop),
+                    "CBCS.xlsx");
+
+            excel.ExportPersonnel(
+                list,
+                filePath);
+
+            MessageBox.Show(
+                "Xuất Excel thành công!");
+        }
     }
 }

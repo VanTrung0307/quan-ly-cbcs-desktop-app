@@ -34,6 +34,7 @@
             btnDelete = new Button();
             btnRefresh = new Button();
             dgvPersonnel = new DataGridView();
+            btnExport = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvPersonnel).BeginInit();
             SuspendLayout();
             // 
@@ -103,11 +104,22 @@
             dgvPersonnel.CellClick += dgvPersonnel_CellClick;
             dgvPersonnel.CellDoubleClick += dgvPersonnel_CellDoubleClick;
             // 
+            // btnExport
+            // 
+            btnExport.Location = new Point(594, 123);
+            btnExport.Name = "btnExport";
+            btnExport.Size = new Size(94, 29);
+            btnExport.TabIndex = 6;
+            btnExport.Text = "⬇️ Excel";
+            btnExport.UseVisualStyleBackColor = true;
+            btnExport.Click += btnExport_Click;
+            // 
             // FrmPersonnelList
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(btnExport);
             Controls.Add(dgvPersonnel);
             Controls.Add(btnRefresh);
             Controls.Add(btnDelete);
@@ -132,5 +144,6 @@
         private Button btnDelete;
         private Button btnRefresh;
         private DataGridView dgvPersonnel;
+        private Button btnExport;
     }
 }
