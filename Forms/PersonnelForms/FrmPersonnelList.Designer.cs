@@ -39,26 +39,26 @@
             // 
             // txtSearch
             // 
-            txtSearch.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             txtSearch.Font = new Font("Segoe UI", 11F);
             txtSearch.Location = new Point(62, 56);
             txtSearch.Name = "txtSearch";
             txtSearch.PlaceholderText = "Tìm kiếm CBCS...";
-            txtSearch.Size = new Size(270, 32);
+            txtSearch.Size = new Size(273, 32);
             txtSearch.TabIndex = 0;
             // 
             // btnAdd
             // 
-            btnAdd.Location = new Point(380, 59);
+            btnAdd.Location = new Point(361, 59);
             btnAdd.Name = "btnAdd";
             btnAdd.Size = new Size(94, 29);
             btnAdd.TabIndex = 1;
             btnAdd.Text = "Thêm";
             btnAdd.UseVisualStyleBackColor = true;
+            btnAdd.Click += btnAdd_Click;
             // 
             // btnEdit
             // 
-            btnEdit.Location = new Point(506, 59);
+            btnEdit.Location = new Point(487, 59);
             btnEdit.Name = "btnEdit";
             btnEdit.Size = new Size(94, 29);
             btnEdit.TabIndex = 2;
@@ -67,7 +67,7 @@
             // 
             // btnDelete
             // 
-            btnDelete.Location = new Point(633, 59);
+            btnDelete.Location = new Point(614, 59);
             btnDelete.Name = "btnDelete";
             btnDelete.Size = new Size(94, 29);
             btnDelete.TabIndex = 3;
@@ -99,6 +99,8 @@
             dgvPersonnel.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvPersonnel.Size = new Size(798, 293);
             dgvPersonnel.TabIndex = 5;
+            dgvPersonnel.CellClick += dgvPersonnel_CellClick;
+            dgvPersonnel.CellDoubleClick += dgvPersonnel_CellDoubleClick;
             // 
             // FrmPersonnelList
             // 
@@ -112,7 +114,9 @@
             Controls.Add(btnAdd);
             Controls.Add(txtSearch);
             Name = "FrmPersonnelList";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "FrmPersonnelList";
+            WindowState = FormWindowState.Maximized;
             Load += FrmPersonnelList_Load;
             ((System.ComponentModel.ISupportInitialize)dgvPersonnel).EndInit();
             ResumeLayout(false);

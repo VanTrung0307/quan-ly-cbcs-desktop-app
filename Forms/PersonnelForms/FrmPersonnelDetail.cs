@@ -25,6 +25,12 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             _personnelId = personnelId;
 
             cboPersonnelType.SelectedIndex = 0;
+
+            dtNgaySinh.Format =
+                DateTimePickerFormat.Custom;
+
+            dtNgaySinh.CustomFormat =
+                "dd/MM/yyyy";
         }
 
         private void chkDangVien_CheckedChanged(
@@ -302,12 +308,16 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
         private async Task LoadPersonnelAsync()
         {
+
             var p =
                 await _service
                 .GetByIdAsync(_personnelId);
 
             if (p == null)
+            {
+                MessageBox.Show("Không tìm thấy dữ liệu");
                 return;
+            }
 
             cboPersonnelType.SelectedIndex =
                 p.PersonnelType - 1;
@@ -338,6 +348,91 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             chkDangVien.Checked =
                 p.DangVien;
+
+            // ADDRESS
+
+            txtQueQuanMoi.Text =
+                p.QueQuanMoi;
+
+            txtQueQuanCu.Text =
+                p.QueQuanCu;
+
+            txtTinhMoi.Text =
+                p.TinhMoi;
+
+            txtTinhCu.Text =
+                p.TinhCu;
+
+            txtHKTTMoi.Text =
+                p.HKTTMoi;
+
+            txtHKTTCu.Text =
+                p.HKTTCu;
+
+            // WORK
+
+            txtViTriCongTac.Text =
+                p.ViTriCongTac;
+
+            txtCapBacHam.Text =
+                p.CapBacHam;
+
+            txtChucVu.Text =
+                p.ChucVu;
+
+            txtHeSoLuong.Text =
+                p.HeSoLuong.ToString();
+
+            dtNgayNhanCapBac.Value =
+                p.NgayNhanCapBac ?? DateTime.Now;
+
+            dtThangNamVaoNganh.Value =
+                p.ThangNamVaoNganh ?? DateTime.Now;
+
+            dtThangNamNhanCongTac.Value =
+                p.ThangNamNhanCongTac ?? DateTime.Now;
+
+            dtNgayBoNhiem.Value =
+                p.NgayBoNhiem ?? DateTime.Now;
+
+            // EDUCATION
+
+            txtTrinhDoTinHoc.Text =
+                p.TrinhDoTinHoc;
+
+            txtTrinhDoNgoaiNgu.Text =
+                p.TrinhDoNgoaiNgu;
+
+            txtTrinhDoVanHoa.Text =
+                p.TrinhDoVanHoa;
+
+            txtTrinhDoChuyenMon.Text =
+                p.TrinhDoChuyenMon;
+
+            txtChuyenNganhDaoTao.Text =
+                p.ChuyenNganhDaoTao;
+
+            txtTrinhDoLyLuanChinhTri.Text =
+                p.TrinhDoLyLuanChinhTri;
+
+            dtThangNamTotNghiep.Value =
+                p.ThangNamTotNghiep ?? DateTime.Now;
+
+            // PARTY
+
+            if (p.DangVien)
+            {
+                dtDangDuBi.Value =
+                    p.NgayVaoDangDuBi ?? DateTime.Now;
+
+                dtDangChinhThuc.Value =
+                    p.NgayVaoDangChinhThuc ?? DateTime.Now;
+            }
+
+            // OTHER
+
+            dtNgayCapCCCD.Value =
+                p.NgayCapCCCD ?? DateTime.Now;
         }
 
         private async void FrmPersonnelDetail_Load(

@@ -17,10 +17,10 @@ public class PersonnelService
     // =========================
     // GET ALL
     // =========================
-    public async Task<List<Personnel>>
-    GetAllAsync()
+    public async Task<List<Personnel>> GetAllAsync()
     {
         return await _db.Personnel
+            .AsNoTracking()
             .OrderBy(x => x.HoTen)
             .ToListAsync();
     }
@@ -84,6 +84,7 @@ public class PersonnelService
         GetByIdAsync(int id)
     {
         return await _db.Personnel
+            .AsNoTracking()
             .FirstOrDefaultAsync(
                 x => x.PersonnelID == id);
     }

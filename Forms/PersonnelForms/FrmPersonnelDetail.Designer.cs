@@ -188,6 +188,7 @@
             dtNgayCapCCCD.Name = "dtNgayCapCCCD";
             dtNgayCapCCCD.Size = new Size(198, 27);
             dtNgayCapCCCD.TabIndex = 14;
+            dtNgayCapCCCD.Value = new DateTime(2026, 6, 11, 0, 0, 0, 0);
             // 
             // lblCCCD
             // 
@@ -238,6 +239,7 @@
             dtNgaySinh.Name = "dtNgaySinh";
             dtNgaySinh.Size = new Size(198, 27);
             dtNgaySinh.TabIndex = 8;
+            dtNgaySinh.Value = new DateTime(2026, 6, 11, 0, 0, 0, 0);
             // 
             // lblGioiTinh
             // 
@@ -490,6 +492,7 @@
             dtNgayBoNhiem.Name = "dtNgayBoNhiem";
             dtNgayBoNhiem.Size = new Size(198, 27);
             dtNgayBoNhiem.TabIndex = 24;
+            dtNgayBoNhiem.Value = new DateTime(2026, 6, 11, 0, 0, 0, 0);
             // 
             // txtChucVu
             // 
@@ -524,6 +527,7 @@
             dtThangNamNhanCongTac.Name = "dtThangNamNhanCongTac";
             dtThangNamNhanCongTac.Size = new Size(198, 27);
             dtThangNamNhanCongTac.TabIndex = 20;
+            dtThangNamNhanCongTac.Value = new DateTime(2026, 6, 1, 0, 0, 0, 0);
             // 
             // lblThangNamVaoNganh
             // 
@@ -542,6 +546,7 @@
             dtThangNamVaoNganh.Name = "dtThangNamVaoNganh";
             dtThangNamVaoNganh.Size = new Size(198, 27);
             dtThangNamVaoNganh.TabIndex = 18;
+            dtThangNamVaoNganh.Value = new DateTime(2026, 6, 1, 0, 0, 0, 0);
             // 
             // lblNgayNhanCapBac
             // 
@@ -560,6 +565,7 @@
             dtNgayNhanCapBac.Name = "dtNgayNhanCapBac";
             dtNgayNhanCapBac.Size = new Size(198, 27);
             dtNgayNhanCapBac.TabIndex = 16;
+            dtNgayNhanCapBac.Value = new DateTime(2026, 6, 11, 0, 0, 0, 0);
             // 
             // txtCapBacHam
             // 
@@ -650,6 +656,7 @@
             dtThangNamTotNghiep.Name = "dtThangNamTotNghiep";
             dtThangNamTotNghiep.Size = new Size(198, 27);
             dtThangNamTotNghiep.TabIndex = 20;
+            dtThangNamTotNghiep.Value = new DateTime(2026, 6, 1, 0, 0, 0, 0);
             // 
             // txtTrinhDoLyLuanChinhTri
             // 
@@ -781,7 +788,7 @@
             btnSave.TabIndex = 14;
             btnSave.Text = "Lưu";
             btnSave.UseVisualStyleBackColor = true;
-            btnSave.Click += this.btnSave_Click;
+            btnSave.Click += btnSave_Click;
             // 
             // lblDangChinhThuc
             // 
@@ -801,6 +808,7 @@
             dtDangChinhThuc.Name = "dtDangChinhThuc";
             dtDangChinhThuc.Size = new Size(198, 27);
             dtDangChinhThuc.TabIndex = 12;
+            dtDangChinhThuc.Value = new DateTime(2026, 6, 11, 0, 0, 0, 0);
             // 
             // lblDangDuBi
             // 
@@ -820,6 +828,7 @@
             dtDangDuBi.Name = "dtDangDuBi";
             dtDangDuBi.Size = new Size(198, 27);
             dtDangDuBi.TabIndex = 10;
+            dtDangDuBi.Value = new DateTime(2026, 6, 11, 0, 0, 0, 0);
             // 
             // chkDangVien
             // 
@@ -852,6 +861,7 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Thông tin CBCS";
             WindowState = FormWindowState.Maximized;
+            Load += FrmPersonnelDetail_Load;
             tabMain.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
             tabPage1.PerformLayout();

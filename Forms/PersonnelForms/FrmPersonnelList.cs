@@ -1,5 +1,7 @@
 ﻿using QuanLyCBCS.Services;
 using QuanLyCBCS.Models;
+using QuanLyCBCS.Enums;
+using QuanLyCBCS.Forms.PersonnelForms;
 
 namespace QuanLyCBCS.Forms.PersonnelForms
 {
@@ -19,6 +21,9 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
         private async Task LoadPersonnelAsync()
         {
+
+            dgvPersonnel.DataSource = null;
+
             dgvPersonnel.DataSource =
                 await _service.GetAllAsync();
 
@@ -27,6 +32,10 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
         private void CustomizeDataGridView()
         {
+            // ==========================
+            // GIAO DIỆN CHUNG
+            // ==========================
+
             dgvPersonnel.BorderStyle =
                 BorderStyle.None;
 
@@ -37,31 +46,194 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 new Font("Segoe UI", 10);
 
             dgvPersonnel.ColumnHeadersDefaultCellStyle.Font =
-                new Font("Segoe UI", 10,
-                FontStyle.Bold);
+                new Font(
+                    "Segoe UI",
+                    10,
+                    FontStyle.Bold);
 
-            dgvPersonnel.Columns["PersonnelID"]
-                .HeaderText = "ID";
+            dgvPersonnel.RowTemplate.Height = 32;
 
-            dgvPersonnel.Columns["SoHieu"]
-                .HeaderText = "Số hiệu";
+            dgvPersonnel.AllowUserToAddRows = false;
 
-            dgvPersonnel.Columns["HoTen"]
-                .HeaderText = "Họ tên";
+            dgvPersonnel.ReadOnly = true;
 
-            dgvPersonnel.Columns["DonVi"]
-                .HeaderText = "Đơn vị";
+            dgvPersonnel.SelectionMode =
+                DataGridViewSelectionMode.FullRowSelect;
 
-            dgvPersonnel.Columns["SoDienThoai"]
-                .HeaderText = "Số điện thoại";
+            dgvPersonnel.MultiSelect = false;
 
-            dgvPersonnel.Columns["CCCD"]
-                .HeaderText = "CCCD";
+            // ==========================
+            // CHO PHÉP CUỘN NGANG
+            // ==========================
 
-            // Ẩn cột không cần
+            dgvPersonnel.AutoSizeColumnsMode =
+                DataGridViewAutoSizeColumnsMode.None;
 
-            dgvPersonnel.Columns["HoTenKhongDau"]
-                .Visible = false;
+            dgvPersonnel.ScrollBars =
+                ScrollBars.Both;
+
+            // ==========================
+            // ĐỔI TÊN CỘT
+            // ==========================
+
+            if (dgvPersonnel.Columns["PersonnelID"] != null)
+                dgvPersonnel.Columns["PersonnelID"].HeaderText = "ID";
+
+            if (dgvPersonnel.Columns["SoHieu"] != null)
+                dgvPersonnel.Columns["SoHieu"].HeaderText = "Số hiệu";
+
+            if (dgvPersonnel.Columns["HoTen"] != null)
+                dgvPersonnel.Columns["HoTen"].HeaderText = "Họ tên";
+
+            if (dgvPersonnel.Columns["DonVi"] != null)
+                dgvPersonnel.Columns["DonVi"].HeaderText = "Đơn vị";
+
+            if (dgvPersonnel.Columns["GioiTinh"] != null)
+                dgvPersonnel.Columns["GioiTinh"].HeaderText = "Giới tính";
+
+            if (dgvPersonnel.Columns["NgaySinh"] != null)
+                dgvPersonnel.Columns["NgaySinh"].HeaderText = "Ngày sinh";
+
+            if (dgvPersonnel.Columns["CapBacHam"] != null)
+                dgvPersonnel.Columns["CapBacHam"].HeaderText = "Cấp bậc";
+
+            if (dgvPersonnel.Columns["ChucVu"] != null)
+                dgvPersonnel.Columns["ChucVu"].HeaderText = "Chức vụ";
+
+            if (dgvPersonnel.Columns["CCCD"] != null)
+                dgvPersonnel.Columns["CCCD"].HeaderText = "CCCD";
+
+            if (dgvPersonnel.Columns["SoDienThoai"] != null)
+                dgvPersonnel.Columns["SoDienThoai"].HeaderText = "Số điện thoại";
+
+            // ==========================
+            // ĐỘ RỘNG CỘT
+            // ==========================
+
+            if (dgvPersonnel.Columns["PersonnelID"] != null)
+                dgvPersonnel.Columns["PersonnelID"].Width = 60;
+
+            if (dgvPersonnel.Columns["SoHieu"] != null)
+                dgvPersonnel.Columns["SoHieu"].Width = 120;
+
+            if (dgvPersonnel.Columns["HoTen"] != null)
+                dgvPersonnel.Columns["HoTen"].Width = 250;
+
+            if (dgvPersonnel.Columns["DonVi"] != null)
+                dgvPersonnel.Columns["DonVi"].Width = 220;
+
+            if (dgvPersonnel.Columns["GioiTinh"] != null)
+                dgvPersonnel.Columns["GioiTinh"].Width = 90;
+
+            if (dgvPersonnel.Columns["NgaySinh"] != null)
+                dgvPersonnel.Columns["NgaySinh"].Width = 120;
+
+            if (dgvPersonnel.Columns["CapBacHam"] != null)
+                dgvPersonnel.Columns["CapBacHam"].Width = 140;
+
+            if (dgvPersonnel.Columns["ChucVu"] != null)
+                dgvPersonnel.Columns["ChucVu"].Width = 180;
+
+            if (dgvPersonnel.Columns["CCCD"] != null)
+                dgvPersonnel.Columns["CCCD"].Width = 140;
+
+            if (dgvPersonnel.Columns["SoDienThoai"] != null)
+                dgvPersonnel.Columns["SoDienThoai"].Width = 130;
+
+            // ==========================
+            // ẨN CỘT KỸ THUẬT
+            // ==========================
+
+            string[] hiddenColumns =
+            {
+        "HoTenKhongDau",
+        "PersonnelType",
+        "CreatedAt",
+        "UpdatedAt"
+    };
+
+            foreach (string column in hiddenColumns)
+            {
+                if (dgvPersonnel.Columns[column] != null)
+                {
+                    dgvPersonnel.Columns[column]
+                        .Visible = false;
+                }
+            }
+
+            // ==========================
+            // FORMAT NGÀY THÁNG
+            // ==========================
+
+            string[] fullDateColumns =
+            {
+        "NgaySinh",
+        "NgayCapCCCD",
+        "NgayNhanCapBac",
+        "NgayBoNhiem",
+        "NgayVaoDangDuBi",
+        "NgayVaoDangChinhThuc"
+    };
+
+            foreach (string column in fullDateColumns)
+            {
+                if (dgvPersonnel.Columns[column] != null)
+                {
+                    dgvPersonnel.Columns[column]
+                        .DefaultCellStyle.Format =
+                        "dd/MM/yyyy";
+                }
+            }
+
+            string[] monthYearColumns =
+            {
+        "ThangNamVaoNganh",
+        "ThangNamNhanCongTac",
+        "ThangNamTotNghiep"
+    };
+
+            foreach (string column in monthYearColumns)
+            {
+                if (dgvPersonnel.Columns[column] != null)
+                {
+                    dgvPersonnel.Columns[column]
+                        .DefaultCellStyle.Format =
+                        "MM/yyyy";
+                }
+            }
+
+            // ==========================
+            // CHỈ HIỂN THỊ CÁC CỘT CHÍNH
+            // ==========================
+
+            foreach (DataGridViewColumn column
+                in dgvPersonnel.Columns)
+            {
+                column.Visible = false;
+            }
+
+            string[] visibleColumns =
+            {
+        "PersonnelID",
+        "SoHieu",
+        "HoTen",
+        "DonVi",
+        "GioiTinh",
+        "NgaySinh",
+        "CapBacHam",
+        "ChucVu",
+        "CCCD",
+        "SoDienThoai"
+    };
+
+            foreach (string column in visibleColumns)
+            {
+                if (dgvPersonnel.Columns[column] != null)
+                {
+                    dgvPersonnel.Columns[column]
+                        .Visible = true;
+                }
+            }
         }
 
         private async void FrmPersonnelList_Load(
@@ -135,6 +307,64 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             MessageBox.Show(
                 "Xóa thành công");
+        }
+
+        private async void btnAdd_Click(
+            object sender,
+            EventArgs e)
+        {
+            FrmPersonnelDetail frm =
+                new FrmPersonnelDetail(
+                    FormMode.Add);
+
+            if (frm.ShowDialog() ==
+                DialogResult.OK)
+            {
+                await LoadPersonnelAsync();
+            }
+        }
+
+        private async void btnEdit_Click(
+            object sender,
+            EventArgs e)
+        {
+            if (SelectedPersonnelId == 0)
+            {
+                MessageBox.Show(
+                    "Vui lòng chọn CBCS");
+
+                return;
+            }
+
+            FrmPersonnelDetail frm =
+                new FrmPersonnelDetail(
+                    FormMode.Edit,
+                    SelectedPersonnelId);
+
+            if (frm.ShowDialog() ==
+                DialogResult.OK)
+            {
+                await LoadPersonnelAsync();
+            }
+        }
+
+        private async void dgvPersonnel_CellDoubleClick(
+            object sender,
+            DataGridViewCellEventArgs e)
+        {
+            if (SelectedPersonnelId == 0)
+                return;
+
+            FrmPersonnelDetail frm =
+                new FrmPersonnelDetail(
+                    FormMode.Edit,
+                    SelectedPersonnelId);
+
+            if (frm.ShowDialog() ==
+                DialogResult.OK)
+            {
+                await LoadPersonnelAsync();
+            }
         }
     }
 }
