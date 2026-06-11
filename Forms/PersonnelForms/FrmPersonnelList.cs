@@ -12,6 +12,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
 
         private int SelectedPersonnelId = 0;
+        private CancellationTokenSource?
+    _searchCts;
         public FrmPersonnelList()
         {
             InitializeComponent();
@@ -19,16 +21,9 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             _service = new PersonnelService();
         }
 
-        private async Task LoadPersonnelAsync()
+        private void AddSttColumn()
         {
-            dgvPersonnel.DataSource = null;
-
-            dgvPersonnel.DataSource =
-                await _service.GetAllAsync();
-
-            CustomizeDataGridView();
-
-            if (!dgvPersonnel.Columns.Contains("STT"))
+            if (dgvPersonnel.Columns["STT"] == null)
             {
                 DataGridViewTextBoxColumn sttColumn =
                     new DataGridViewTextBoxColumn();
@@ -36,11 +31,14 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 sttColumn.Name = "STT";
                 sttColumn.HeaderText = "STT";
                 sttColumn.Width = 60;
+                sttColumn.ReadOnly = true;
 
                 dgvPersonnel.Columns.Insert(
                     0,
                     sttColumn);
             }
+
+            dgvPersonnel.Columns["STT"].Visible = true;
 
             for (int i = 0;
                  i < dgvPersonnel.Rows.Count;
@@ -50,6 +48,18 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                     .Cells["STT"]
                     .Value = i + 1;
             }
+        }
+
+        private async Task LoadPersonnelAsync()
+        {
+            dgvPersonnel.DataSource = null;
+
+            dgvPersonnel.DataSource =
+                await _service.GetAllAsync();
+
+            AddSttColumn();
+
+            CustomizeDataGridView();
         }
 
         private void CustomizeDataGridView()
@@ -242,16 +252,17 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             string[] visibleColumns =
             {
-        "SoHieu",
-        "HoTen",
-        "DonVi",
-        "GioiTinh",
-        "NgaySinh",
-        "CapBacHam",
-        "ChucVu",
-        "CCCD",
-        "SoDienThoai"
-    };
+                "STT",
+                "SoHieu",
+                "HoTen",
+                "DonVi",
+                "GioiTinh",
+                "NgaySinh",
+                "CapBacHam",
+                "ChucVu",
+                "CCCD",
+                "SoDienThoai"
+            };
 
             foreach (string column in visibleColumns)
             {
@@ -260,6 +271,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                     dgvPersonnel.Columns[column]
                         .Visible = true;
                 }
+                if (dgvPersonnel.Columns["STT"] != null)
+                    dgvPersonnel.Columns["STT"].Width = 60;
             }
         }
 
@@ -289,13 +302,50 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
-            dgvPersonnel.DataSource = null;
+            try
+            {
+                _searchCts?.Cancel();
 
-            dgvPersonnel.DataSource =
-                await _service.SearchAsync(
-                    txtSearch.Text);
+                _searchCts =
+                    new CancellationTokenSource();
 
-            CustomizeDataGridView();
+                var token =
+                    _searchCts.Token;
+
+                await Task.Delay(
+                    300,
+                    token);
+
+                string keyword =
+                    txtSearch.Text.Trim();
+
+                var result =
+                    await _service.SearchAsync(
+                        keyword);
+
+                if (token.IsCancellationRequested)
+                    return;
+
+                dgvPersonnel.DataSource = null;
+                dgvPersonnel.DataSource = result;
+
+                AddSttColumn();
+
+                CustomizeDataGridView();
+
+                this.Text =
+                    $"Quản lý CBCS - {result.Count} kết quả";
+            }
+            catch (TaskCanceledException)
+            {
+                // bỏ qua
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    ex.Message,
+                    "Lỗi tìm kiếm");
+            }
         }
 
         private async void btnRefresh_Click(
