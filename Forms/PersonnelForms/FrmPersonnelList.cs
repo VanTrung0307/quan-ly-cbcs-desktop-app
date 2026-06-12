@@ -16,6 +16,9 @@ namespace QuanLyCBCS.Forms.PersonnelForms
         private int SelectedPersonnelId = 0;
         private CancellationTokenSource?
     _searchCts;
+        private readonly AuditLogService _auditService =
+    new AuditLogService();
+
         public FrmPersonnelList()
         {
             InitializeComponent();
@@ -422,6 +425,13 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             await _service.DeleteAsync(
                 SelectedPersonnelId);
+
+            AuditLogService auditService =
+                new AuditLogService();
+
+            await _auditService.AddLogAsync(
+                "DELETE_PERSONNEL",
+                $"PersonnelId = {SelectedPersonnelId}");
 
             await LoadPersonnelAsync();
             await LoadDashboardAsync();

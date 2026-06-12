@@ -8,6 +8,7 @@ namespace QuanLyCBCS.Forms.Auth
     public partial class FrmLogin : Form
     {
         private readonly UserService _userService;
+
         public FrmLogin()
         {
             InitializeComponent();
@@ -73,9 +74,17 @@ namespace QuanLyCBCS.Forms.Auth
                 CurrentUser.Role =
                     user.Role;
 
-                MessageBox.Show(
-                    $"Xin chào {user.Username}",
-                    "Đăng nhập thành công");
+                AuditLogService auditService =
+                    new AuditLogService();
+
+                await auditService
+                    .AddLogAsync(
+                        "LOGIN",
+                        "Đăng nhập hệ thống");
+
+                //MessageBox.Show(
+                //    $"Xin chào {user.Username}",
+                //    "Đăng nhập thành công");
 
                 FrmPersonnelList frm =
                     new FrmPersonnelList();

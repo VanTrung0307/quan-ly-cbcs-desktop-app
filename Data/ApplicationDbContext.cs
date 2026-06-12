@@ -12,6 +12,12 @@ public class ApplicationDbContext : DbContext
         get;
         set;
     }
+    public DbSet<AuditLog> AuditLogs
+    {
+        get;
+        set;
+    }
+
 
     protected override void OnConfiguring(
         DbContextOptionsBuilder optionsBuilder)

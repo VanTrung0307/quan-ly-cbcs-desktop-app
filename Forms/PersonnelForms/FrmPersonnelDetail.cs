@@ -1,7 +1,8 @@
-﻿using QuanLyCBCS.Enums;
+﻿using DocumentFormat.OpenXml.Wordprocessing;
+using QuanLyCBCS.Enums;
+using QuanLyCBCS.Helpers;
 using QuanLyCBCS.Models;
 using QuanLyCBCS.Services;
-using QuanLyCBCS.Helpers;
 
 namespace QuanLyCBCS.Forms.PersonnelForms
 {
@@ -12,6 +13,9 @@ namespace QuanLyCBCS.Forms.PersonnelForms
         private readonly FormMode _mode;
 
         private readonly int _personnelId;
+
+        private readonly AuditLogService _auditService =
+    new AuditLogService();
         public FrmPersonnelDetail(
             FormMode mode,
             int personnelId = 0)
@@ -283,6 +287,11 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             await _service.AddAsync(p);
 
+            await _auditService
+                .AddLogAsync(
+                    "ADD_PERSONNEL",
+                    p.HoTen);
+
             MessageBox.Show(
                 "Thêm CBCS thành công");
 
@@ -463,6 +472,11 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             FillPersonnel(p);
 
             await _service.UpdateAsync(p);
+
+            await _auditService
+                .AddLogAsync(
+                    "UPDATE_PERSONNEL",
+                    p.HoTen);
 
             MessageBox.Show(
                 "Cập nhật thành công");
