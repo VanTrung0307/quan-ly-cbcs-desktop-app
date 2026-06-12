@@ -13,6 +13,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
     {
         private PersonnelService _service;
 
+        private System.Windows.Forms.Timer _idleTimer =
+            new System.Windows.Forms.Timer();
 
         private int SelectedPersonnelId = 0;
         private CancellationTokenSource?
@@ -28,6 +30,15 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 new PersonnelService();
 
             ApplyPermission();
+
+            RegisterActivityControl(this);
+
+            _idleTimer.Interval = 1000;
+
+            _idleTimer.Tick +=
+                IdleTimer_Tick;
+
+            _idleTimer.Start();
         }
 
         private bool IsAdmin =>
@@ -50,6 +61,25 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             btnDelete.Enabled = false;
             btnBackup.Enabled = false;
             btnRestore.Enabled = false;
+        }
+
+        protected override bool ProcessCmdKey(
+            ref Message msg,
+            Keys keyData)
+        {
+            IdleTimeoutHelper.ResetTimer();
+
+            return base.ProcessCmdKey(
+                ref msg,
+                keyData);
+        }
+
+        protected override void OnMouseMove(
+            MouseEventArgs e)
+        {
+            IdleTimeoutHelper.ResetTimer();
+
+            base.OnMouseMove(e);
         }
 
         private void AddSttColumn()
@@ -311,6 +341,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
+            IdleTimeoutHelper.ResetTimer();
             lblCurrentUser.Text =
                 $"👤 {CurrentUser.Username} ({CurrentUser.Role})";
 
@@ -768,6 +799,53 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 new FrmChangePassword();
 
             frm.ShowDialog();
+        }
+
+        private async void IdleTimer_Tick(
+            object? sender,
+            EventArgs e)
+        {
+            TimeSpan idleTime =
+                DateTime.Now -
+                IdleTimeoutHelper.LastActivityTime;
+
+            if (idleTime.TotalMinutes < 15)
+            {
+                return;
+            }
+
+            _idleTimer.Stop();
+
+            await _auditService.AddLogAsync(
+                "AUTO_LOGOUT",
+                "Tự động đăng xuất do không hoạt động");
+
+            MessageBox.Show(
+                "Phiên làm việc đã hết hạn.\nVui lòng đăng nhập lại.");
+
+            Close();
+        }
+
+        private void RegisterActivityControl(
+            Control parent)
+        {
+            foreach (Control control
+                in parent.Controls)
+            {
+                control.MouseMove +=
+                    (_, _) =>
+                    IdleTimeoutHelper.ResetTimer();
+
+                control.KeyPress +=
+                    (_, _) =>
+                    IdleTimeoutHelper.ResetTimer();
+
+                if (control.HasChildren)
+                {
+                    RegisterActivityControl(
+                        control);
+                }
+            }
         }
     }
 }

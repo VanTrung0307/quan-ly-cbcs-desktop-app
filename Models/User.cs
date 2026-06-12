@@ -25,4 +25,8 @@ public class User
         get;
         set;
     } = string.Empty;
+
+    public int FailedLoginCount { get; set; }
+
+    public DateTime? LockedUntil { get; set; }
 }

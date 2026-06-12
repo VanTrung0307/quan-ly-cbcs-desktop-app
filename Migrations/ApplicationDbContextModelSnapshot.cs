@@ -149,7 +149,7 @@ namespace QuanLyCBCS.Migrations
 
                     b.HasKey("PersonnelID");
 
-                    b.ToTable("Personnel");
+                    b.ToTable("Personnel", (string)null);
                 });
 #pragma warning restore 612, 618
         }

@@ -29,6 +29,8 @@ namespace QuanLyCBCS.Forms.Auth
             object sender,
             EventArgs e)
         {
+            AuditLogService auditService =
+                    new AuditLogService();
             try
             {
                 string username =
@@ -70,6 +72,17 @@ namespace QuanLyCBCS.Forms.Auth
                     return;
                 }
 
+                if (user.LockedUntil != null &&
+                        user.LockedUntil > DateTime.Now)
+                {
+                    MessageBox.Show(
+                        $"Tài khoản đang bị khóa đến: " +
+                        user.LockedUntil.Value.ToString(
+                            "dd/MM/yyyy HH:mm:ss"));
+
+                    return;
+                }
+
                 bool isValid =
                     PasswordHelper.VerifyPassword(
                         txtPassword.Text.Trim(),
@@ -77,8 +90,32 @@ namespace QuanLyCBCS.Forms.Auth
 
                 if (!isValid)
                 {
+                    user.FailedLoginCount++;
+
+                    if (user.FailedLoginCount >= 5)
+                    {
+                        user.LockedUntil =
+                            DateTime.Now.AddMinutes(15);
+
+                        user.FailedLoginCount = 0;
+
+                        await db.SaveChangesAsync();    
+
+                        await auditService.AddLogAsync(
+                            "ACCOUNT_LOCKED",
+                            $"Khóa tài khoản {user.Username}");
+
+                        MessageBox.Show(
+                            "Tài khoản đã bị khóa 15 phút do đăng nhập sai quá nhiều lần.");
+
+                        return;
+                    }
+
+                    await db.SaveChangesAsync();
+
                     MessageBox.Show(
-                        "Sai tài khoản hoặc mật khẩu.");
+                        $"Sai tài khoản hoặc mật khẩu.\n" +
+                        $"Lần sai: {user.FailedLoginCount}/5");
 
                     return;
                 }
@@ -92,8 +129,10 @@ namespace QuanLyCBCS.Forms.Auth
                 CurrentUser.Role =
                     user.Role;
 
-                AuditLogService auditService =
-                    new AuditLogService();
+                user.FailedLoginCount = 0;
+                user.LockedUntil = null;
+
+                await db.SaveChangesAsync();
 
                 await auditService
                     .AddLogAsync(
