@@ -759,5 +759,15 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             frm.ShowDialog();
         }
+
+        private void btnChangePassword_Click(
+            object sender,
+            EventArgs e)
+        {
+            FrmChangePassword frm =
+                new FrmChangePassword();
+
+            frm.ShowDialog();
+        }
     }
 }

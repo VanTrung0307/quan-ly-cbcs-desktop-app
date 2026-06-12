@@ -61,6 +61,7 @@
             lblTuoiTrungBinh = new Label();
             lblNu = new Label();
             lblNam = new Label();
+            btnChangePassword = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvPersonnel).BeginInit();
             pnlTongCBCS.SuspendLayout();
             pnlChienSi.SuspendLayout();
@@ -322,7 +323,7 @@
             // 
             btnUsers.Location = new Point(112, 50);
             btnUsers.Name = "btnUsers";
-            btnUsers.Size = new Size(105, 29);
+            btnUsers.Size = new Size(133, 29);
             btnUsers.TabIndex = 17;
             btnUsers.Text = "👥 Tài khoản";
             btnUsers.UseVisualStyleBackColor = true;
@@ -330,9 +331,9 @@
             // 
             // btnAuditLog
             // 
-            btnAuditLog.Location = new Point(112, 88);
+            btnAuditLog.Location = new Point(112, 85);
             btnAuditLog.Name = "btnAuditLog";
-            btnAuditLog.Size = new Size(105, 29);
+            btnAuditLog.Size = new Size(133, 29);
             btnAuditLog.TabIndex = 18;
             btnAuditLog.Text = "📓 Nhật ký";
             btnAuditLog.UseVisualStyleBackColor = true;
@@ -410,11 +411,22 @@
             lblNam.TabIndex = 24;
             lblNam.Text = "0";
             // 
+            // btnChangePassword
+            // 
+            btnChangePassword.Location = new Point(112, 120);
+            btnChangePassword.Name = "btnChangePassword";
+            btnChangePassword.Size = new Size(133, 29);
+            btnChangePassword.TabIndex = 28;
+            btnChangePassword.Text = "🔑 Đổi mật khẩu";
+            btnChangePassword.UseVisualStyleBackColor = true;
+            btnChangePassword.Click += btnChangePassword_Click;
+            // 
             // FrmPersonnelList
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1554, 450);
+            Controls.Add(btnChangePassword);
             Controls.Add(lblDonViDongNhat);
             Controls.Add(lblTuoiTrungBinh);
             Controls.Add(lblNu);
@@ -493,5 +505,6 @@
         private Label lblTuoiTrungBinh;
         private Label lblNu;
         private Label lblNam;
+        private Button btnChangePassword;
     }
 }

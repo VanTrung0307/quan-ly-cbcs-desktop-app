@@ -134,3 +134,4 @@ E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.Auth.FrmLogin.resources
 E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.UserForms.FrmUserList.resources
 E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.UserForms.FrmUserDetail.resources
 E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.SystemForms.FrmAuditLogList.resources
+E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.UserForms.FrmChangePassword.resources

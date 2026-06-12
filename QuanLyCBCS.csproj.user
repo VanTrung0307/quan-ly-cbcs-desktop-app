@@ -16,6 +16,9 @@
     <Compile Update="Forms\SystemForms\FrmAuditLogList.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Forms\UserForms\FrmChangePassword.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Forms\UserForms\FrmUserDetail.cs">
       <SubType>Form</SubType>
     </Compile>

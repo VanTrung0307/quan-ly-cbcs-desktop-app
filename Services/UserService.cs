@@ -134,4 +134,30 @@ public class UserService
 
         await db.SaveChangesAsync();
     }
+
+    public async Task ChangePasswordAsync(
+        int userId,
+        string oldPassword,
+        string newPassword)
+    {
+        using ApplicationDbContext db =
+            new ApplicationDbContext();
+
+        User? user =
+            await db.Users
+                .FirstOrDefaultAsync(
+                    x => x.UserId == userId);
+
+        if (user == null)
+            throw new Exception(
+                "Không tìm thấy tài khoản.");
+
+        if (user.Password != oldPassword)
+            throw new Exception(
+                "Mật khẩu cũ không đúng.");
+
+        user.Password = newPassword;
+
+        await db.SaveChangesAsync();
+    }
 }
