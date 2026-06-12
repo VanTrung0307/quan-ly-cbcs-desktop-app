@@ -7,19 +7,16 @@ namespace QuanLyCBCS.Services;
 
 public class PersonnelService
 {
-    private readonly ApplicationDbContext _db;
-
-    public PersonnelService()
-    {
-        _db = new ApplicationDbContext();
-    }
 
     // =========================
     // GET ALL
     // =========================
     public async Task<List<Personnel>> GetAllAsync()
     {
-        return await _db.Personnel
+        using ApplicationDbContext db =
+            new ApplicationDbContext();
+
+        return await db.Personnel
             .AsNoTracking()
             .OrderBy(x => x.HoTen)
             .ToListAsync();
@@ -28,6 +25,9 @@ public class PersonnelService
     public async Task<List<Personnel>>
         SearchAsync(string keyword)
     {
+        using ApplicationDbContext db =
+            new ApplicationDbContext();
+
         if (string.IsNullOrWhiteSpace(keyword))
         {
             return await GetAllAsync();
@@ -40,7 +40,7 @@ public class PersonnelService
             VietnameseHelper
             .RemoveVietnameseSigns(keywordLower);
 
-        return await _db.Personnel
+        return await db.Personnel
             .AsNoTracking()
             .Where(x =>
 
@@ -91,7 +91,10 @@ public class PersonnelService
     public async Task<Personnel?>
         GetByIdAsync(int id)
     {
-        return await _db.Personnel
+        using ApplicationDbContext db =
+            new ApplicationDbContext();
+
+        return await db.Personnel
             .AsNoTracking()
             .FirstOrDefaultAsync(
                 x => x.PersonnelID == id);
@@ -111,11 +114,13 @@ public class PersonnelService
 
         personnel.CreatedAt =
             DateTime.Now;
+        using ApplicationDbContext db =
+            new ApplicationDbContext();
 
-        await _db.Personnel
+        await db.Personnel
             .AddAsync(personnel);
 
-        await _db.SaveChangesAsync();
+        await db.SaveChangesAsync();
     }
 
     // =========================
@@ -133,27 +138,34 @@ public class PersonnelService
         personnel.UpdatedAt =
             DateTime.Now;
 
-        _db.Personnel.Update(personnel);
+        using ApplicationDbContext db =
+            new ApplicationDbContext();
 
-        await _db.SaveChangesAsync();
+        db.Personnel.Update(personnel);
+
+        await db.SaveChangesAsync();
     }
 
     // =========================
     // DELETE
     // =========================
 
-    public async Task DeleteAsync(
-        int id)
+    public async Task DeleteAsync(int id)
     {
+        using ApplicationDbContext db =
+            new ApplicationDbContext();
+
         var personnel =
-            await GetByIdAsync(id);
+            await db.Personnel
+                .FirstOrDefaultAsync(
+                    x => x.PersonnelID == id);
 
         if (personnel == null)
             return;
 
-        _db.Personnel.Remove(personnel);
+        db.Personnel.Remove(personnel);
 
-        await _db.SaveChangesAsync();
+        await db.SaveChangesAsync();
     }
 
     // =========================
@@ -164,7 +176,10 @@ public class PersonnelService
         IsSoHieuExistsAsync(
             string soHieu)
     {
-        return await _db.Personnel
+        using ApplicationDbContext db =
+            new ApplicationDbContext();
+
+        return await db.Personnel
             .AnyAsync(x =>
                 x.SoHieu == soHieu);
     }
@@ -173,7 +188,10 @@ public class PersonnelService
         IsCCCDExistsAsync(
             string cccd)
     {
-        return await _db.Personnel
+        using ApplicationDbContext db =
+            new ApplicationDbContext();
+
+        return await db.Personnel
             .AnyAsync(x =>
                 x.CCCD == cccd);
     }
@@ -184,26 +202,37 @@ public class PersonnelService
 
     public async Task<int> GetTotalCountAsync()
     {
-        return await _db.Personnel.CountAsync();
+        using ApplicationDbContext db =
+            new ApplicationDbContext();
+        return await db.Personnel.CountAsync();
     }
 
     public async Task<int> GetChienSiCountAsync()
     {
-        return await _db.Personnel
+        using ApplicationDbContext db =
+            new ApplicationDbContext();
+
+        return await db.Personnel
             .CountAsync(x =>
                 x.PersonnelType == 1);
     }
 
     public async Task<int> GetCanBoCountAsync()
     {
-        return await _db.Personnel
+        using ApplicationDbContext db =
+            new ApplicationDbContext();
+
+        return await db.Personnel
             .CountAsync(x =>
                 x.PersonnelType == 2);
     }
 
     public async Task<int> GetDangVienCountAsync()
     {
-        return await _db.Personnel
+        using ApplicationDbContext db =
+            new ApplicationDbContext();
+
+        return await db.Personnel
             .CountAsync(x =>
                 x.DangVien);
     }

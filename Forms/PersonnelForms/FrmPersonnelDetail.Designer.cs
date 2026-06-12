@@ -777,7 +777,7 @@
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(94, 29);
             btnCancel.TabIndex = 15;
-            btnCancel.Text = "Huỷ";
+            btnCancel.Text = "❌ Huỷ";
             btnCancel.UseVisualStyleBackColor = true;
             // 
             // btnSave
@@ -786,7 +786,7 @@
             btnSave.Name = "btnSave";
             btnSave.Size = new Size(94, 29);
             btnSave.TabIndex = 14;
-            btnSave.Text = "Lưu";
+            btnSave.Text = "💾 Lưu";
             btnSave.UseVisualStyleBackColor = true;
             btnSave.Click += btnSave_Click;
             // 

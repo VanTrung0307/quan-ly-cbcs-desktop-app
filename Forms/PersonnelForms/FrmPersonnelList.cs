@@ -1,7 +1,5 @@
 ﻿using QuanLyCBCS.Services;
-using QuanLyCBCS.Models;
 using QuanLyCBCS.Enums;
-using QuanLyCBCS.Forms.PersonnelForms;
 using Microsoft.EntityFrameworkCore;
 using QuanLyCBCS.Data;
 
@@ -9,8 +7,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 {
     public partial class FrmPersonnelList : Form
     {
-        private readonly PersonnelService
-            _service;
+        private PersonnelService _service;
 
 
         private int SelectedPersonnelId = 0;
@@ -547,6 +544,69 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
                 MessageBox.Show(
                     $"Sao lưu thành công!\n\n{backupFilePath}",
+                    "Thông báo",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    ex.Message,
+                    "Lỗi",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
+        private async void btnRestore_Click(
+            object sender,
+            EventArgs e)
+        {
+            try
+            {
+                OpenFileDialog openDialog =
+                    new OpenFileDialog();
+
+                openDialog.Filter =
+                    "Backup File (*.bak)|*.bak";
+
+                if (openDialog.ShowDialog()
+                    != DialogResult.OK)
+                {
+                    return;
+                }
+
+                DialogResult result =
+                    MessageBox.Show(
+                        "Restore sẽ ghi đè toàn bộ dữ liệu hiện tại.\n\nTiếp tục?",
+                        "Xác nhận",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Warning);
+
+                if (result != DialogResult.Yes)
+                {
+                    return;
+                }
+
+                using ApplicationDbContext db =
+                    new ApplicationDbContext();
+
+                DatabaseRestoreService
+                    restoreService =
+                        new DatabaseRestoreService(
+                            db.Database
+                              .GetDbConnection()
+                              .ConnectionString);
+
+                await restoreService
+                    .RestoreDatabaseAsync(
+                        openDialog.FileName);
+
+                await LoadPersonnelAsync();
+                await LoadDashboardAsync();
+
+                MessageBox.Show(
+                    "Restore thành công!",
                     "Thông báo",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
