@@ -87,9 +87,9 @@
             // 
             btnLogin.Location = new Point(289, 231);
             btnLogin.Name = "btnLogin";
-            btnLogin.Size = new Size(94, 29);
+            btnLogin.Size = new Size(123, 29);
             btnLogin.TabIndex = 5;
-            btnLogin.Text = "Đăng nhập";
+            btnLogin.Text = "🔑 Đăng nhập";
             btnLogin.UseVisualStyleBackColor = true;
             btnLogin.Click += btnLogin_Click;
             // 
@@ -99,7 +99,7 @@
             btnExit.Name = "btnExit";
             btnExit.Size = new Size(94, 29);
             btnExit.TabIndex = 6;
-            btnExit.Text = "Thoát";
+            btnExit.Text = "➜] Thoát";
             btnExit.UseVisualStyleBackColor = true;
             btnExit.Click += btnExit_Click;
             // 

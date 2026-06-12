@@ -1,8 +1,9 @@
-﻿using QuanLyCBCS.Services;
-using QuanLyCBCS.Enums;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using QuanLyCBCS.Data;
+using QuanLyCBCS.Enums;
+using QuanLyCBCS.Forms.Auth;
 using QuanLyCBCS.Helpers;
+using QuanLyCBCS.Services;
 
 namespace QuanLyCBCS.Forms.PersonnelForms
 {
@@ -14,6 +15,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
         private int SelectedPersonnelId = 0;
         private CancellationTokenSource?
     _searchCts;
+        private bool _isLogout = false;
         public FrmPersonnelList()
         {
             InitializeComponent();
@@ -303,7 +305,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             EventArgs e)
         {
             lblCurrentUser.Text =
-                $"{CurrentUser.Username} ({CurrentUser.Role})";
+                $"👤 {CurrentUser.Username} ({CurrentUser.Role})";
 
             this.Text =
                 $"Quản lý CBCS - {CurrentUser.Role}";
@@ -488,6 +490,17 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             DataGridViewCellEventArgs e)
         {
+            if (!IsAdmin)
+            {
+                MessageBox.Show(
+                    "Bạn không có quyền chỉnh sửa dữ liệu.",
+                    "Thông báo",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                return;
+            }
+
             if (SelectedPersonnelId == 0)
                 return;
 
@@ -688,6 +701,15 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
+        }
+
+        private void btnLogout_Click(
+            object sender,
+            EventArgs e)
+        {
+            _isLogout = true;
+
+            this.Close();
         }
     }
 }

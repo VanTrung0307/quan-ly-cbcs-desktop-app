@@ -84,7 +84,13 @@ namespace QuanLyCBCS.Forms.Auth
 
                 frm.ShowDialog();
 
-                this.Close();
+                this.Show();
+
+                txtUsername.Clear();
+
+                txtPassword.Clear();
+
+                txtUsername.Focus();
             }
             catch (Exception ex)
             {

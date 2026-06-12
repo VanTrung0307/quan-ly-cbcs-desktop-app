@@ -50,6 +50,7 @@
             btnBackup = new Button();
             btnRestore = new Button();
             lblCurrentUser = new Label();
+            btnLogout = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvPersonnel).BeginInit();
             pnlTongCBCS.SuspendLayout();
             pnlChienSi.SuspendLayout();
@@ -83,7 +84,7 @@
             btnEdit.Name = "btnEdit";
             btnEdit.Size = new Size(94, 29);
             btnEdit.TabIndex = 2;
-            btnEdit.Text = "🔨 Sửa";
+            btnEdit.Text = "✏️ Sửa";
             btnEdit.UseVisualStyleBackColor = true;
             // 
             // btnDelete
@@ -103,7 +104,7 @@
             btnRefresh.Name = "btnRefresh";
             btnRefresh.Size = new Size(101, 29);
             btnRefresh.TabIndex = 4;
-            btnRefresh.Text = "🔁 Làm mới";
+            btnRefresh.Text = "⟳ Làm mới";
             btnRefresh.UseVisualStyleBackColor = true;
             // 
             // dgvPersonnel
@@ -131,7 +132,7 @@
             btnExport.Name = "btnExport";
             btnExport.Size = new Size(101, 29);
             btnExport.TabIndex = 6;
-            btnExport.Text = "⬇️ Excel";
+            btnExport.Text = "📊 Excel";
             btnExport.UseVisualStyleBackColor = true;
             btnExport.Click += btnExport_Click;
             // 
@@ -173,7 +174,7 @@
             lblDangVienTitle.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
             lblDangVienTitle.AutoSize = true;
             lblDangVienTitle.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold);
-            lblDangVienTitle.Location = new Point(35, 9);
+            lblDangVienTitle.Location = new Point(36, 12);
             lblDangVienTitle.Name = "lblDangVienTitle";
             lblDangVienTitle.Size = new Size(96, 23);
             lblDangVienTitle.TabIndex = 10;
@@ -286,17 +287,33 @@
             // 
             lblCurrentUser.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblCurrentUser.AutoSize = true;
-            lblCurrentUser.Location = new Point(1353, 9);
+            lblCurrentUser.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblCurrentUser.Location = new Point(1218, 27);
             lblCurrentUser.Name = "lblCurrentUser";
-            lblCurrentUser.Size = new Size(73, 20);
+            lblCurrentUser.Size = new Size(104, 20);
             lblCurrentUser.TabIndex = 15;
-            lblCurrentUser.Text = "username";
+            lblCurrentUser.Text = "👤 username";
+            // 
+            // btnLogout
+            // 
+            btnLogout.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnLogout.BackColor = Color.Red;
+            btnLogout.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnLogout.ForeColor = SystemColors.ButtonHighlight;
+            btnLogout.Location = new Point(1364, 9);
+            btnLogout.Name = "btnLogout";
+            btnLogout.Size = new Size(62, 52);
+            btnLogout.TabIndex = 16;
+            btnLogout.Text = "\u23fb";
+            btnLogout.UseVisualStyleBackColor = false;
+            btnLogout.Click += btnLogout_Click;
             // 
             // FrmPersonnelList
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1438, 450);
+            Controls.Add(btnLogout);
             Controls.Add(lblCurrentUser);
             Controls.Add(btnRestore);
             Controls.Add(btnBackup);
@@ -353,5 +370,6 @@
         private Button btnBackup;
         private Button btnRestore;
         private Label lblCurrentUser;
+        private Button btnLogout;
     }
 }
