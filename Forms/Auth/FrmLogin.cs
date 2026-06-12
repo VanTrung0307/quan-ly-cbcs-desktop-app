@@ -66,6 +66,10 @@ namespace QuanLyCBCS.Forms.Auth
 
                 if (user == null)
                 {
+                    await auditService.AddLogAsync(
+                        "FAILED_LOGIN",
+                        $"Tài khoản không tồn tại: {username}");
+
                     MessageBox.Show(
                         "Sai tài khoản hoặc mật khẩu.");
 
@@ -90,6 +94,10 @@ namespace QuanLyCBCS.Forms.Auth
 
                 if (!isValid)
                 {
+                    await auditService.AddLogAsync(
+                        "FAILED_LOGIN",
+                        $"Sai mật khẩu: {user.Username}");
+
                     user.FailedLoginCount++;
 
                     if (user.FailedLoginCount >= 5)
