@@ -2,6 +2,8 @@
 using QuanLyCBCS.Models;
 using QuanLyCBCS.Enums;
 using QuanLyCBCS.Forms.PersonnelForms;
+using Microsoft.EntityFrameworkCore;
+using QuanLyCBCS.Data;
 
 namespace QuanLyCBCS.Forms.PersonnelForms
 {
@@ -507,6 +509,56 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             pnlDangVien.BackColor =
                 Color.MediumPurple;
+        }
+
+        private async void btnBackup_Click(
+            object sender,
+            EventArgs e)
+        {
+            try
+            {
+                string backupFolder =
+                    @"E:\QuanLyCBCS_Backup";
+
+                if (!Directory.Exists(
+                    backupFolder))
+                {
+                    Directory.CreateDirectory(
+                        backupFolder);
+                }
+
+                string backupFilePath =
+                    Path.Combine(
+                        backupFolder,
+                        $"CBCS_{DateTime.Now:yyyyMMdd_HHmmss}.bak");
+
+                using ApplicationDbContext db =
+                    new ApplicationDbContext();
+
+                DatabaseBackupService backupService =
+                    new DatabaseBackupService(
+                        db.Database
+                          .GetDbConnection()
+                          .ConnectionString);
+
+                await backupService
+                    .BackupDatabaseAsync(
+                        backupFilePath);
+
+                MessageBox.Show(
+                    $"Sao lưu thành công!\n\n{backupFilePath}",
+                    "Thông báo",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    ex.Message,
+                    "Lỗi",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
         }
     }
 }

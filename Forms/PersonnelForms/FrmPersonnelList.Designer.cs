@@ -47,6 +47,7 @@
             lblCanBoValue = new Label();
             pnlDangVien = new Panel();
             lblDangVienValue = new Label();
+            btnBackup = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvPersonnel).BeginInit();
             pnlTongCBCS.SuspendLayout();
             pnlChienSi.SuspendLayout();
@@ -253,11 +254,22 @@
             lblDangVienValue.Size = new Size(0, 41);
             lblDangVienValue.TabIndex = 11;
             // 
+            // btnBackup
+            // 
+            btnBackup.Location = new Point(112, 50);
+            btnBackup.Name = "btnBackup";
+            btnBackup.Size = new Size(94, 29);
+            btnBackup.TabIndex = 13;
+            btnBackup.Text = "Backup";
+            btnBackup.UseVisualStyleBackColor = true;
+            btnBackup.Click += btnBackup_Click;
+            // 
             // FrmPersonnelList
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1438, 450);
+            Controls.Add(btnBackup);
             Controls.Add(btnExport);
             Controls.Add(dgvPersonnel);
             Controls.Add(btnRefresh);
@@ -308,5 +320,6 @@
         private Label lblChienSiValue;
         private Label lblCanBoValue;
         private Label lblDangVienValue;
+        private Button btnBackup;
     }
 }
