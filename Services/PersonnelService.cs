@@ -177,4 +177,34 @@ public class PersonnelService
             .AnyAsync(x =>
                 x.CCCD == cccd);
     }
+
+    // =========================
+    // DASHBOARD
+    // =========================
+
+    public async Task<int> GetTotalCountAsync()
+    {
+        return await _db.Personnel.CountAsync();
+    }
+
+    public async Task<int> GetChienSiCountAsync()
+    {
+        return await _db.Personnel
+            .CountAsync(x =>
+                x.PersonnelType == 1);
+    }
+
+    public async Task<int> GetCanBoCountAsync()
+    {
+        return await _db.Personnel
+            .CountAsync(x =>
+                x.PersonnelType == 2);
+    }
+
+    public async Task<int> GetDangVienCountAsync()
+    {
+        return await _db.Personnel
+            .CountAsync(x =>
+                x.DangVien);
+    }
 }

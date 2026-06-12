@@ -281,6 +281,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             EventArgs e)
         {
             await LoadPersonnelAsync();
+
+            await LoadDashboardAsync();
         }
 
         private void dgvPersonnel_CellClick(
@@ -383,6 +385,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 SelectedPersonnelId);
 
             await LoadPersonnelAsync();
+            await LoadDashboardAsync();
 
             MessageBox.Show(
                 "Xóa thành công");
@@ -400,6 +403,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 DialogResult.OK)
             {
                 await LoadPersonnelAsync();
+                await LoadDashboardAsync();
             }
         }
 
@@ -424,6 +428,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 DialogResult.OK)
             {
                 await LoadPersonnelAsync();
+                await LoadDashboardAsync();
             }
         }
 
@@ -468,6 +473,40 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             MessageBox.Show(
                 "Xuất Excel thành công!");
+        }
+
+        private async Task LoadDashboardAsync()
+        {
+            lblTongValue.Text =
+                (await _service
+                    .GetTotalCountAsync())
+                .ToString();
+
+            lblChienSiValue.Text =
+                (await _service
+                    .GetChienSiCountAsync())
+                .ToString();
+
+            lblCanBoValue.Text =
+                (await _service
+                    .GetCanBoCountAsync())
+                .ToString();
+
+            lblDangVienValue.Text =
+                (await _service
+                    .GetDangVienCountAsync())
+                .ToString();
+            pnlTongCBCS.BackColor =
+                Color.SteelBlue;
+
+            pnlChienSi.BackColor =
+                Color.SeaGreen;
+
+            pnlCanBo.BackColor =
+                Color.DarkOrange;
+
+            pnlDangVien.BackColor =
+                Color.MediumPurple;
         }
     }
 }
