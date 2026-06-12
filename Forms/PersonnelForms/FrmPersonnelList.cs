@@ -2,6 +2,7 @@
 using QuanLyCBCS.Data;
 using QuanLyCBCS.Enums;
 using QuanLyCBCS.Forms.Auth;
+using QuanLyCBCS.Forms.SystemForms;
 using QuanLyCBCS.Forms.UserForms;
 using QuanLyCBCS.Helpers;
 using QuanLyCBCS.Services;
@@ -727,6 +728,16 @@ namespace QuanLyCBCS.Forms.PersonnelForms
         {
             FrmUserList frm =
                 new FrmUserList();
+
+            frm.ShowDialog();
+        }
+
+        private void btnAuditLog_Click(
+            object sender,
+            EventArgs e)
+        {
+            FrmAuditLogList frm =
+                new FrmAuditLogList();
 
             frm.ShowDialog();
         }

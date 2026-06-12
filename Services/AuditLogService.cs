@@ -1,4 +1,5 @@
-﻿using QuanLyCBCS.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using QuanLyCBCS.Data;
 using QuanLyCBCS.Helpers;
 using QuanLyCBCS.Models;
 
@@ -32,5 +33,15 @@ public class AuditLogService
         db.AuditLogs.Add(log);
 
         await db.SaveChangesAsync();
+    }
+
+    public async Task<List<AuditLog>> GetAllAsync()
+    {
+        using ApplicationDbContext db =
+            new ApplicationDbContext();
+
+        return await db.AuditLogs
+            .OrderByDescending(x => x.AuditLogId)
+            .ToListAsync();
     }
 }

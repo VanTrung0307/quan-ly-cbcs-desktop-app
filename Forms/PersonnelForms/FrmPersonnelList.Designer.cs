@@ -52,6 +52,7 @@
             lblCurrentUser = new Label();
             btnLogout = new Button();
             btnUsers = new Button();
+            btnAuditLog = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvPersonnel).BeginInit();
             pnlTongCBCS.SuspendLayout();
             pnlChienSi.SuspendLayout();
@@ -319,11 +320,22 @@
             btnUsers.UseVisualStyleBackColor = true;
             btnUsers.Click += btnUsers_Click;
             // 
+            // btnAuditLog
+            // 
+            btnAuditLog.Location = new Point(112, 88);
+            btnAuditLog.Name = "btnAuditLog";
+            btnAuditLog.Size = new Size(105, 29);
+            btnAuditLog.TabIndex = 18;
+            btnAuditLog.Text = "📓 Nhật ký";
+            btnAuditLog.UseVisualStyleBackColor = true;
+            btnAuditLog.Click += btnAuditLog_Click;
+            // 
             // FrmPersonnelList
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1438, 450);
+            Controls.Add(btnAuditLog);
             Controls.Add(btnUsers);
             Controls.Add(btnLogout);
             Controls.Add(lblCurrentUser);
@@ -384,5 +396,6 @@
         private Label lblCurrentUser;
         private Button btnLogout;
         private Button btnUsers;
+        private Button btnAuditLog;
     }
 }

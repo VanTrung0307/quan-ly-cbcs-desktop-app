@@ -9,7 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Forms\System\" />
     <Folder Include="DTOs\" />
   </ItemGroup>
 
