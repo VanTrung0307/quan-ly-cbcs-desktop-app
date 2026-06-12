@@ -38,6 +38,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
         private void ApplyPermission()
         {
             btnUsers.Visible = IsAdmin;
+            btnAuditLog.Visible = IsAdmin;
+
             if (IsAdmin)
             {
                 return;
