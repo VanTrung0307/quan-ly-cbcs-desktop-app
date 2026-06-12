@@ -1,7 +1,9 @@
-﻿using QuanLyCBCS.Forms.PersonnelForms;
-using QuanLyCBCS.Services;
-using QuanLyCBCS.Models;
+﻿using QuanLyCBCS.Data;
+using QuanLyCBCS.Forms.PersonnelForms;
 using QuanLyCBCS.Helpers;
+using QuanLyCBCS.Models;
+using QuanLyCBCS.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace QuanLyCBCS.Forms.Auth
 {
@@ -50,17 +52,33 @@ namespace QuanLyCBCS.Forms.Auth
 
                     return;
                 }
+                using ApplicationDbContext db =
+                    new ApplicationDbContext();
 
                 User? user =
-                    await _userService
-                        .LoginAsync(
-                            username,
-                            password);
+                    await db.Users
+                        .FirstOrDefaultAsync(
+                            x =>
+                                x.Username ==
+                                txtUsername.Text.Trim());
 
                 if (user == null)
                 {
                     MessageBox.Show(
-                        "Sai tài khoản hoặc mật khẩu");
+                        "Sai tài khoản hoặc mật khẩu.");
+
+                    return;
+                }
+
+                bool isValid =
+                    PasswordHelper.VerifyPassword(
+                        txtPassword.Text.Trim(),
+                        user.Password);
+
+                if (!isValid)
+                {
+                    MessageBox.Show(
+                        "Sai tài khoản hoặc mật khẩu.");
 
                     return;
                 }
@@ -82,10 +100,6 @@ namespace QuanLyCBCS.Forms.Auth
                         "LOGIN",
                         "Đăng nhập hệ thống");
 
-                //MessageBox.Show(
-                //    $"Xin chào {user.Username}",
-                //    "Đăng nhập thành công");
-
                 FrmPersonnelList frm =
                     new FrmPersonnelList();
 
@@ -101,11 +115,11 @@ namespace QuanLyCBCS.Forms.Auth
 
                 txtUsername.Focus();
             }
-            catch (Exception ex)
+            catch
             {
                 MessageBox.Show(
-                    ex.Message,
-                    "Lỗi");
+                    "Đăng nhập thất bại.",
+                    "Thông báo");
             }
         }
 

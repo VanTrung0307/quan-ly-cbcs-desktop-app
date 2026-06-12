@@ -1,5 +1,7 @@
+using QuanLyCBCS.Data;
 using QuanLyCBCS.Forms.Auth;
 using QuanLyCBCS.Forms.PersonnelForms;
+using QuanLyCBCS.Helpers;
 
 namespace QuanLyCBCS
 {
@@ -14,6 +16,7 @@ namespace QuanLyCBCS
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
+
             Application.Run(
                 new FrmLogin());
         }

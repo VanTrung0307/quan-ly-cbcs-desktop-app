@@ -1,5 +1,6 @@
-﻿using QuanLyCBCS.Services;
+﻿using QuanLyCBCS.Helpers;
 using QuanLyCBCS.Models;
+using QuanLyCBCS.Services;
 
 namespace QuanLyCBCS.Forms.UserForms
 {
@@ -68,7 +69,9 @@ namespace QuanLyCBCS.Forms.UserForms
                 new User
                 {
                     Username = username,
-                    Password = password,
+                    Password =
+                        PasswordHelper.HashPassword(
+                            password),
                     Role = role
                 };
 

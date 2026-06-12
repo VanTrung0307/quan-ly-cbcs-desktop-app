@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuanLyCBCS.Data;
+using QuanLyCBCS.Helpers;
 using QuanLyCBCS.Models;
 
 namespace QuanLyCBCS.Services;
@@ -130,15 +131,17 @@ public class UserService
             return;
         }
 
-        user.Password = "123456";
+        user.Password =
+            PasswordHelper.HashPassword(
+                "123456");
 
         await db.SaveChangesAsync();
     }
 
     public async Task ChangePasswordAsync(
-        int userId,
-        string oldPassword,
-        string newPassword)
+    int userId,
+    string oldPassword,
+    string newPassword)
     {
         using ApplicationDbContext db =
             new ApplicationDbContext();
@@ -152,11 +155,18 @@ public class UserService
             throw new Exception(
                 "Không tìm thấy tài khoản.");
 
-        if (user.Password != oldPassword)
+        bool isValid =
+            PasswordHelper.VerifyPassword(
+                oldPassword,
+                user.Password);
+
+        if (!isValid)
             throw new Exception(
                 "Mật khẩu cũ không đúng.");
 
-        user.Password = newPassword;
+        user.Password =
+            PasswordHelper.HashPassword(
+                newPassword);
 
         await db.SaveChangesAsync();
     }
