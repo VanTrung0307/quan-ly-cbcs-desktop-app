@@ -2,6 +2,7 @@
 using QuanLyCBCS.Data;
 using QuanLyCBCS.Enums;
 using QuanLyCBCS.Forms.Auth;
+using QuanLyCBCS.Forms.UserForms;
 using QuanLyCBCS.Helpers;
 using QuanLyCBCS.Services;
 
@@ -15,7 +16,6 @@ namespace QuanLyCBCS.Forms.PersonnelForms
         private int SelectedPersonnelId = 0;
         private CancellationTokenSource?
     _searchCts;
-        private bool _isLogout = false;
         public FrmPersonnelList()
         {
             InitializeComponent();
@@ -33,6 +33,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
         private void ApplyPermission()
         {
+            btnUsers.Visible = IsAdmin;
             if (IsAdmin)
             {
                 return;
@@ -707,9 +708,17 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
-            _isLogout = true;
-
             this.Close();
+        }
+
+        private void btnUsers_Click(
+            object sender,
+            EventArgs e)
+        {
+            FrmUserList frm =
+                new FrmUserList();
+
+            frm.ShowDialog();
         }
     }
 }

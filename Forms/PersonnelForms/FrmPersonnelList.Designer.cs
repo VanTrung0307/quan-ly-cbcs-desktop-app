@@ -51,6 +51,7 @@
             btnRestore = new Button();
             lblCurrentUser = new Label();
             btnLogout = new Button();
+            btnUsers = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvPersonnel).BeginInit();
             pnlTongCBCS.SuspendLayout();
             pnlChienSi.SuspendLayout();
@@ -308,11 +309,22 @@
             btnLogout.UseVisualStyleBackColor = false;
             btnLogout.Click += btnLogout_Click;
             // 
+            // btnUsers
+            // 
+            btnUsers.Location = new Point(112, 50);
+            btnUsers.Name = "btnUsers";
+            btnUsers.Size = new Size(105, 29);
+            btnUsers.TabIndex = 17;
+            btnUsers.Text = "👥 Tài khoản";
+            btnUsers.UseVisualStyleBackColor = true;
+            btnUsers.Click += btnUsers_Click;
+            // 
             // FrmPersonnelList
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1438, 450);
+            Controls.Add(btnUsers);
             Controls.Add(btnLogout);
             Controls.Add(lblCurrentUser);
             Controls.Add(btnRestore);
@@ -371,5 +383,6 @@
         private Button btnRestore;
         private Label lblCurrentUser;
         private Button btnLogout;
+        private Button btnUsers;
     }
 }
