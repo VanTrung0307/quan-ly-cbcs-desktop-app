@@ -7,6 +7,12 @@ public class ApplicationDbContext : DbContext
 {
     public DbSet<Personnel> Personnel { get; set; }
 
+    public DbSet<User> Users
+    {
+        get;
+        set;
+    }
+
     protected override void OnConfiguring(
         DbContextOptionsBuilder optionsBuilder)
     {

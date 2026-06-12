@@ -1,3 +1,4 @@
+using QuanLyCBCS.Forms.Auth;
 using QuanLyCBCS.Forms.PersonnelForms;
 
 namespace QuanLyCBCS
@@ -14,7 +15,7 @@ namespace QuanLyCBCS
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
             Application.Run(
-                new FrmPersonnelList());
+                new FrmLogin());
         }
     }
 }

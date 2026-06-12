@@ -2,6 +2,7 @@
 using QuanLyCBCS.Enums;
 using Microsoft.EntityFrameworkCore;
 using QuanLyCBCS.Data;
+using QuanLyCBCS.Helpers;
 
 namespace QuanLyCBCS.Forms.PersonnelForms
 {
@@ -17,7 +18,29 @@ namespace QuanLyCBCS.Forms.PersonnelForms
         {
             InitializeComponent();
 
-            _service = new PersonnelService();
+            _service =
+                new PersonnelService();
+
+            ApplyPermission();
+        }
+
+        private bool IsAdmin =>
+            CurrentUser.Role.Equals(
+        "Admin",
+        StringComparison.OrdinalIgnoreCase);
+
+        private void ApplyPermission()
+        {
+            if (IsAdmin)
+            {
+                return;
+            }
+
+            btnAdd.Enabled = false;
+            btnEdit.Enabled = false;
+            btnDelete.Enabled = false;
+            btnBackup.Enabled = false;
+            btnRestore.Enabled = false;
         }
 
         private void AddSttColumn()
@@ -279,6 +302,12 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
+            lblCurrentUser.Text =
+                $"{CurrentUser.Username} ({CurrentUser.Role})";
+
+            this.Text =
+                $"Quản lý CBCS - {CurrentUser.Role}";
+
             await LoadPersonnelAsync();
 
             await LoadDashboardAsync();
@@ -362,6 +391,14 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
+            if (CurrentUser.Role != "Admin")
+            {
+                MessageBox.Show(
+                    "Bạn không có quyền thực hiện chức năng này.");
+
+                return;
+            }
+
             if (SelectedPersonnelId == 0)
             {
                 MessageBox.Show(
@@ -394,6 +431,14 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
+            if (CurrentUser.Role != "Admin")
+            {
+                MessageBox.Show(
+                    "Bạn không có quyền thực hiện chức năng này.");
+
+                return;
+            }
+
             FrmPersonnelDetail frm =
                 new FrmPersonnelDetail(
                     FormMode.Add);
@@ -410,6 +455,14 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
+            if (CurrentUser.Role != "Admin")
+            {
+                MessageBox.Show(
+                    "Bạn không có quyền thực hiện chức năng này.");
+
+                return;
+            }
+
             if (SelectedPersonnelId == 0)
             {
                 MessageBox.Show(
@@ -512,6 +565,14 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
+            if (CurrentUser.Role != "Admin")
+            {
+                MessageBox.Show(
+                    "Bạn không có quyền thực hiện chức năng này.");
+
+                return;
+            }
+
             try
             {
                 string backupFolder =
@@ -562,6 +623,14 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
+            if (CurrentUser.Role != "Admin")
+            {
+                MessageBox.Show(
+                    "Bạn không có quyền thực hiện chức năng này.");
+
+                return;
+            }
+
             try
             {
                 OpenFileDialog openDialog =

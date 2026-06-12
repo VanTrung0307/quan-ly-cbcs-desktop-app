@@ -49,6 +49,7 @@
             lblDangVienValue = new Label();
             btnBackup = new Button();
             btnRestore = new Button();
+            lblCurrentUser = new Label();
             ((System.ComponentModel.ISupportInitialize)dgvPersonnel).BeginInit();
             pnlTongCBCS.SuspendLayout();
             pnlChienSi.SuspendLayout();
@@ -281,11 +282,22 @@
             btnRestore.UseVisualStyleBackColor = true;
             btnRestore.Click += btnRestore_Click;
             // 
+            // lblCurrentUser
+            // 
+            lblCurrentUser.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            lblCurrentUser.AutoSize = true;
+            lblCurrentUser.Location = new Point(1353, 9);
+            lblCurrentUser.Name = "lblCurrentUser";
+            lblCurrentUser.Size = new Size(73, 20);
+            lblCurrentUser.TabIndex = 15;
+            lblCurrentUser.Text = "username";
+            // 
             // FrmPersonnelList
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1438, 450);
+            Controls.Add(lblCurrentUser);
             Controls.Add(btnRestore);
             Controls.Add(btnBackup);
             Controls.Add(btnExport);
@@ -340,5 +352,6 @@
         private Label lblDangVienValue;
         private Button btnBackup;
         private Button btnRestore;
+        private Label lblCurrentUser;
     }
 }
