@@ -116,5 +116,25 @@ namespace QuanLyCBCS.Forms.SystemForms
             dgvAuditLogs.Columns["Description"].FillWeight = 180;
             dgvAuditLogs.Columns["CreatedAt"].FillWeight = 120;
         }
-     }
+
+        private async void btnSearch_Click(
+            object sender,
+            EventArgs e)
+        {
+            string keyword =
+                txtSearch.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(keyword))
+            {
+                await LoadAuditLogsAsync();
+                return;
+            }
+
+            var data =
+                await _auditService
+                    .SearchAsync(keyword);
+
+            dgvAuditLogs.DataSource = data;
+        }
+    }
 }

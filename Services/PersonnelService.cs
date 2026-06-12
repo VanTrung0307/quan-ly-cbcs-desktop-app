@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuanLyCBCS.Data;
+using QuanLyCBCS.DTOs;
 using QuanLyCBCS.Helpers;
 using QuanLyCBCS.Models;
 
@@ -235,5 +236,43 @@ public class PersonnelService
         return await db.Personnel
             .CountAsync(x =>
                 x.DangVien);
+    }
+
+    public async Task<DashboardDto>
+    GetDashboardAsync()
+    {
+        using ApplicationDbContext db =
+            new ApplicationDbContext();
+
+        var data =
+            await db.Personnel.ToListAsync();
+
+        DashboardDto dto =
+            new DashboardDto();
+
+        dto.TongCBCS = data.Count;
+
+        dto.Nam =
+            data.Count(x => x.GioiTinh == "Nam");
+
+        dto.Nu =
+            data.Count(x => x.GioiTinh == "Nữ");
+
+        dto.TuoiTrungBinh =
+            Math.Round(
+                data
+                    .Where(x => x.NgaySinh.HasValue)
+                    .Average(x =>
+                        DateTime.Now.Year -
+                        x.NgaySinh!.Value.Year),
+        1);
+
+        dto.DonViDongNhat =
+            data.GroupBy(x => x.DonVi)
+                .OrderByDescending(x => x.Count())
+                .FirstOrDefault()
+                ?.Key ?? "";
+
+        return dto;
     }
 }

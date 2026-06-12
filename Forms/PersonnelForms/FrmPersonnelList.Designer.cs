@@ -53,6 +53,14 @@
             btnLogout = new Button();
             btnUsers = new Button();
             btnAuditLog = new Button();
+            label1 = new Label();
+            label2 = new Label();
+            label3 = new Label();
+            label4 = new Label();
+            lblDonViDongNhat = new Label();
+            lblTuoiTrungBinh = new Label();
+            lblNu = new Label();
+            lblNam = new Label();
             ((System.ComponentModel.ISupportInitialize)dgvPersonnel).BeginInit();
             pnlTongCBCS.SuspendLayout();
             pnlChienSi.SuspendLayout();
@@ -102,7 +110,7 @@
             // btnRefresh
             // 
             btnRefresh.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnRefresh.Location = new Point(1325, 123);
+            btnRefresh.Location = new Point(1441, 123);
             btnRefresh.Name = "btnRefresh";
             btnRefresh.Size = new Size(101, 29);
             btnRefresh.TabIndex = 4;
@@ -122,7 +130,7 @@
             dgvPersonnel.RowHeadersVisible = false;
             dgvPersonnel.RowHeadersWidth = 51;
             dgvPersonnel.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvPersonnel.Size = new Size(1436, 293);
+            dgvPersonnel.Size = new Size(1552, 292);
             dgvPersonnel.TabIndex = 5;
             dgvPersonnel.CellClick += dgvPersonnel_CellClick;
             dgvPersonnel.CellDoubleClick += dgvPersonnel_CellDoubleClick;
@@ -130,7 +138,7 @@
             // btnExport
             // 
             btnExport.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnExport.Location = new Point(1218, 123);
+            btnExport.Location = new Point(1334, 123);
             btnExport.Name = "btnExport";
             btnExport.Size = new Size(101, 29);
             btnExport.TabIndex = 6;
@@ -187,7 +195,7 @@
             pnlTongCBCS.Anchor = AnchorStyles.Top;
             pnlTongCBCS.Controls.Add(lblTongValue);
             pnlTongCBCS.Controls.Add(lblTongTitle);
-            pnlTongCBCS.Location = new Point(387, 12);
+            pnlTongCBCS.Location = new Point(542, 12);
             pnlTongCBCS.Name = "pnlTongCBCS";
             pnlTongCBCS.Size = new Size(166, 114);
             pnlTongCBCS.TabIndex = 11;
@@ -207,7 +215,7 @@
             pnlChienSi.Anchor = AnchorStyles.Top;
             pnlChienSi.Controls.Add(lblChienSiValue);
             pnlChienSi.Controls.Add(lblChienSiTitle);
-            pnlChienSi.Location = new Point(576, 12);
+            pnlChienSi.Location = new Point(731, 12);
             pnlChienSi.Name = "pnlChienSi";
             pnlChienSi.Size = new Size(166, 114);
             pnlChienSi.TabIndex = 12;
@@ -227,7 +235,7 @@
             pnlCanBo.Anchor = AnchorStyles.Top;
             pnlCanBo.Controls.Add(lblCanBoValue);
             pnlCanBo.Controls.Add(lblCanBoTitle);
-            pnlCanBo.Location = new Point(763, 12);
+            pnlCanBo.Location = new Point(918, 12);
             pnlCanBo.Name = "pnlCanBo";
             pnlCanBo.Size = new Size(166, 114);
             pnlCanBo.TabIndex = 12;
@@ -248,7 +256,7 @@
             pnlDangVien.Anchor = AnchorStyles.Top;
             pnlDangVien.Controls.Add(lblDangVienValue);
             pnlDangVien.Controls.Add(lblDangVienTitle);
-            pnlDangVien.Location = new Point(951, 12);
+            pnlDangVien.Location = new Point(1106, 12);
             pnlDangVien.Name = "pnlDangVien";
             pnlDangVien.Size = new Size(166, 114);
             pnlDangVien.TabIndex = 12;
@@ -266,7 +274,7 @@
             // btnBackup
             // 
             btnBackup.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnBackup.Location = new Point(1218, 88);
+            btnBackup.Location = new Point(1334, 88);
             btnBackup.Name = "btnBackup";
             btnBackup.Size = new Size(101, 29);
             btnBackup.TabIndex = 13;
@@ -277,7 +285,7 @@
             // btnRestore
             // 
             btnRestore.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnRestore.Location = new Point(1325, 88);
+            btnRestore.Location = new Point(1441, 88);
             btnRestore.Name = "btnRestore";
             btnRestore.Size = new Size(101, 29);
             btnRestore.TabIndex = 14;
@@ -290,7 +298,7 @@
             lblCurrentUser.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblCurrentUser.AutoSize = true;
             lblCurrentUser.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblCurrentUser.Location = new Point(1218, 27);
+            lblCurrentUser.Location = new Point(1334, 27);
             lblCurrentUser.Name = "lblCurrentUser";
             lblCurrentUser.Size = new Size(104, 20);
             lblCurrentUser.TabIndex = 15;
@@ -302,7 +310,7 @@
             btnLogout.BackColor = Color.Red;
             btnLogout.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnLogout.ForeColor = SystemColors.ButtonHighlight;
-            btnLogout.Location = new Point(1364, 9);
+            btnLogout.Location = new Point(1480, 9);
             btnLogout.Name = "btnLogout";
             btnLogout.Size = new Size(62, 52);
             btnLogout.TabIndex = 16;
@@ -330,11 +338,91 @@
             btnAuditLog.UseVisualStyleBackColor = true;
             btnAuditLog.Click += btnAuditLog_Click;
             // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(311, 19);
+            label1.Name = "label1";
+            label1.Size = new Size(44, 20);
+            label1.TabIndex = 19;
+            label1.Text = "Nam:";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(311, 54);
+            label2.Name = "label2";
+            label2.Size = new Size(32, 20);
+            label2.TabIndex = 20;
+            label2.Text = "Nữ:";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(311, 85);
+            label3.Name = "label3";
+            label3.Size = new Size(62, 20);
+            label3.TabIndex = 21;
+            label3.Text = "Tuổi TB:";
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(311, 123);
+            label4.Name = "label4";
+            label4.Size = new Size(127, 20);
+            label4.TabIndex = 22;
+            label4.Text = "Đơn vị đông nhất:";
+            // 
+            // lblDonViDongNhat
+            // 
+            lblDonViDongNhat.AutoSize = true;
+            lblDonViDongNhat.Location = new Point(459, 123);
+            lblDonViDongNhat.Name = "lblDonViDongNhat";
+            lblDonViDongNhat.Size = new Size(21, 20);
+            lblDonViDongNhat.TabIndex = 27;
+            lblDonViDongNhat.Text = "--";
+            // 
+            // lblTuoiTrungBinh
+            // 
+            lblTuoiTrungBinh.AutoSize = true;
+            lblTuoiTrungBinh.Location = new Point(459, 85);
+            lblTuoiTrungBinh.Name = "lblTuoiTrungBinh";
+            lblTuoiTrungBinh.Size = new Size(17, 20);
+            lblTuoiTrungBinh.TabIndex = 26;
+            lblTuoiTrungBinh.Text = "0";
+            // 
+            // lblNu
+            // 
+            lblNu.AutoSize = true;
+            lblNu.Location = new Point(459, 54);
+            lblNu.Name = "lblNu";
+            lblNu.Size = new Size(17, 20);
+            lblNu.TabIndex = 25;
+            lblNu.Text = "0";
+            // 
+            // lblNam
+            // 
+            lblNam.AutoSize = true;
+            lblNam.Location = new Point(459, 19);
+            lblNam.Name = "lblNam";
+            lblNam.Size = new Size(17, 20);
+            lblNam.TabIndex = 24;
+            lblNam.Text = "0";
+            // 
             // FrmPersonnelList
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1438, 450);
+            ClientSize = new Size(1554, 450);
+            Controls.Add(lblDonViDongNhat);
+            Controls.Add(lblTuoiTrungBinh);
+            Controls.Add(lblNu);
+            Controls.Add(lblNam);
+            Controls.Add(label4);
+            Controls.Add(label3);
+            Controls.Add(label2);
+            Controls.Add(label1);
             Controls.Add(btnAuditLog);
             Controls.Add(btnUsers);
             Controls.Add(btnLogout);
@@ -397,5 +485,13 @@
         private Button btnLogout;
         private Button btnUsers;
         private Button btnAuditLog;
+        private Label label1;
+        private Label label2;
+        private Label label3;
+        private Label label4;
+        private Label lblDonViDongNhat;
+        private Label lblTuoiTrungBinh;
+        private Label lblNu;
+        private Label lblNam;
     }
 }

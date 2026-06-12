@@ -586,6 +586,22 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             pnlDangVien.BackColor =
                 Color.MediumPurple;
+
+            var dashboard =
+                await _service
+                    .GetDashboardAsync();
+
+            lblNam.Text =
+                dashboard.Nam.ToString();
+
+            lblNu.Text =
+                dashboard.Nu.ToString();
+
+            lblTuoiTrungBinh.Text =
+                $"{dashboard.TuoiTrungBinh:0.0}";
+
+            lblDonViDongNhat.Text =
+                dashboard.DonViDongNhat;
         }
 
         private async void btnBackup_Click(

@@ -31,6 +31,8 @@
             label1 = new Label();
             btnRefresh = new Button();
             dgvAuditLogs = new DataGridView();
+            txtSearch = new TextBox();
+            btnSearch = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvAuditLogs).BeginInit();
             SuspendLayout();
             // 
@@ -68,11 +70,30 @@
             dgvAuditLogs.Size = new Size(699, 359);
             dgvAuditLogs.TabIndex = 2;
             // 
+            // txtSearch
+            // 
+            txtSearch.Location = new Point(12, 56);
+            txtSearch.Name = "txtSearch";
+            txtSearch.Size = new Size(193, 27);
+            txtSearch.TabIndex = 3;
+            // 
+            // btnSearch
+            // 
+            btnSearch.Location = new Point(211, 55);
+            btnSearch.Name = "btnSearch";
+            btnSearch.Size = new Size(69, 29);
+            btnSearch.TabIndex = 4;
+            btnSearch.Text = "🔍 Tìm";
+            btnSearch.UseVisualStyleBackColor = true;
+            btnSearch.Click += btnSearch_Click;
+            // 
             // FrmAuditLogList
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(699, 450);
+            Controls.Add(btnSearch);
+            Controls.Add(txtSearch);
             Controls.Add(dgvAuditLogs);
             Controls.Add(btnRefresh);
             Controls.Add(label1);
@@ -89,5 +110,7 @@
         private Label label1;
         private Button btnRefresh;
         private DataGridView dgvAuditLogs;
+        private TextBox txtSearch;
+        private Button btnSearch;
     }
 }

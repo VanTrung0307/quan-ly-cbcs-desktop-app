@@ -44,4 +44,22 @@ public class AuditLogService
             .OrderByDescending(x => x.AuditLogId)
             .ToListAsync();
     }
+
+    public async Task<List<AuditLog>>
+    SearchAsync(string keyword)
+    {
+        using ApplicationDbContext db =
+            new ApplicationDbContext();
+
+        keyword = keyword.Trim();
+
+        return await db.AuditLogs
+            .Where(x =>
+                x.Username.Contains(keyword)
+                || x.Action.Contains(keyword)
+                || x.Description.Contains(keyword))
+            .OrderByDescending(
+                x => x.AuditLogId)
+            .ToListAsync();
+    }
 }
