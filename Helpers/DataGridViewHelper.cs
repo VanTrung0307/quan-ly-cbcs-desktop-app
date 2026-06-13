@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using System.Windows.Forms;
+﻿using System.Reflection;
 
 namespace QuanLyCBCS.Helpers
 {
@@ -69,6 +68,12 @@ namespace QuanLyCBCS.Helpers
 
             dgv.ScrollBars =
                 ScrollBars.Both;
+
+            dgv.RowHeadersVisible = false;
+
+            dgv.AllowUserToResizeRows = false;
+
+            dgv.AllowUserToResizeColumns = false;
         }
 
         public static void ConfigureColumnHeaders(
@@ -307,6 +312,20 @@ namespace QuanLyCBCS.Helpers
                     .DefaultCellStyle.Format =
                     format;
             }
+        }
+
+        public static void EnableDoubleBuffer(
+            DataGridView dgv)
+        {
+            typeof(DataGridView)
+                .GetProperty(
+                    "DoubleBuffered",
+                    BindingFlags.Instance |
+                    BindingFlags.NonPublic)
+                ?.SetValue(
+                    dgv,
+                    true,
+                    null);
         }
     }
 }

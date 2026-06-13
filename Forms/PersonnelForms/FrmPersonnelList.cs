@@ -407,6 +407,10 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             DataGridViewHelper
                 .ApplyModernStyle(
                     dgvPersonnel);
+
+            DataGridViewHelper
+                .EnableDoubleBuffer(
+                    dgvPersonnel);
         }
 
         private void SetupStatusBar()
