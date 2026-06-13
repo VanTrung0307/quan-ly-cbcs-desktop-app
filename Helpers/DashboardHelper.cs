@@ -11,5 +11,6 @@ namespace QuanLyCBCS.Helpers
             panel.BackColor = color;
             panel.BorderStyle = BorderStyle.None;
         }
+
     }
 }

@@ -83,7 +83,7 @@
             // 
             txtSearch.BorderStyle = BorderStyle.None;
             txtSearch.Font = new Font("Segoe UI", 11F);
-            txtSearch.ForeColor = Color.Transparent;
+            txtSearch.ForeColor = Color.FromArgb(40, 40, 40);
             txtSearch.Location = new Point(12, 6);
             txtSearch.Name = "txtSearch";
             txtSearch.PlaceholderText = "🔍 Tìm kiếm CBCS...";

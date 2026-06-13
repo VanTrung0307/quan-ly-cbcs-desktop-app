@@ -18,5 +18,9 @@ namespace QuanLyCBCS.Helpers
 
         public static Color BorderColor =
             Color.FromArgb(220, 220, 220);
+
+        public static Color DashboardBlue = Color.FromArgb(41, 128, 185);
+        public static Color DashboardGreen = Color.FromArgb(39, 174, 96);
+        public static Color DashboardPurple = Color.FromArgb(142, 68, 173);
     }
 }

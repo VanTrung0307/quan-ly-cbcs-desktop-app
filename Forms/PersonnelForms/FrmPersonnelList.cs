@@ -11,7 +11,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 {
     public partial class FrmPersonnelList : Form
     {
-        private PersonnelService _service;
+        private readonly PersonnelService _service = new();
 
         private readonly System.Windows.Forms.Timer _idleTimer =
             new();
@@ -19,7 +19,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
         private readonly System.Windows.Forms.Timer _clockTimer =
             new();
 
-        private int SelectedPersonnelId = 0;
+        private int _selectedPersonnelId;
         private CancellationTokenSource?
              _searchCts;
         private readonly AuditLogService _auditService =
@@ -29,65 +29,17 @@ namespace QuanLyCBCS.Forms.PersonnelForms
         {
             InitializeComponent();
 
-            this.Load += FrmPersonnelList_Load;
-
-            _service =
-                new PersonnelService();
+            _service = new PersonnelService();
 
             ApplyPermission();
 
             RegisterActivityControl(this);
 
-            _idleTimer.Interval = 1000;
+            ConfigureButtons();
 
-            _idleTimer.Tick +=
-                IdleTimer_Tick;
+            SetupSearchBox();
 
-            _idleTimer.Start();
-
-            StyleButtons(
-                btnAdd,
-                btnEdit,
-                btnDelete,
-                btnUsers,
-                btnAuditLog,
-                btnChangePassword,
-                btnExport,
-                btnBackup,
-                btnRestore,
-                btnRefresh);
-
-            RegisterHoverEffect(
-                btnAdd,
-                btnEdit,
-                btnDelete,
-                btnUsers,
-                btnAuditLog,
-                btnChangePassword,
-                btnExport,
-                btnBackup,
-                btnRestore,
-                btnRefresh);
-
-            txtSearch.BorderStyle = BorderStyle.FixedSingle;
-            txtSearch.Font = new Font(
-                "Segoe UI",
-                11F);
-
-            txtSearch.BackColor =
-                Color.White;
-
-            txtSearch.ForeColor =
-                Color.FromArgb(
-                    40, 40, 40);
-
-            _idleTimer.Interval = 1000;
-            _idleTimer.Tick += IdleTimer_Tick;
-            _idleTimer.Start();
-
-            _clockTimer.Interval = 1000;
-            _clockTimer.Tick += TimerClock_Tick;
-            _clockTimer.Start();
+            ConfigureTimers();
         }
 
         private bool IsAdmin =>
@@ -102,11 +54,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             btnAdd.Visible = IsAdmin;
             btnEdit.Visible = IsAdmin;
             btnDelete.Visible = IsAdmin;
-
-            if (IsAdmin)
-            {
-                return;
-            }
+            btnBackup.Visible = IsAdmin;
+            btnRestore.Visible = IsAdmin;
         }
 
         protected override bool ProcessCmdKey(
@@ -139,10 +88,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 Color.White;
 
             btn.BackColor =
-                Color.FromArgb(
-                    44,
-                    62,
-                    80);
+                ThemeHelper.PrimaryColor;
 
             btn.Font =
                 new Font(
@@ -164,6 +110,58 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             }
         }
 
+        private void ConfigureButtons()
+        {
+            StyleButtons(
+                btnAdd,
+                btnEdit,
+                btnDelete,
+                btnUsers,
+                btnAuditLog,
+                btnChangePassword,
+                btnExport,
+                btnBackup,
+                btnRestore,
+                btnRefresh);
+
+            RegisterHoverEffect(
+                btnAdd,
+                btnEdit,
+                btnDelete,
+                btnUsers,
+                btnAuditLog,
+                btnChangePassword,
+                btnExport,
+                btnBackup,
+                btnRestore,
+                btnRefresh);
+        }
+
+        private void ConfigureTimers()
+        {
+            _idleTimer.Interval = 1000;
+            _idleTimer.Tick += IdleTimer_Tick;
+            _idleTimer.Start();
+
+            _clockTimer.Interval = 1000;
+            _clockTimer.Tick += TimerClock_Tick;
+            _clockTimer.Start();
+        }
+
+        private void SetupSearchBox()
+        {
+            txtSearch.BorderStyle = BorderStyle.FixedSingle;
+            txtSearch.Font = new Font(
+                "Segoe UI",
+                11F);
+
+            txtSearch.BackColor =
+                Color.White;
+
+            txtSearch.ForeColor =
+                ThemeHelper.PrimaryColor;
+        }
+
         private void Button_MouseEnter(
             object? sender,
             EventArgs e)
@@ -171,10 +169,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             if (sender is Button btn)
             {
                 btn.BackColor =
-                    Color.FromArgb(
-                        52,
-                        73,
-                        94);
+                    ThemeHelper.SecondaryColor;
             }
         }
 
@@ -195,25 +190,22 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             if (sender is Button btn)
             {
                 btn.BackColor =
-                    Color.FromArgb(
-                        44,
-                        62,
-                        80);
+                    ThemeHelper.PrimaryColor;
             }
         }
 
         private bool EnsureAdmin()
-{
-    if (IsAdmin)
-    {
-        return true;
-    }
+        {
+            if (IsAdmin)
+            {
+                return true;
+            }
 
-    MessageBox.Show(
-        "Bạn không có quyền thực hiện chức năng này.");
+            MessageBox.Show(
+                "Bạn không có quyền thực hiện chức năng này.");
 
-    return false;
-}
+            return false;
+        }
 
         private void AddSttColumn()
         {
@@ -258,223 +250,26 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
         private void CustomizeDataGridView()
         {
-            // ==========================
-            // GIAO DIỆN CHUNG
-            // ==========================
+            DataGridViewHelper.ApplyModernStyle(
+                dgvPersonnel);
 
-            dgvPersonnel.BorderStyle =
-                BorderStyle.None;
+            DataGridViewHelper.ConfigureColumnHeaders(
+                dgvPersonnel);
 
-            dgvPersonnel.BackgroundColor =
-                Color.White;
+            DataGridViewHelper.ConfigureColumnWidths(
+                dgvPersonnel);
 
-            dgvPersonnel.DefaultCellStyle.Font =
-                new Font("Segoe UI", 10);
+            DataGridViewHelper.HideTechnicalColumns(
+                dgvPersonnel);
 
-            dgvPersonnel.ColumnHeadersDefaultCellStyle.Font =
-                new Font(
-                    "Segoe UI",
-                    10,
-                    FontStyle.Bold);
-            dgvPersonnel.RowTemplate.Height = 40;
+            DataGridViewHelper.ConfigureDateFormats(
+                dgvPersonnel);
 
-            dgvPersonnel.DefaultCellStyle.Padding =
-                new Padding(3);
-
-            dgvPersonnel.AllowUserToAddRows = false;
-
-            dgvPersonnel.ReadOnly = true;
-
-            dgvPersonnel.SelectionMode =
-                DataGridViewSelectionMode.FullRowSelect;
-
-            dgvPersonnel.MultiSelect = false;
-
-            // ==========================
-            // CHO PHÉP CUỘN NGANG
-            // ==========================
-
-            dgvPersonnel.AutoSizeColumnsMode =
-                DataGridViewAutoSizeColumnsMode.None;
-
-            dgvPersonnel.ScrollBars =
-                ScrollBars.Both;
-
-            // ==========================
-            // ĐỔI TÊN CỘT
-            // ==========================
-            if (dgvPersonnel.Columns["PersonnelID"] != null)
-            {
-                dgvPersonnel.Columns["PersonnelID"]
-                    .Visible = false;
-            }
-
-            //if (dgvPersonnel.Columns["PersonnelID"] != null)
-            //    dgvPersonnel.Columns["PersonnelID"].HeaderText = "STT";
-
-            if (dgvPersonnel.Columns["SoHieu"] != null)
-                dgvPersonnel.Columns["SoHieu"].HeaderText = "Số hiệu";
-
-            if (dgvPersonnel.Columns["HoTen"] != null)
-                dgvPersonnel.Columns["HoTen"].HeaderText = "Họ tên";
-
-            if (dgvPersonnel.Columns["DonVi"] != null)
-                dgvPersonnel.Columns["DonVi"].HeaderText = "Đơn vị";
-
-            if (dgvPersonnel.Columns["GioiTinh"] != null)
-                dgvPersonnel.Columns["GioiTinh"].HeaderText = "Giới tính";
-
-            if (dgvPersonnel.Columns["NgaySinh"] != null)
-                dgvPersonnel.Columns["NgaySinh"].HeaderText = "Ngày sinh";
-
-            if (dgvPersonnel.Columns["CapBacHam"] != null)
-                dgvPersonnel.Columns["CapBacHam"].HeaderText = "Cấp bậc";
-
-            if (dgvPersonnel.Columns["ChucVu"] != null)
-                dgvPersonnel.Columns["ChucVu"].HeaderText = "Chức vụ";
-
-            if (dgvPersonnel.Columns["CCCD"] != null)
-                dgvPersonnel.Columns["CCCD"].HeaderText = "CCCD";
-
-            if (dgvPersonnel.Columns["SoDienThoai"] != null)
-                dgvPersonnel.Columns["SoDienThoai"].HeaderText = "Số điện thoại";
-
-            // ==========================
-            // ĐỘ RỘNG CỘT
-            // ==========================
-
-            if (dgvPersonnel.Columns["PersonnelID"] != null)
-                dgvPersonnel.Columns["PersonnelID"].Width = 60;
-
-            if (dgvPersonnel.Columns["SoHieu"] != null)
-                dgvPersonnel.Columns["SoHieu"].Width = 120;
-
-            if (dgvPersonnel.Columns["HoTen"] != null)
-                dgvPersonnel.Columns["HoTen"].Width = 250;
-
-            if (dgvPersonnel.Columns["DonVi"] != null)
-                dgvPersonnel.Columns["DonVi"].Width = 220;
-
-            if (dgvPersonnel.Columns["GioiTinh"] != null)
-                dgvPersonnel.Columns["GioiTinh"].Width = 90;
-
-            if (dgvPersonnel.Columns["NgaySinh"] != null)
-                dgvPersonnel.Columns["NgaySinh"].Width = 120;
-
-            if (dgvPersonnel.Columns["CapBacHam"] != null)
-                dgvPersonnel.Columns["CapBacHam"].Width = 140;
-
-            if (dgvPersonnel.Columns["ChucVu"] != null)
-                dgvPersonnel.Columns["ChucVu"].Width = 180;
-
-            if (dgvPersonnel.Columns["CCCD"] != null)
-                dgvPersonnel.Columns["CCCD"].Width = 140;
-
-            if (dgvPersonnel.Columns["SoDienThoai"] != null)
-                dgvPersonnel.Columns["SoDienThoai"].Width = 130;
-
-            // ==========================
-            // ẨN CỘT KỸ THUẬT
-            // ==========================
-
-            string[] hiddenColumns =
-            {
-                "PersonnelID",
-                "HoTenKhongDau",
-                "PersonnelType",
-                "CreatedAt",
-                "UpdatedAt"
-            };
-
-            foreach (string column in hiddenColumns)
-            {
-                if (dgvPersonnel.Columns[column] != null)
-                {
-                    dgvPersonnel.Columns[column]
-                        .Visible = false;
-                }
-            }
-
-            // ==========================
-            // FORMAT NGÀY THÁNG
-            // ==========================
-
-            string[] fullDateColumns =
-            {
-                "NgaySinh",
-                "NgayCapCCCD",
-                "NgayNhanCapBac",
-                "NgayBoNhiem",
-                "NgayVaoDangDuBi",
-                "NgayVaoDangChinhThuc"
-            };
-
-            foreach (string column in fullDateColumns)
-            {
-                if (dgvPersonnel.Columns[column] != null)
-                {
-                    dgvPersonnel.Columns[column]
-                        .DefaultCellStyle.Format =
-                        "dd/MM/yyyy";
-                }
-            }
-
-            string[] monthYearColumns =
-            {
-        "ThangNamVaoNganh",
-        "ThangNamNhanCongTac",
-        "ThangNamTotNghiep"
-    };
-
-            foreach (string column in monthYearColumns)
-            {
-                if (dgvPersonnel.Columns[column] != null)
-                {
-                    dgvPersonnel.Columns[column]
-                        .DefaultCellStyle.Format =
-                        "MM/yyyy";
-                }
-            }
-
-            // ==========================
-            // CHỈ HIỂN THỊ CÁC CỘT CHÍNH
-            // ==========================
-
-            foreach (DataGridViewColumn column
-                in dgvPersonnel.Columns)
-            {
-                column.Visible = false;
-            }
-
-            string[] visibleColumns =
-            {
-                "STT",
-                "SoHieu",
-                "HoTen",
-                "DonVi",
-                "GioiTinh",
-                "NgaySinh",
-                "CapBacHam",
-                "ChucVu",
-                "CCCD",
-                "SoDienThoai"
-            };
-
-            foreach (string column in visibleColumns)
-            {
-                if (dgvPersonnel.Columns[column] != null)
-                {
-                    dgvPersonnel.Columns[column]
-                        .Visible = true;
-                }
-                if (dgvPersonnel.Columns["STT"] != null)
-                    dgvPersonnel.Columns["STT"].Width = 60;
-            }
+            DataGridViewHelper.ConfigureVisibleColumns(
+                dgvPersonnel);
         }
 
-        private async void  FrmPersonnelList_Load(
-            object? sender,
-            EventArgs e)
+        private void SetupRoundedControls()
         {
             RoundedControlHelper.SetRounded(
                 pnlTongCBCS,
@@ -503,37 +298,46 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             RoundedControlHelper.SetRounded(
                 btnLogout,
                 12);
+        }
 
+        private void SetupCurrentUser()
+        {
             IdleTimeoutHelper.ResetTimer();
+
             lblCurrentUser.Text =
                 $"👤 {CurrentUser.Username} ({CurrentUser.Role})";
 
-            this.Text =
+            Text =
                 $"Quản lý CBCS - {CurrentUser.Role}";
+        }
 
-            if (!EnsureAdmin())
-            {
-                btnUsers.Visible = false;
-
-                btnAuditLog.Visible = false;
-
-                btnBackup.Visible = false;
-
-                btnRestore.Visible = false;
-            }
-
+        private void SetupDataGridView()
+        {
             DataGridViewHelper
                 .ApplyModernStyle(
                     dgvPersonnel);
+        }
 
+        private void SetupStatusBar()
+        {
             statusStrip1.BackColor =
-                Color.FromArgb(
-                    44,
-                    62,
-                    80);
+                ThemeHelper.PrimaryColor;
 
             statusStrip1.ForeColor =
                 Color.White;
+        }
+
+        private async void FrmPersonnelList_Load(
+            object? sender,
+            EventArgs e)
+        {
+            SetupRoundedControls();
+
+            SetupCurrentUser();
+
+            SetupDataGridView();
+
+            SetupStatusBar();
 
             await LoadPersonnelAsync();
 
@@ -547,7 +351,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             if (e.RowIndex < 0)
                 return;
 
-            SelectedPersonnelId =
+            _selectedPersonnelId =
                 Convert.ToInt32(
                     dgvPersonnel
                     .Rows[e.RowIndex]
@@ -559,9 +363,6 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
-            txtSearch.BorderStyle =
-                BorderStyle.FixedSingle;
-
             try
             {
                 _searchCts?.Cancel();
@@ -626,7 +427,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 return;
             }
 
-            if (SelectedPersonnelId == 0)
+            if (_selectedPersonnelId == 0)
             {
                 MessageBox.Show(
                     "Vui lòng chọn CBCS cần xóa");
@@ -645,14 +446,11 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 return;
 
             await _service.DeleteAsync(
-                SelectedPersonnelId);
-
-            AuditLogService auditService =
-                new AuditLogService();
+                _selectedPersonnelId);
 
             await _auditService.AddLogAsync(
                 "DELETE_PERSONNEL",
-                $"PersonnelId = {SelectedPersonnelId}");
+                $"PersonnelId = {_selectedPersonnelId}");
 
             await LoadPersonnelAsync();
             await LoadDashboardAsync();
@@ -691,7 +489,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 return;
             }
 
-            if (SelectedPersonnelId == 0)
+            if (_selectedPersonnelId == 0)
             {
                 MessageBox.Show(
                     "Vui lòng chọn CBCS");
@@ -702,7 +500,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             FrmPersonnelDetail frm =
                 new FrmPersonnelDetail(
                     FormMode.Edit,
-                    SelectedPersonnelId);
+                    _selectedPersonnelId);
 
             if (frm.ShowDialog() ==
                 DialogResult.OK)
@@ -727,13 +525,13 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 return;
             }
 
-            if (SelectedPersonnelId == 0)
+            if (_selectedPersonnelId == 0)
                 return;
 
             FrmPersonnelDetail frm =
                 new FrmPersonnelDetail(
                     FormMode.Edit,
-                    SelectedPersonnelId);
+                    _selectedPersonnelId);
 
             if (frm.ShowDialog() ==
                 DialogResult.OK)
@@ -837,25 +635,19 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             DashboardHelper.ApplyPanelColor(
                 pnlChienSi,
-                Color.FromArgb(41, 128, 185));
+                ThemeHelper.DashboardBlue);
 
             DashboardHelper.ApplyPanelColor(
                 pnlCanBo,
-                Color.FromArgb(39, 174, 96));
+                ThemeHelper.DashboardGreen);
 
             DashboardHelper.ApplyPanelColor(
                 pnlDangVien,
-                Color.FromArgb(142, 68, 173));
+                ThemeHelper.DashboardPurple);
 
             DashboardHelper.ApplyPanelColor(
                 pnlThongKe,
                 ThemeHelper.PrimaryColor);
-
-            pnlTongCBCS.BorderStyle = BorderStyle.None;
-            pnlChienSi.BorderStyle = BorderStyle.None;
-            pnlCanBo.BorderStyle = BorderStyle.None;
-            pnlDangVien.BorderStyle = BorderStyle.None;
-            pnlThongKe.BorderStyle = BorderStyle.None;
         }
 
         private async void btnBackup_Click(
@@ -1007,6 +799,10 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
+            if (!EnsureAdmin())
+            {
+                return;
+            }
             FrmAuditLogList frm =
                 new FrmAuditLogList();
 
