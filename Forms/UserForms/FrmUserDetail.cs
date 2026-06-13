@@ -6,11 +6,12 @@ namespace QuanLyCBCS.Forms.UserForms
 {
     public partial class FrmUserDetail : Form
     {
-        private readonly UserService
-            _userService;
+        private readonly UserService _userService = new();
         public FrmUserDetail()
         {
             InitializeComponent();
+
+            PermissionHelper.CheckAdmin();
 
             cboRole.Items.Add("Admin");
             cboRole.Items.Add("User");

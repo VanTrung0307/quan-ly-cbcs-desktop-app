@@ -1,9 +1,10 @@
-﻿using QuanLyCBCS.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using QuanLyCBCS.Data;
+using QuanLyCBCS.Forms.CommonForms;
 using QuanLyCBCS.Forms.PersonnelForms;
 using QuanLyCBCS.Helpers;
 using QuanLyCBCS.Models;
 using QuanLyCBCS.Services;
-using Microsoft.EntityFrameworkCore;
 
 namespace QuanLyCBCS.Forms.Auth
 {
@@ -147,8 +148,19 @@ namespace QuanLyCBCS.Forms.Auth
                         "LOGIN",
                         "Đăng nhập hệ thống");
 
+                FrmLoading loading =
+                    new FrmLoading();
+
+                loading.Show();
+
+                Application.DoEvents();
+
+                await Task.Delay(300);
+
                 FrmPersonnelList frm =
                     new FrmPersonnelList();
+
+                loading.Hide();
 
                 this.Hide();
 

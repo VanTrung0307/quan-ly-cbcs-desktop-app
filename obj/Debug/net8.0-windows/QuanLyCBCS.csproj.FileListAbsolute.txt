@@ -136,3 +136,5 @@ E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.UserForms.FrmUserDetail.
 E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.SystemForms.FrmAuditLogList.resources
 E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.UserForms.FrmChangePassword.resources
 E:\QuanLyCBCS\bin\Debug\net8.0-windows\BCrypt-Net-Next.dll
+E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.CommonForms.FrmLoading.resources
+E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Properties.Resources.resources

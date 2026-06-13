@@ -123,6 +123,7 @@
             Controls.Add(label2);
             Controls.Add(label1);
             Name = "FrmUserDetail";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "FrmUserDetail";
             ResumeLayout(false);
             PerformLayout();

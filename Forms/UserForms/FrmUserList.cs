@@ -6,15 +6,13 @@ namespace QuanLyCBCS.Forms.UserForms
 {
     public partial class FrmUserList : Form
     {
-        private readonly UserService
-            _userService;
+        private readonly UserService _userService = new();
 
         public FrmUserList()
         {
             InitializeComponent();
 
-            _userService =
-                new UserService();
+            PermissionHelper.CheckAdmin();
         }
 
         private async Task

@@ -98,6 +98,7 @@
             Controls.Add(btnRefresh);
             Controls.Add(label1);
             Name = "FrmAuditLogList";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "FrmAuditLogList";
             Load += FrmAuditLogList_Load;
             ((System.ComponentModel.ISupportInitialize)dgvAuditLogs).EndInit();

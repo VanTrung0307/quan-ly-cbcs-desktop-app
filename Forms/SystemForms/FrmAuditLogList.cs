@@ -12,6 +12,8 @@ namespace QuanLyCBCS.Forms.SystemForms
         public FrmAuditLogList()
         {
             InitializeComponent();
+
+            PermissionHelper.CheckAdmin();
         }
 
         private async Task LoadAuditLogsAsync()

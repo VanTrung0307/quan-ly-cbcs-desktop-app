@@ -110,6 +110,7 @@
             Controls.Add(btnAddUser);
             Controls.Add(label1);
             Name = "FrmUserList";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "FrmUserList";
             Load += FrmUserList_Load;
             ((System.ComponentModel.ISupportInitialize)dgvUsers).EndInit();

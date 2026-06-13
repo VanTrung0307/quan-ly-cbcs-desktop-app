@@ -35,6 +35,8 @@
             txtPassword = new TextBox();
             btnLogin = new Button();
             btnExit = new Button();
+            pictureBox1 = new PictureBox();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
             // label1
@@ -42,7 +44,7 @@
             label1.Anchor = AnchorStyles.Top;
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.Location = new Point(252, 43);
+            label1.Location = new Point(135, 73);
             label1.Name = "label1";
             label1.Size = new Size(277, 31);
             label1.TabIndex = 0;
@@ -52,7 +54,7 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label2.Location = new Point(170, 118);
+            label2.Location = new Point(53, 148);
             label2.Name = "label2";
             label2.Size = new Size(99, 28);
             label2.TabIndex = 1;
@@ -62,7 +64,7 @@
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label3.Location = new Point(170, 163);
+            label3.Location = new Point(53, 193);
             label3.Name = "label3";
             label3.Size = new Size(93, 28);
             label3.TabIndex = 2;
@@ -70,14 +72,14 @@
             // 
             // txtUsername
             // 
-            txtUsername.Location = new Point(289, 122);
+            txtUsername.Location = new Point(172, 152);
             txtUsername.Name = "txtUsername";
             txtUsername.Size = new Size(240, 27);
             txtUsername.TabIndex = 3;
             // 
             // txtPassword
             // 
-            txtPassword.Location = new Point(289, 167);
+            txtPassword.Location = new Point(172, 197);
             txtPassword.Name = "txtPassword";
             txtPassword.Size = new Size(240, 27);
             txtPassword.TabIndex = 4;
@@ -85,7 +87,7 @@
             // 
             // btnLogin
             // 
-            btnLogin.Location = new Point(289, 231);
+            btnLogin.Location = new Point(172, 261);
             btnLogin.Name = "btnLogin";
             btnLogin.Size = new Size(123, 29);
             btnLogin.TabIndex = 5;
@@ -95,7 +97,7 @@
             // 
             // btnExit
             // 
-            btnExit.Location = new Point(435, 231);
+            btnExit.Location = new Point(318, 261);
             btnExit.Name = "btnExit";
             btnExit.Size = new Size(94, 29);
             btnExit.TabIndex = 6;
@@ -103,11 +105,22 @@
             btnExit.UseVisualStyleBackColor = true;
             btnExit.Click += btnExit_Click;
             // 
+            // pictureBox1
+            // 
+            pictureBox1.Image = Properties.Resources.logoCSCD;
+            pictureBox1.Location = new Point(456, 50);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(300, 300);
+            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox1.TabIndex = 7;
+            pictureBox1.TabStop = false;
+            // 
             // FrmLogin
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(pictureBox1);
             Controls.Add(btnExit);
             Controls.Add(btnLogin);
             Controls.Add(txtPassword);
@@ -116,7 +129,9 @@
             Controls.Add(label2);
             Controls.Add(label1);
             Name = "FrmLogin";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "FrmLogin";
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -130,5 +145,6 @@
         private TextBox txtPassword;
         private Button btnLogin;
         private Button btnExit;
+        private PictureBox pictureBox1;
     }
 }

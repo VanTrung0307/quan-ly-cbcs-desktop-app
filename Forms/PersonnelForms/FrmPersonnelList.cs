@@ -348,6 +348,17 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             this.Text =
                 $"Quản lý CBCS - {CurrentUser.Role}";
 
+            if (CurrentUser.Role != "Admin")
+            {
+                btnUsers.Visible = false;
+
+                btnAuditLog.Visible = false;
+
+                btnBackup.Visible = false;
+
+                btnRestore.Visible = false;
+            }
+
             await LoadPersonnelAsync();
 
             await LoadDashboardAsync();
@@ -775,6 +786,14 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
+            if (CurrentUser.Role != "Admin")
+            {
+                MessageBox.Show(
+                    "Bạn không có quyền.");
+
+                return;
+            }
+
             FrmUserList frm =
                 new FrmUserList();
 

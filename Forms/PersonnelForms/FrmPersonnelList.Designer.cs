@@ -342,7 +342,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(311, 19);
+            label1.Location = new Point(329, 19);
             label1.Name = "label1";
             label1.Size = new Size(44, 20);
             label1.TabIndex = 19;
@@ -351,7 +351,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(311, 54);
+            label2.Location = new Point(329, 54);
             label2.Name = "label2";
             label2.Size = new Size(32, 20);
             label2.TabIndex = 20;
@@ -360,7 +360,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(311, 85);
+            label3.Location = new Point(329, 85);
             label3.Name = "label3";
             label3.Size = new Size(62, 20);
             label3.TabIndex = 21;
@@ -369,7 +369,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(311, 123);
+            label4.Location = new Point(329, 123);
             label4.Name = "label4";
             label4.Size = new Size(127, 20);
             label4.TabIndex = 22;
@@ -378,7 +378,7 @@
             // lblDonViDongNhat
             // 
             lblDonViDongNhat.AutoSize = true;
-            lblDonViDongNhat.Location = new Point(459, 123);
+            lblDonViDongNhat.Location = new Point(477, 123);
             lblDonViDongNhat.Name = "lblDonViDongNhat";
             lblDonViDongNhat.Size = new Size(21, 20);
             lblDonViDongNhat.TabIndex = 27;
@@ -387,7 +387,7 @@
             // lblTuoiTrungBinh
             // 
             lblTuoiTrungBinh.AutoSize = true;
-            lblTuoiTrungBinh.Location = new Point(459, 85);
+            lblTuoiTrungBinh.Location = new Point(477, 85);
             lblTuoiTrungBinh.Name = "lblTuoiTrungBinh";
             lblTuoiTrungBinh.Size = new Size(17, 20);
             lblTuoiTrungBinh.TabIndex = 26;
@@ -396,7 +396,7 @@
             // lblNu
             // 
             lblNu.AutoSize = true;
-            lblNu.Location = new Point(459, 54);
+            lblNu.Location = new Point(477, 54);
             lblNu.Name = "lblNu";
             lblNu.Size = new Size(17, 20);
             lblNu.TabIndex = 25;
@@ -405,7 +405,7 @@
             // lblNam
             // 
             lblNam.AutoSize = true;
-            lblNam.Location = new Point(459, 19);
+            lblNam.Location = new Point(477, 19);
             lblNam.Name = "lblNam";
             lblNam.Size = new Size(17, 20);
             lblNam.TabIndex = 24;

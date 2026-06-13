@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using QuanLyCBCS.Helpers;
 
 namespace QuanLyCBCS.Services;
 
@@ -16,21 +17,23 @@ public class DatabaseRestoreService
     public async Task RestoreDatabaseAsync(
         string backupFilePath)
     {
+        PermissionHelper.CheckAdmin();
+
         string sql =
             $@"
-USE master;
+                USE master;
 
-ALTER DATABASE QuanLyCBCS
-SET SINGLE_USER
-WITH ROLLBACK IMMEDIATE;
+                ALTER DATABASE QuanLyCBCS
+                SET SINGLE_USER
+                WITH ROLLBACK IMMEDIATE;
 
-RESTORE DATABASE QuanLyCBCS
-FROM DISK = N'{backupFilePath}'
-WITH REPLACE;
+                RESTORE DATABASE QuanLyCBCS
+                FROM DISK = N'{backupFilePath}'
+                WITH REPLACE;
 
-ALTER DATABASE QuanLyCBCS
-SET MULTI_USER;
-";
+                ALTER DATABASE QuanLyCBCS
+                SET MULTI_USER;
+                ";
 
         using SqlConnection conn =
             new SqlConnection(

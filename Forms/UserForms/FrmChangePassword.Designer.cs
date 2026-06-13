@@ -124,6 +124,7 @@
             Controls.Add(label2);
             Controls.Add(label1);
             Name = "FrmChangePassword";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "FrmChangePassword";
             ResumeLayout(false);
             PerformLayout();
