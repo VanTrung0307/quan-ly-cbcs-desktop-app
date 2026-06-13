@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuanLyCBCS.Data;
 using QuanLyCBCS.Enums;
-using QuanLyCBCS.Forms.Auth;
+using System.Drawing;
 using QuanLyCBCS.Forms.SystemForms;
 using QuanLyCBCS.Forms.UserForms;
 using QuanLyCBCS.Helpers;
@@ -13,18 +13,23 @@ namespace QuanLyCBCS.Forms.PersonnelForms
     {
         private PersonnelService _service;
 
-        private System.Windows.Forms.Timer _idleTimer =
-            new System.Windows.Forms.Timer();
+        private readonly System.Windows.Forms.Timer _idleTimer =
+            new();
+
+        private readonly System.Windows.Forms.Timer _clockTimer =
+            new();
 
         private int SelectedPersonnelId = 0;
         private CancellationTokenSource?
-    _searchCts;
+             _searchCts;
         private readonly AuditLogService _auditService =
-    new AuditLogService();
+            new AuditLogService();
 
         public FrmPersonnelList()
         {
             InitializeComponent();
+
+            this.Load += FrmPersonnelList_Load;
 
             _service =
                 new PersonnelService();
@@ -39,6 +44,50 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 IdleTimer_Tick;
 
             _idleTimer.Start();
+
+            StyleButtons(
+                btnAdd,
+                btnEdit,
+                btnDelete,
+                btnUsers,
+                btnAuditLog,
+                btnChangePassword,
+                btnExport,
+                btnBackup,
+                btnRestore,
+                btnRefresh);
+
+            RegisterHoverEffect(
+                btnAdd,
+                btnEdit,
+                btnDelete,
+                btnUsers,
+                btnAuditLog,
+                btnChangePassword,
+                btnExport,
+                btnBackup,
+                btnRestore,
+                btnRefresh);
+
+            txtSearch.BorderStyle = BorderStyle.FixedSingle;
+            txtSearch.Font = new Font(
+                "Segoe UI",
+                11F);
+
+            txtSearch.BackColor =
+                Color.White;
+
+            txtSearch.ForeColor =
+                Color.FromArgb(
+                    40, 40, 40);
+
+            _idleTimer.Interval = 1000;
+            _idleTimer.Tick += IdleTimer_Tick;
+            _idleTimer.Start();
+
+            _clockTimer.Interval = 1000;
+            _clockTimer.Tick += TimerClock_Tick;
+            _clockTimer.Start();
         }
 
         private bool IsAdmin =>
@@ -50,17 +99,14 @@ namespace QuanLyCBCS.Forms.PersonnelForms
         {
             btnUsers.Visible = IsAdmin;
             btnAuditLog.Visible = IsAdmin;
+            btnAdd.Visible = IsAdmin;
+            btnEdit.Visible = IsAdmin;
+            btnDelete.Visible = IsAdmin;
 
             if (IsAdmin)
             {
                 return;
             }
-
-            btnAdd.Enabled = false;
-            btnEdit.Enabled = false;
-            btnDelete.Enabled = false;
-            btnBackup.Enabled = false;
-            btnRestore.Enabled = false;
         }
 
         protected override bool ProcessCmdKey(
@@ -81,6 +127,93 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             base.OnMouseMove(e);
         }
+
+        private void StyleButton(Button btn)
+        {
+            btn.FlatStyle =
+                FlatStyle.Flat;
+
+            btn.FlatAppearance.BorderSize = 0;
+
+            btn.ForeColor =
+                Color.White;
+
+            btn.BackColor =
+                Color.FromArgb(
+                    44,
+                    62,
+                    80);
+
+            btn.Font =
+                new Font(
+                    "Segoe UI",
+                    10,
+                    FontStyle.Bold);
+
+            RoundedControlHelper.SetRounded(
+                btn,
+                12);
+        }
+
+        private void StyleButtons(
+            params Button[] buttons)
+        {
+            foreach (var btn in buttons)
+            {
+                StyleButton(btn);
+            }
+        }
+
+        private void Button_MouseEnter(
+            object? sender,
+            EventArgs e)
+        {
+            if (sender is Button btn)
+            {
+                btn.BackColor =
+                    Color.FromArgb(
+                        52,
+                        73,
+                        94);
+            }
+        }
+
+        private void RegisterHoverEffect(
+            params Button[] buttons)
+        {
+            foreach (var btn in buttons)
+            {
+                btn.MouseEnter += Button_MouseEnter;
+                btn.MouseLeave += Button_MouseLeave;
+            }
+        }
+
+        private void Button_MouseLeave(
+            object? sender,
+            EventArgs e)
+        {
+            if (sender is Button btn)
+            {
+                btn.BackColor =
+                    Color.FromArgb(
+                        44,
+                        62,
+                        80);
+            }
+        }
+
+        private bool EnsureAdmin()
+{
+    if (IsAdmin)
+    {
+        return true;
+    }
+
+    MessageBox.Show(
+        "Bạn không có quyền thực hiện chức năng này.");
+
+    return false;
+}
 
         private void AddSttColumn()
         {
@@ -143,8 +276,10 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                     "Segoe UI",
                     10,
                     FontStyle.Bold);
+            dgvPersonnel.RowTemplate.Height = 40;
 
-            dgvPersonnel.RowTemplate.Height = 32;
+            dgvPersonnel.DefaultCellStyle.Padding =
+                new Padding(3);
 
             dgvPersonnel.AllowUserToAddRows = false;
 
@@ -337,10 +472,38 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             }
         }
 
-        private async void FrmPersonnelList_Load(
-            object sender,
+        private async void  FrmPersonnelList_Load(
+            object? sender,
             EventArgs e)
         {
+            RoundedControlHelper.SetRounded(
+                pnlTongCBCS,
+                20);
+
+            RoundedControlHelper.SetRounded(
+                pnlChienSi,
+                20);
+
+            RoundedControlHelper.SetRounded(
+                pnlCanBo,
+                20);
+
+            RoundedControlHelper.SetRounded(
+                pnlDangVien,
+                20);
+
+            RoundedControlHelper.SetRounded(
+                pnlThongKe,
+                20);
+
+            RoundedControlHelper.SetRounded(
+                pnlSearch,
+                15);
+
+            RoundedControlHelper.SetRounded(
+                btnLogout,
+                12);
+
             IdleTimeoutHelper.ResetTimer();
             lblCurrentUser.Text =
                 $"👤 {CurrentUser.Username} ({CurrentUser.Role})";
@@ -348,7 +511,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             this.Text =
                 $"Quản lý CBCS - {CurrentUser.Role}";
 
-            if (CurrentUser.Role != "Admin")
+            if (!EnsureAdmin())
             {
                 btnUsers.Visible = false;
 
@@ -358,6 +521,19 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
                 btnRestore.Visible = false;
             }
+
+            DataGridViewHelper
+                .ApplyModernStyle(
+                    dgvPersonnel);
+
+            statusStrip1.BackColor =
+                Color.FromArgb(
+                    44,
+                    62,
+                    80);
+
+            statusStrip1.ForeColor =
+                Color.White;
 
             await LoadPersonnelAsync();
 
@@ -383,6 +559,9 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
+            txtSearch.BorderStyle =
+                BorderStyle.FixedSingle;
+
             try
             {
                 _searchCts?.Cancel();
@@ -442,11 +621,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
-            if (CurrentUser.Role != "Admin")
+            if (!EnsureAdmin())
             {
-                MessageBox.Show(
-                    "Bạn không có quyền thực hiện chức năng này.");
-
                 return;
             }
 
@@ -489,11 +665,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
-            if (CurrentUser.Role != "Admin")
+            if (!EnsureAdmin())
             {
-                MessageBox.Show(
-                    "Bạn không có quyền thực hiện chức năng này.");
-
                 return;
             }
 
@@ -513,11 +686,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
-            if (CurrentUser.Role != "Admin")
+            if (!EnsureAdmin())
             {
-                MessageBox.Show(
-                    "Bạn không có quyền thực hiện chức năng này.");
-
                 return;
             }
 
@@ -596,8 +766,35 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 "Xuất Excel thành công!");
         }
 
+        private void ApplyDashboardLabelColor()
+        {
+            Control[] controls =
+            {
+                lblTongValue,
+                lblChienSiValue,
+                lblCanBoValue,
+                lblDangVienValue,
+                lblThongke,
+                lblDonViDongNhat,
+                lblNam,
+                lblNu,
+                lblTuoiTrungBinh,
+                label1,
+                label2,
+                label3,
+                label4
+            };
+
+            foreach (var c in controls)
+            {
+                c.ForeColor = Color.White;
+            }
+        }
+
         private async Task LoadDashboardAsync()
         {
+            ApplyDashboardLabelColor();
+
             lblTongValue.Text =
                 (await _service
                     .GetTotalCountAsync())
@@ -617,17 +814,6 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 (await _service
                     .GetDangVienCountAsync())
                 .ToString();
-            pnlTongCBCS.BackColor =
-                Color.SteelBlue;
-
-            pnlChienSi.BackColor =
-                Color.SeaGreen;
-
-            pnlCanBo.BackColor =
-                Color.DarkOrange;
-
-            pnlDangVien.BackColor =
-                Color.MediumPurple;
 
             var dashboard =
                 await _service
@@ -644,17 +830,40 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             lblDonViDongNhat.Text =
                 dashboard.DonViDongNhat;
+
+            DashboardHelper.ApplyPanelColor(
+                pnlTongCBCS,
+                ThemeHelper.PrimaryColor);
+
+            DashboardHelper.ApplyPanelColor(
+                pnlChienSi,
+                Color.FromArgb(41, 128, 185));
+
+            DashboardHelper.ApplyPanelColor(
+                pnlCanBo,
+                Color.FromArgb(39, 174, 96));
+
+            DashboardHelper.ApplyPanelColor(
+                pnlDangVien,
+                Color.FromArgb(142, 68, 173));
+
+            DashboardHelper.ApplyPanelColor(
+                pnlThongKe,
+                ThemeHelper.PrimaryColor);
+
+            pnlTongCBCS.BorderStyle = BorderStyle.None;
+            pnlChienSi.BorderStyle = BorderStyle.None;
+            pnlCanBo.BorderStyle = BorderStyle.None;
+            pnlDangVien.BorderStyle = BorderStyle.None;
+            pnlThongKe.BorderStyle = BorderStyle.None;
         }
 
         private async void btnBackup_Click(
             object sender,
             EventArgs e)
         {
-            if (CurrentUser.Role != "Admin")
+            if (!EnsureAdmin())
             {
-                MessageBox.Show(
-                    "Bạn không có quyền thực hiện chức năng này.");
-
                 return;
             }
 
@@ -708,11 +917,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
-            if (CurrentUser.Role != "Admin")
+            if (!EnsureAdmin())
             {
-                MessageBox.Show(
-                    "Bạn không có quyền thực hiện chức năng này.");
-
                 return;
             }
 
@@ -786,11 +992,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
-            if (CurrentUser.Role != "Admin")
+            if (!EnsureAdmin())
             {
-                MessageBox.Show(
-                    "Bạn không có quyền.");
-
                 return;
             }
 
@@ -865,6 +1068,21 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                         control);
                 }
             }
+        }
+
+        private void TimerClock_Tick(
+            object? sender,
+            EventArgs e)
+        {
+            lblTime.Text =
+                DateTime.Now.ToString(
+                    "dd/MM/yyyy HH:mm:ss");
+
+            lblUser.Text =
+                $"👤 {CurrentUser.Username}";
+
+            lblRole.Text =
+                $"🛡 {CurrentUser.Role}";
         }
     }
 }

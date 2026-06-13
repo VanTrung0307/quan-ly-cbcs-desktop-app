@@ -115,7 +115,6 @@ E:\QuanLyCBCS\bin\Debug\net8.0-windows\runtimes\win-x64\native\Microsoft.Data.Sq
 E:\QuanLyCBCS\bin\Debug\net8.0-windows\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
 E:\QuanLyCBCS\bin\Debug\net8.0-windows\runtimes\win\lib\net6.0\System.Runtime.Caching.dll
 E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.csproj.AssemblyReference.cache
-E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Form1.resources
 E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.csproj.GenerateResource.cache
 E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.GeneratedMSBuildEditorConfig.editorconfig
 E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.AssemblyInfoInputs.cache

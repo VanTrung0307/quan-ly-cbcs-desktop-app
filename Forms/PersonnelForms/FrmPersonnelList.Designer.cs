@@ -62,28 +62,41 @@
             lblNu = new Label();
             lblNam = new Label();
             btnChangePassword = new Button();
+            pnlThongKe = new Panel();
+            lblThongke = new Label();
+            pnlSearch = new Panel();
+            statusStrip1 = new StatusStrip();
+            lblUser = new ToolStripStatusLabel();
+            lblRole = new ToolStripStatusLabel();
+            lblTime = new ToolStripStatusLabel();
             ((System.ComponentModel.ISupportInitialize)dgvPersonnel).BeginInit();
             pnlTongCBCS.SuspendLayout();
             pnlChienSi.SuspendLayout();
             pnlCanBo.SuspendLayout();
             pnlDangVien.SuspendLayout();
+            pnlThongKe.SuspendLayout();
+            pnlSearch.SuspendLayout();
+            statusStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // txtSearch
             // 
+            txtSearch.BorderStyle = BorderStyle.None;
             txtSearch.Font = new Font("Segoe UI", 11F);
-            txtSearch.Location = new Point(12, 12);
+            txtSearch.ForeColor = Color.Transparent;
+            txtSearch.Location = new Point(12, 6);
             txtSearch.Name = "txtSearch";
             txtSearch.PlaceholderText = "🔍 Tìm kiếm CBCS...";
-            txtSearch.Size = new Size(273, 32);
+            txtSearch.Size = new Size(269, 25);
             txtSearch.TabIndex = 0;
             txtSearch.TextChanged += txtSearch_TextChanged;
             // 
             // btnAdd
             // 
+            btnAdd.Font = new Font("Segoe UI", 10F);
             btnAdd.Location = new Point(12, 50);
             btnAdd.Name = "btnAdd";
-            btnAdd.Size = new Size(94, 29);
+            btnAdd.Size = new Size(115, 36);
             btnAdd.TabIndex = 1;
             btnAdd.Text = "➕ Thêm";
             btnAdd.UseVisualStyleBackColor = true;
@@ -91,18 +104,20 @@
             // 
             // btnEdit
             // 
-            btnEdit.Location = new Point(12, 85);
+            btnEdit.Font = new Font("Segoe UI", 10F);
+            btnEdit.Location = new Point(12, 90);
             btnEdit.Name = "btnEdit";
-            btnEdit.Size = new Size(94, 29);
+            btnEdit.Size = new Size(115, 36);
             btnEdit.TabIndex = 2;
             btnEdit.Text = "✏️ Sửa";
             btnEdit.UseVisualStyleBackColor = true;
             // 
             // btnDelete
             // 
-            btnDelete.Location = new Point(12, 120);
+            btnDelete.Font = new Font("Segoe UI", 10F);
+            btnDelete.Location = new Point(12, 132);
             btnDelete.Name = "btnDelete";
-            btnDelete.Size = new Size(94, 29);
+            btnDelete.Size = new Size(115, 36);
             btnDelete.TabIndex = 3;
             btnDelete.Text = "🗑️ Xóa";
             btnDelete.UseVisualStyleBackColor = true;
@@ -111,9 +126,9 @@
             // btnRefresh
             // 
             btnRefresh.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnRefresh.Location = new Point(1441, 123);
+            btnRefresh.Location = new Point(1535, 114);
             btnRefresh.Name = "btnRefresh";
-            btnRefresh.Size = new Size(101, 29);
+            btnRefresh.Size = new Size(120, 36);
             btnRefresh.TabIndex = 4;
             btnRefresh.Text = "⟳ Làm mới";
             btnRefresh.UseVisualStyleBackColor = true;
@@ -124,14 +139,14 @@
             dgvPersonnel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvPersonnel.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvPersonnel.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvPersonnel.Location = new Point(1, 158);
+            dgvPersonnel.Location = new Point(1, 174);
             dgvPersonnel.MultiSelect = false;
             dgvPersonnel.Name = "dgvPersonnel";
             dgvPersonnel.ReadOnly = true;
             dgvPersonnel.RowHeadersVisible = false;
             dgvPersonnel.RowHeadersWidth = 51;
             dgvPersonnel.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvPersonnel.Size = new Size(1552, 292);
+            dgvPersonnel.Size = new Size(1665, 276);
             dgvPersonnel.TabIndex = 5;
             dgvPersonnel.CellClick += dgvPersonnel_CellClick;
             dgvPersonnel.CellDoubleClick += dgvPersonnel_CellDoubleClick;
@@ -139,9 +154,9 @@
             // btnExport
             // 
             btnExport.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnExport.Location = new Point(1334, 123);
+            btnExport.Location = new Point(1409, 116);
             btnExport.Name = "btnExport";
-            btnExport.Size = new Size(101, 29);
+            btnExport.Size = new Size(120, 36);
             btnExport.TabIndex = 6;
             btnExport.Text = "📊 Excel";
             btnExport.UseVisualStyleBackColor = true;
@@ -196,7 +211,7 @@
             pnlTongCBCS.Anchor = AnchorStyles.Top;
             pnlTongCBCS.Controls.Add(lblTongValue);
             pnlTongCBCS.Controls.Add(lblTongTitle);
-            pnlTongCBCS.Location = new Point(542, 12);
+            pnlTongCBCS.Location = new Point(623, 12);
             pnlTongCBCS.Name = "pnlTongCBCS";
             pnlTongCBCS.Size = new Size(166, 114);
             pnlTongCBCS.TabIndex = 11;
@@ -205,10 +220,10 @@
             // 
             lblTongValue.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
             lblTongValue.AutoSize = true;
-            lblTongValue.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblTongValue.Font = new Font("Segoe UI", 24F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblTongValue.Location = new Point(65, 47);
             lblTongValue.Name = "lblTongValue";
-            lblTongValue.Size = new Size(0, 41);
+            lblTongValue.Size = new Size(0, 54);
             lblTongValue.TabIndex = 8;
             // 
             // pnlChienSi
@@ -216,7 +231,7 @@
             pnlChienSi.Anchor = AnchorStyles.Top;
             pnlChienSi.Controls.Add(lblChienSiValue);
             pnlChienSi.Controls.Add(lblChienSiTitle);
-            pnlChienSi.Location = new Point(731, 12);
+            pnlChienSi.Location = new Point(812, 12);
             pnlChienSi.Name = "pnlChienSi";
             pnlChienSi.Size = new Size(166, 114);
             pnlChienSi.TabIndex = 12;
@@ -225,10 +240,10 @@
             // 
             lblChienSiValue.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
             lblChienSiValue.AutoSize = true;
-            lblChienSiValue.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblChienSiValue.Font = new Font("Segoe UI", 24F, FontStyle.Bold);
             lblChienSiValue.Location = new Point(61, 47);
             lblChienSiValue.Name = "lblChienSiValue";
-            lblChienSiValue.Size = new Size(0, 41);
+            lblChienSiValue.Size = new Size(0, 54);
             lblChienSiValue.TabIndex = 9;
             // 
             // pnlCanBo
@@ -236,7 +251,7 @@
             pnlCanBo.Anchor = AnchorStyles.Top;
             pnlCanBo.Controls.Add(lblCanBoValue);
             pnlCanBo.Controls.Add(lblCanBoTitle);
-            pnlCanBo.Location = new Point(918, 12);
+            pnlCanBo.Location = new Point(999, 12);
             pnlCanBo.Name = "pnlCanBo";
             pnlCanBo.Size = new Size(166, 114);
             pnlCanBo.TabIndex = 12;
@@ -245,10 +260,10 @@
             // 
             lblCanBoValue.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
             lblCanBoValue.AutoSize = true;
-            lblCanBoValue.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblCanBoValue.Font = new Font("Segoe UI", 24F, FontStyle.Bold);
             lblCanBoValue.Location = new Point(71, 47);
             lblCanBoValue.Name = "lblCanBoValue";
-            lblCanBoValue.Size = new Size(0, 41);
+            lblCanBoValue.Size = new Size(0, 54);
             lblCanBoValue.TabIndex = 10;
             lblCanBoValue.TextAlign = ContentAlignment.MiddleCenter;
             // 
@@ -257,7 +272,7 @@
             pnlDangVien.Anchor = AnchorStyles.Top;
             pnlDangVien.Controls.Add(lblDangVienValue);
             pnlDangVien.Controls.Add(lblDangVienTitle);
-            pnlDangVien.Location = new Point(1106, 12);
+            pnlDangVien.Location = new Point(1187, 12);
             pnlDangVien.Name = "pnlDangVien";
             pnlDangVien.Size = new Size(166, 114);
             pnlDangVien.TabIndex = 12;
@@ -266,18 +281,18 @@
             // 
             lblDangVienValue.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
             lblDangVienValue.AutoSize = true;
-            lblDangVienValue.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblDangVienValue.Font = new Font("Segoe UI", 24F, FontStyle.Bold);
             lblDangVienValue.Location = new Point(67, 47);
             lblDangVienValue.Name = "lblDangVienValue";
-            lblDangVienValue.Size = new Size(0, 41);
+            lblDangVienValue.Size = new Size(0, 54);
             lblDangVienValue.TabIndex = 11;
             // 
             // btnBackup
             // 
             btnBackup.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnBackup.Location = new Point(1334, 88);
+            btnBackup.Location = new Point(1409, 72);
             btnBackup.Name = "btnBackup";
-            btnBackup.Size = new Size(101, 29);
+            btnBackup.Size = new Size(120, 36);
             btnBackup.TabIndex = 13;
             btnBackup.Text = "💽 Backup";
             btnBackup.UseVisualStyleBackColor = true;
@@ -286,9 +301,9 @@
             // btnRestore
             // 
             btnRestore.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnRestore.Location = new Point(1441, 88);
+            btnRestore.Location = new Point(1535, 72);
             btnRestore.Name = "btnRestore";
-            btnRestore.Size = new Size(101, 29);
+            btnRestore.Size = new Size(120, 36);
             btnRestore.TabIndex = 14;
             btnRestore.Text = "🔄️ Restore";
             btnRestore.UseVisualStyleBackColor = true;
@@ -299,7 +314,7 @@
             lblCurrentUser.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblCurrentUser.AutoSize = true;
             lblCurrentUser.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblCurrentUser.Location = new Point(1334, 27);
+            lblCurrentUser.Location = new Point(1447, 27);
             lblCurrentUser.Name = "lblCurrentUser";
             lblCurrentUser.Size = new Size(104, 20);
             lblCurrentUser.TabIndex = 15;
@@ -309,11 +324,14 @@
             // 
             btnLogout.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnLogout.BackColor = Color.Red;
+            btnLogout.FlatAppearance.BorderSize = 0;
+            btnLogout.FlatStyle = FlatStyle.Flat;
             btnLogout.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnLogout.ForeColor = SystemColors.ButtonHighlight;
-            btnLogout.Location = new Point(1480, 9);
+            btnLogout.Location = new Point(1593, 9);
             btnLogout.Name = "btnLogout";
-            btnLogout.Size = new Size(62, 52);
+            btnLogout.Padding = new Padding(5);
+            btnLogout.Size = new Size(48, 48);
             btnLogout.TabIndex = 16;
             btnLogout.Text = "\u23fb";
             btnLogout.UseVisualStyleBackColor = false;
@@ -321,9 +339,10 @@
             // 
             // btnUsers
             // 
-            btnUsers.Location = new Point(112, 50);
+            btnUsers.Font = new Font("Segoe UI", 10F);
+            btnUsers.Location = new Point(137, 50);
             btnUsers.Name = "btnUsers";
-            btnUsers.Size = new Size(133, 29);
+            btnUsers.Size = new Size(164, 36);
             btnUsers.TabIndex = 17;
             btnUsers.Text = "👥 Tài khoản";
             btnUsers.UseVisualStyleBackColor = true;
@@ -331,9 +350,10 @@
             // 
             // btnAuditLog
             // 
-            btnAuditLog.Location = new Point(112, 85);
+            btnAuditLog.Font = new Font("Segoe UI", 10F);
+            btnAuditLog.Location = new Point(137, 90);
             btnAuditLog.Name = "btnAuditLog";
-            btnAuditLog.Size = new Size(133, 29);
+            btnAuditLog.Size = new Size(164, 36);
             btnAuditLog.TabIndex = 18;
             btnAuditLog.Text = "📓 Nhật ký";
             btnAuditLog.UseVisualStyleBackColor = true;
@@ -342,7 +362,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(329, 19);
+            label1.Location = new Point(13, 54);
             label1.Name = "label1";
             label1.Size = new Size(44, 20);
             label1.TabIndex = 19;
@@ -351,7 +371,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(329, 54);
+            label2.Location = new Point(13, 74);
             label2.Name = "label2";
             label2.Size = new Size(32, 20);
             label2.TabIndex = 20;
@@ -360,7 +380,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(329, 85);
+            label3.Location = new Point(13, 94);
             label3.Name = "label3";
             label3.Size = new Size(62, 20);
             label3.TabIndex = 21;
@@ -369,7 +389,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(329, 123);
+            label4.Location = new Point(13, 114);
             label4.Name = "label4";
             label4.Size = new Size(127, 20);
             label4.TabIndex = 22;
@@ -378,7 +398,7 @@
             // lblDonViDongNhat
             // 
             lblDonViDongNhat.AutoSize = true;
-            lblDonViDongNhat.Location = new Point(477, 123);
+            lblDonViDongNhat.Location = new Point(172, 114);
             lblDonViDongNhat.Name = "lblDonViDongNhat";
             lblDonViDongNhat.Size = new Size(21, 20);
             lblDonViDongNhat.TabIndex = 27;
@@ -387,7 +407,7 @@
             // lblTuoiTrungBinh
             // 
             lblTuoiTrungBinh.AutoSize = true;
-            lblTuoiTrungBinh.Location = new Point(477, 85);
+            lblTuoiTrungBinh.Location = new Point(172, 94);
             lblTuoiTrungBinh.Name = "lblTuoiTrungBinh";
             lblTuoiTrungBinh.Size = new Size(17, 20);
             lblTuoiTrungBinh.TabIndex = 26;
@@ -396,7 +416,7 @@
             // lblNu
             // 
             lblNu.AutoSize = true;
-            lblNu.Location = new Point(477, 54);
+            lblNu.Location = new Point(172, 74);
             lblNu.Name = "lblNu";
             lblNu.Size = new Size(17, 20);
             lblNu.TabIndex = 25;
@@ -405,7 +425,7 @@
             // lblNam
             // 
             lblNam.AutoSize = true;
-            lblNam.Location = new Point(477, 19);
+            lblNam.Location = new Point(172, 54);
             lblNam.Name = "lblNam";
             lblNam.Size = new Size(17, 20);
             lblNam.TabIndex = 24;
@@ -413,28 +433,88 @@
             // 
             // btnChangePassword
             // 
-            btnChangePassword.Location = new Point(112, 120);
+            btnChangePassword.Font = new Font("Segoe UI", 10F);
+            btnChangePassword.Location = new Point(137, 132);
             btnChangePassword.Name = "btnChangePassword";
-            btnChangePassword.Size = new Size(133, 29);
+            btnChangePassword.Size = new Size(164, 36);
             btnChangePassword.TabIndex = 28;
             btnChangePassword.Text = "🔑 Đổi mật khẩu";
             btnChangePassword.UseVisualStyleBackColor = true;
             btnChangePassword.Click += btnChangePassword_Click;
             // 
+            // pnlThongKe
+            // 
+            pnlThongKe.Controls.Add(lblThongke);
+            pnlThongKe.Controls.Add(lblDonViDongNhat);
+            pnlThongKe.Controls.Add(label4);
+            pnlThongKe.Controls.Add(lblNam);
+            pnlThongKe.Controls.Add(lblNu);
+            pnlThongKe.Controls.Add(lblTuoiTrungBinh);
+            pnlThongKe.Controls.Add(label3);
+            pnlThongKe.Controls.Add(label2);
+            pnlThongKe.Controls.Add(label1);
+            pnlThongKe.Location = new Point(321, 6);
+            pnlThongKe.Name = "pnlThongKe";
+            pnlThongKe.Size = new Size(271, 143);
+            pnlThongKe.TabIndex = 29;
+            // 
+            // lblThongke
+            // 
+            lblThongke.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
+            lblThongke.AutoSize = true;
+            lblThongke.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold);
+            lblThongke.Location = new Point(83, 11);
+            lblThongke.Name = "lblThongke";
+            lblThongke.Size = new Size(96, 23);
+            lblThongke.TabIndex = 9;
+            lblThongke.Text = "THỐNG KÊ";
+            // 
+            // pnlSearch
+            // 
+            pnlSearch.BackColor = Color.White;
+            pnlSearch.Controls.Add(txtSearch);
+            pnlSearch.Location = new Point(12, 6);
+            pnlSearch.Name = "pnlSearch";
+            pnlSearch.Padding = new Padding(5);
+            pnlSearch.Size = new Size(289, 41);
+            pnlSearch.TabIndex = 30;
+            // 
+            // statusStrip1
+            // 
+            statusStrip1.ImageScalingSize = new Size(20, 20);
+            statusStrip1.Items.AddRange(new ToolStripItem[] { lblUser, lblRole, lblTime });
+            statusStrip1.Location = new Point(0, 424);
+            statusStrip1.Name = "statusStrip1";
+            statusStrip1.Size = new Size(1667, 26);
+            statusStrip1.TabIndex = 31;
+            statusStrip1.Text = "statusStrip1";
+            // 
+            // lblUser
+            // 
+            lblUser.Name = "lblUser";
+            lblUser.Size = new Size(55, 20);
+            lblUser.Text = "lblUser";
+            // 
+            // lblRole
+            // 
+            lblRole.Name = "lblRole";
+            lblRole.Size = new Size(56, 20);
+            lblRole.Text = "lblRole";
+            // 
+            // lblTime
+            // 
+            lblTime.Name = "lblTime";
+            lblTime.Size = new Size(59, 20);
+            lblTime.Text = "lblTime";
+            // 
             // FrmPersonnelList
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1554, 450);
+            ClientSize = new Size(1667, 450);
+            Controls.Add(statusStrip1);
+            Controls.Add(pnlThongKe);
             Controls.Add(btnChangePassword);
-            Controls.Add(lblDonViDongNhat);
-            Controls.Add(lblTuoiTrungBinh);
-            Controls.Add(lblNu);
-            Controls.Add(lblNam);
-            Controls.Add(label4);
-            Controls.Add(label3);
-            Controls.Add(label2);
-            Controls.Add(label1);
             Controls.Add(btnAuditLog);
             Controls.Add(btnUsers);
             Controls.Add(btnLogout);
@@ -447,11 +527,11 @@
             Controls.Add(btnDelete);
             Controls.Add(btnEdit);
             Controls.Add(btnAdd);
-            Controls.Add(txtSearch);
             Controls.Add(pnlTongCBCS);
             Controls.Add(pnlDangVien);
             Controls.Add(pnlCanBo);
             Controls.Add(pnlChienSi);
+            Controls.Add(pnlSearch);
             Name = "FrmPersonnelList";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "FrmPersonnelList";
@@ -466,6 +546,12 @@
             pnlCanBo.PerformLayout();
             pnlDangVien.ResumeLayout(false);
             pnlDangVien.PerformLayout();
+            pnlThongKe.ResumeLayout(false);
+            pnlThongKe.PerformLayout();
+            pnlSearch.ResumeLayout(false);
+            pnlSearch.PerformLayout();
+            statusStrip1.ResumeLayout(false);
+            statusStrip1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -506,5 +592,12 @@
         private Label lblNu;
         private Label lblNam;
         private Button btnChangePassword;
+        private Panel pnlThongKe;
+        private Label lblThongke;
+        private Panel pnlSearch;
+        private StatusStrip statusStrip1;
+        private ToolStripStatusLabel lblUser;
+        private ToolStripStatusLabel lblRole;
+        private ToolStripStatusLabel lblTime;
     }
 }
