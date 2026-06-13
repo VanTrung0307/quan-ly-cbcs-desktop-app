@@ -69,6 +69,10 @@
             lblUser = new ToolStripStatusLabel();
             lblRole = new ToolStripStatusLabel();
             lblTime = new ToolStripStatusLabel();
+            lblRecordCount = new ToolStripStatusLabel();
+            cboDonVi = new ComboBox();
+            cboCapBac = new ComboBox();
+            cboChucVu = new ComboBox();
             ((System.ComponentModel.ISupportInitialize)dgvPersonnel).BeginInit();
             pnlTongCBCS.SuspendLayout();
             pnlChienSi.SuspendLayout();
@@ -126,7 +130,7 @@
             // btnRefresh
             // 
             btnRefresh.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnRefresh.Location = new Point(1535, 114);
+            btnRefresh.Location = new Point(1535, 132);
             btnRefresh.Name = "btnRefresh";
             btnRefresh.Size = new Size(120, 36);
             btnRefresh.TabIndex = 4;
@@ -154,7 +158,7 @@
             // btnExport
             // 
             btnExport.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnExport.Location = new Point(1409, 116);
+            btnExport.Location = new Point(1409, 134);
             btnExport.Name = "btnExport";
             btnExport.Size = new Size(120, 36);
             btnExport.TabIndex = 6;
@@ -212,6 +216,7 @@
             pnlTongCBCS.Controls.Add(lblTongValue);
             pnlTongCBCS.Controls.Add(lblTongTitle);
             pnlTongCBCS.Location = new Point(623, 12);
+            pnlTongCBCS.Margin = new Padding(15);
             pnlTongCBCS.Name = "pnlTongCBCS";
             pnlTongCBCS.Size = new Size(166, 114);
             pnlTongCBCS.TabIndex = 11;
@@ -232,6 +237,7 @@
             pnlChienSi.Controls.Add(lblChienSiValue);
             pnlChienSi.Controls.Add(lblChienSiTitle);
             pnlChienSi.Location = new Point(812, 12);
+            pnlChienSi.Margin = new Padding(15);
             pnlChienSi.Name = "pnlChienSi";
             pnlChienSi.Size = new Size(166, 114);
             pnlChienSi.TabIndex = 12;
@@ -252,6 +258,7 @@
             pnlCanBo.Controls.Add(lblCanBoValue);
             pnlCanBo.Controls.Add(lblCanBoTitle);
             pnlCanBo.Location = new Point(999, 12);
+            pnlCanBo.Margin = new Padding(15);
             pnlCanBo.Name = "pnlCanBo";
             pnlCanBo.Size = new Size(166, 114);
             pnlCanBo.TabIndex = 12;
@@ -273,6 +280,7 @@
             pnlDangVien.Controls.Add(lblDangVienValue);
             pnlDangVien.Controls.Add(lblDangVienTitle);
             pnlDangVien.Location = new Point(1187, 12);
+            pnlDangVien.Margin = new Padding(15);
             pnlDangVien.Name = "pnlDangVien";
             pnlDangVien.Size = new Size(166, 114);
             pnlDangVien.TabIndex = 12;
@@ -290,7 +298,7 @@
             // btnBackup
             // 
             btnBackup.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnBackup.Location = new Point(1409, 72);
+            btnBackup.Location = new Point(1409, 90);
             btnBackup.Name = "btnBackup";
             btnBackup.Size = new Size(120, 36);
             btnBackup.TabIndex = 13;
@@ -301,7 +309,7 @@
             // btnRestore
             // 
             btnRestore.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnRestore.Location = new Point(1535, 72);
+            btnRestore.Location = new Point(1535, 90);
             btnRestore.Name = "btnRestore";
             btnRestore.Size = new Size(120, 36);
             btnRestore.TabIndex = 14;
@@ -454,6 +462,7 @@
             pnlThongKe.Controls.Add(label2);
             pnlThongKe.Controls.Add(label1);
             pnlThongKe.Location = new Point(321, 6);
+            pnlThongKe.Margin = new Padding(15);
             pnlThongKe.Name = "pnlThongKe";
             pnlThongKe.Size = new Size(271, 143);
             pnlThongKe.TabIndex = 29;
@@ -482,7 +491,7 @@
             // statusStrip1
             // 
             statusStrip1.ImageScalingSize = new Size(20, 20);
-            statusStrip1.Items.AddRange(new ToolStripItem[] { lblUser, lblRole, lblTime });
+            statusStrip1.Items.AddRange(new ToolStripItem[] { lblUser, lblRole, lblTime, lblRecordCount });
             statusStrip1.Location = new Point(0, 424);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(1667, 26);
@@ -507,11 +516,50 @@
             lblTime.Size = new Size(59, 20);
             lblTime.Text = "lblTime";
             // 
+            // lblRecordCount
+            // 
+            lblRecordCount.Name = "lblRecordCount";
+            lblRecordCount.Size = new Size(154, 20);
+            lblRecordCount.Text = "📋 Hiển thị: 0/0 CBCS";
+            // 
+            // cboDonVi
+            // 
+            cboDonVi.FormattingEnabled = true;
+            cboDonVi.Location = new Point(811, 140);
+            cboDonVi.Name = "cboDonVi";
+            cboDonVi.Size = new Size(166, 28);
+            cboDonVi.TabIndex = 32;
+            cboDonVi.Text = "Đơn vị";
+            cboDonVi.SelectedIndexChanged += FilterChanged;
+            // 
+            // cboCapBac
+            // 
+            cboCapBac.FormattingEnabled = true;
+            cboCapBac.Location = new Point(1000, 140);
+            cboCapBac.Name = "cboCapBac";
+            cboCapBac.Size = new Size(166, 28);
+            cboCapBac.TabIndex = 33;
+            cboCapBac.Text = "Cấp bậc";
+            cboCapBac.SelectedIndexChanged += FilterChanged;
+            // 
+            // cboChucVu
+            // 
+            cboChucVu.FormattingEnabled = true;
+            cboChucVu.Location = new Point(1187, 140);
+            cboChucVu.Name = "cboChucVu";
+            cboChucVu.Size = new Size(166, 28);
+            cboChucVu.TabIndex = 34;
+            cboChucVu.Text = "Chức vụ";
+            cboChucVu.SelectedIndexChanged += FilterChanged;
+            // 
             // FrmPersonnelList
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1667, 450);
+            Controls.Add(cboChucVu);
+            Controls.Add(cboCapBac);
+            Controls.Add(cboDonVi);
             Controls.Add(statusStrip1);
             Controls.Add(pnlThongKe);
             Controls.Add(btnChangePassword);
@@ -599,5 +647,9 @@
         private ToolStripStatusLabel lblUser;
         private ToolStripStatusLabel lblRole;
         private ToolStripStatusLabel lblTime;
+        private ToolStripStatusLabel lblRecordCount;
+        private ComboBox cboDonVi;
+        private ComboBox cboCapBac;
+        private ComboBox cboChucVu;
     }
 }

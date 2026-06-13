@@ -1,17 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuanLyCBCS.Data;
 using QuanLyCBCS.Enums;
-using System.Drawing;
 using QuanLyCBCS.Forms.SystemForms;
 using QuanLyCBCS.Forms.UserForms;
 using QuanLyCBCS.Helpers;
+using QuanLyCBCS.Models;
 using QuanLyCBCS.Services;
+using System.Drawing;
 
 namespace QuanLyCBCS.Forms.PersonnelForms
 {
     public partial class FrmPersonnelList : Form
     {
         private readonly PersonnelService _service = new();
+        private List<Personnel> _allPersonnel = new();
 
         private readonly System.Windows.Forms.Timer _idleTimer =
             new();
@@ -20,10 +22,11 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             new();
 
         private int _selectedPersonnelId;
-        private CancellationTokenSource?
-             _searchCts;
+
         private readonly AuditLogService _auditService =
             new AuditLogService();
+
+        private bool _filterLoaded;
 
         public FrmPersonnelList()
         {
@@ -238,14 +241,102 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
         private async Task LoadPersonnelAsync()
         {
-            dgvPersonnel.DataSource = null;
+            _allPersonnel =
+                await _service.GetAllAsync();
 
             dgvPersonnel.DataSource =
-                await _service.GetAllAsync();
+                _allPersonnel;
+
+            CustomizeDataGridView();
 
             AddSttColumn();
 
+            UpdateRecordCount(
+                _allPersonnel.Count);
+        }
+
+        private void UpdateRecordCount(
+            int currentCount)
+        {
+            lblRecordCount.Text =
+                $"📋 Hiển thị: {currentCount}/{_allPersonnel.Count} CBCS";
+        }
+
+        private void SearchPersonnel()
+        {
+            string keyword =
+                txtSearch.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(keyword))
+            {
+                dgvPersonnel.DataSource =
+                    _allPersonnel;
+
+                AddSttColumn();
+
+                UpdateRecordCount(
+                    _allPersonnel.Count);
+
+                return;
+            }
+
+            string keywordNoSign =
+                VietnameseHelper
+                    .RemoveVietnameseSigns(
+                        keyword)
+                    .ToLower();
+
+            var result =
+                _allPersonnel
+                .Where(x =>
+                    (x.HoTen != null &&
+                     VietnameseHelper
+                        .RemoveVietnameseSigns(
+                            x.HoTen)
+                        .ToLower()
+                        .Contains(keywordNoSign))
+
+                    ||
+
+                    (x.SoHieu != null &&
+                     x.SoHieu
+                        .ToLower()
+                        .Contains(keywordNoSign))
+
+                    ||
+
+                    (x.DonVi != null &&
+                     VietnameseHelper
+                        .RemoveVietnameseSigns(
+                            x.DonVi)
+                        .ToLower()
+                        .Contains(keywordNoSign))
+
+                    ||
+
+                    (x.ChucVu != null &&
+                     VietnameseHelper
+                        .RemoveVietnameseSigns(
+                            x.ChucVu)
+                        .ToLower()
+                        .Contains(keywordNoSign))
+
+                    ||
+
+                    (x.CCCD != null &&
+                     x.CCCD.Contains(keyword))
+                )
+                .ToList();
+
+            dgvPersonnel.DataSource =
+                result;
+
             CustomizeDataGridView();
+
+            AddSttColumn();
+
+            UpdateRecordCount(
+                result.Count);
         }
 
         private void CustomizeDataGridView()
@@ -341,6 +432,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             await LoadPersonnelAsync();
 
+            LoadFilterData();
+
             await LoadDashboardAsync();
         }
 
@@ -359,54 +452,11 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                     .Value);
         }
 
-        private async void txtSearch_TextChanged(
-            object sender,
+        private void txtSearch_TextChanged(
+            object? sender,
             EventArgs e)
         {
-            try
-            {
-                _searchCts?.Cancel();
-
-                _searchCts =
-                    new CancellationTokenSource();
-
-                var token =
-                    _searchCts.Token;
-
-                await Task.Delay(
-                    300,
-                    token);
-
-                string keyword =
-                    txtSearch.Text.Trim();
-
-                var result =
-                    await _service.SearchAsync(
-                        keyword);
-
-                if (token.IsCancellationRequested)
-                    return;
-
-                dgvPersonnel.DataSource = null;
-                dgvPersonnel.DataSource = result;
-
-                AddSttColumn();
-
-                CustomizeDataGridView();
-
-                this.Text =
-                    $"Quản lý CBCS - {result.Count} kết quả";
-            }
-            catch (TaskCanceledException)
-            {
-                // bỏ qua
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    ex.Message,
-                    "Lỗi tìm kiếm");
-            }
+            SearchPersonnel();
         }
 
         private async void btnRefresh_Click(
@@ -872,13 +922,108 @@ namespace QuanLyCBCS.Forms.PersonnelForms
         {
             lblTime.Text =
                 DateTime.Now.ToString(
-                    "dd/MM/yyyy HH:mm:ss");
+                    " dd/MM/yyyy HH:mm:ss |");
 
             lblUser.Text =
-                $"👤 {CurrentUser.Username}";
+                $"👤 {CurrentUser.Username} |";
 
             lblRole.Text =
-                $"🛡 {CurrentUser.Role}";
+                $" 🛡 {CurrentUser.Role} |";
+        }
+
+        private void ApplyFilter()
+        {
+            IEnumerable<Personnel> filtered =
+                _allPersonnel;
+
+            if (cboDonVi.Text != "Tất cả")
+            {
+                filtered =
+                    filtered.Where(
+                        x => x.DonVi ==
+                             cboDonVi.Text);
+            }
+
+            if (cboCapBac.Text != "Tất cả")
+            {
+                filtered =
+                    filtered.Where(
+                        x => x.CapBacHam ==
+                             cboCapBac.Text);
+            }
+
+            if (cboChucVu.Text != "Tất cả")
+            {
+                filtered =
+                    filtered.Where(
+                        x => x.ChucVu ==
+                             cboChucVu.Text);
+            }
+
+            var result =
+                filtered.ToList();
+
+            dgvPersonnel.DataSource =
+                result;
+
+            AddSttColumn();
+
+            UpdateRecordCount(
+                result.Count);
+        }
+
+        private void LoadFilterData()
+        {
+            cboDonVi.Items.Clear();
+            cboCapBac.Items.Clear();
+            cboChucVu.Items.Clear();
+
+            cboDonVi.Items.Add("Tất cả");
+            cboCapBac.Items.Add("Tất cả");
+            cboChucVu.Items.Add("Tất cả");
+
+            cboDonVi.Items.AddRange(
+                _allPersonnel
+                    .Select(x => x.DonVi)
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .Distinct()
+                    .OrderBy(x => x)
+                    .Cast<object>()
+                    .ToArray());
+
+            cboCapBac.Items.AddRange(
+                _allPersonnel
+                    .Select(x => x.CapBacHam)
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .Distinct()
+                    .OrderBy(x => x)
+                    .Cast<object>()
+                    .ToArray());
+
+            cboChucVu.Items.AddRange(
+                _allPersonnel
+                    .Select(x => x.ChucVu)
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .Distinct()
+                    .OrderBy(x => x)
+                    .Cast<object>()
+                    .ToArray());
+
+            cboDonVi.SelectedIndex = 0;
+            cboCapBac.SelectedIndex = 0;
+            cboChucVu.SelectedIndex = 0;
+
+            _filterLoaded = true;
+        }
+
+        private void FilterChanged(
+            object? sender,
+            EventArgs e)
+        {
+            if (!_filterLoaded)
+                return;
+
+            ApplyFilter();
         }
     }
 }
