@@ -18,6 +18,8 @@ namespace QuanLyCBCS.Forms.UserForms
         private async Task
             LoadUsersAsync()
         {
+            SetupDataGridView();
+
             dgvUsers.DataSource = null;
 
             dgvUsers.DataSource =
@@ -35,6 +37,39 @@ namespace QuanLyCBCS.Forms.UserForms
 
             dgvUsers.Columns["Role"]
                 .HeaderText = "Vai trò";
+
+            dgvUsers.Columns["FailedLoginCount"]
+                .HeaderText = "Đăng nhập sai";
+
+            dgvUsers.Columns["LockedUntil"]
+                .HeaderText = "Khóa đến";
+
+            dgvUsers.Columns["UserId"].Visible = false;
+
+            dgvUsers.Columns["Role"]
+                .DefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleCenter;
+
+            dgvUsers.Columns["FailedLoginCount"]
+                .DefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleCenter;
+
+            dgvUsers.Columns["LockedUntil"]
+                .DefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleCenter;
+
+            UpdateStatusBar();
+
+            AddSttColumn();
+
+            SetupTooltips();
+        }
+
+        private void SetupDataGridView()
+        {
+            DataGridViewHelper
+                .SetupDefaultStyle(
+                    dgvUsers);
         }
 
         private async void FrmUserList_Load(
@@ -158,6 +193,134 @@ namespace QuanLyCBCS.Forms.UserForms
                 "Thông báo",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
+        }
+
+        private void dgvUsers_CellFormatting(
+            object sender,
+            DataGridViewCellFormattingEventArgs e)
+        {
+            var style = e.CellStyle;
+
+            if (style == null)
+                return;
+
+            if (e.RowIndex < 0)
+                return;
+
+            string columnName =
+                dgvUsers.Columns[e.ColumnIndex]
+                    .Name;
+
+            if (columnName != "Role")
+                return;
+
+            if (columnName == "LockedUntil")
+            {
+                if (e.Value == null)
+                {
+                    e.Value = "Chưa khóa";
+                    style.ForeColor =
+                        Color.Gray;
+                }
+            }
+
+            string role =
+                e.Value?.ToString() ?? "";
+
+            if (role == "Admin")
+            {
+                style.BackColor =
+                    Color.FromArgb(39, 174, 96);
+
+                style.ForeColor =
+                    Color.White;
+
+                style.SelectionBackColor =
+                    Color.FromArgb(39, 174, 96);
+
+                style.SelectionForeColor =
+                    Color.White;
+            }
+            else
+            {
+                style.BackColor =
+                    Color.FromArgb(52, 152, 219);
+
+                style.ForeColor =
+                    Color.White;
+
+                style.SelectionBackColor =
+                    Color.FromArgb(52, 152, 219);
+
+                style.SelectionForeColor =
+                    Color.White;
+            }
+        }
+
+        private void UpdateStatusBar()
+        {
+            lblUserCount.Text =
+                $"Đang hiển thị: {dgvUsers.Rows.Count} tài khoản";
+        }
+
+        private void AddSttColumn()
+        {
+            if (dgvUsers.Columns["STT"] == null)
+            {
+                DataGridViewTextBoxColumn sttColumn =
+                    new DataGridViewTextBoxColumn();
+
+                sttColumn.Name = "STT";
+                sttColumn.HeaderText = "STT";
+                sttColumn.Width = 50;
+                sttColumn.ReadOnly = true;
+
+                dgvUsers.Columns.Insert(
+                    0,
+                    sttColumn);
+            }
+
+            dgvUsers.Columns["STT"].Visible = true;
+            dgvUsers.Columns["STT"].Frozen = true;
+
+            for (int i = 0;
+                 i < dgvUsers.Rows.Count;
+                 i++)
+            {
+                dgvUsers.Rows[i]
+                    .Cells["STT"]
+                    .Value = i + 1;
+            }
+        }
+
+        private void SetupTooltips()
+        {
+            toolTipMain.SetToolTip(
+                btnAddUser,
+                "Thêm tài khoản mới");
+
+            toolTipMain.SetToolTip(
+                btnDeleteUser,
+                "Xóa vĩnh viễn tài khoản được chọn");
+
+            toolTipMain.SetToolTip(
+                btnResetPassword,
+                "Đặt lại mật khẩu về: 123456");
+
+            toolTipMain.SetToolTip(
+                btnRefresh,
+                "Tải lại danh sách tài khoản");
+
+            toolTipMain.SetToolTip(
+                dgvUsers,
+                "Danh sách tài khoản hệ thống");
+        }
+
+        private async void btnRefresh_Click(
+            object sender,
+            EventArgs e)
+        {
+            await LoadUsersAsync();
         }
     }
 }

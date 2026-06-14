@@ -39,11 +39,6 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             StartPosition =
                 FormStartPosition.CenterScreen;
 
-            Size =
-                new Size(
-                    1200,
-                    750);
-
             txtSoHieu.TextChanged +=
                 (_, _) => ClearError(txtSoHieu);
 
@@ -55,6 +50,11 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             txtSoDienThoai.TextChanged +=
                 (_, _) => ClearError(txtSoDienThoai);
+
+             ToolTipHelper
+                .SetupPersonnelDetailToolTips(
+                    this,
+                    toolTipMain);
         }
 
         private void chkDangVien_CheckedChanged(
@@ -210,7 +210,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 txtViTriCongTac.Text.Trim();
 
             p.CapBacHam =
-                txtCapBacHam.Text.Trim();
+                cboCapBacHam.Text.Trim();
 
             p.NgayNhanCapBac =
                 dtNgayNhanCapBac.Value;
@@ -415,7 +415,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             txtViTriCongTac.Text =
                 p.ViTriCongTac;
 
-            txtCapBacHam.Text =
+            cboCapBacHam.Text =
                 p.CapBacHam;
 
             txtChucVu.Text =
@@ -618,8 +618,6 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             StyleTextBox(txtSoDienThoai);
 
             StyleTextBox(txtChucVu);
-
-            StyleTextBox(txtCapBacHam);
 
             StyleTextBox(txtDonVi);
         }

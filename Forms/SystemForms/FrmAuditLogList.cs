@@ -1,4 +1,5 @@
-﻿using QuanLyCBCS.Helpers;
+﻿using Microsoft.VisualBasic.Logging;
+using QuanLyCBCS.Helpers;
 using QuanLyCBCS.Services;
 
 
@@ -9,11 +10,15 @@ namespace QuanLyCBCS.Forms.SystemForms
         private readonly AuditLogService
             _auditService =
                 new AuditLogService();
+
+        private ToolTip _toolTip = new();
         public FrmAuditLogList()
         {
             InitializeComponent();
 
             PermissionHelper.CheckAdmin();
+
+            SetupTooltips();
         }
 
         private async Task LoadAuditLogsAsync()
@@ -26,6 +31,16 @@ namespace QuanLyCBCS.Forms.SystemForms
 
             AddSttColumn();
             CustomizeAuditGrid();
+
+            if (dgvAuditLogs.Columns["AuditLogId"] != null)
+            {
+                dgvAuditLogs.Columns["AuditLogId"].Visible =
+                    false;
+            }
+
+            lblStatus.Text =
+                $"Đang hiển thị: {dgvAuditLogs.Rows.Count} bản ghi";
+
         }
 
         private async void FrmAuditLogList_Load(
@@ -40,6 +55,8 @@ namespace QuanLyCBCS.Forms.SystemForms
                 this.BeginInvoke(() => Close());
                 return;
             }
+
+            SetupDataGridView();
 
             await LoadAuditLogsAsync();
         }
@@ -137,6 +154,143 @@ namespace QuanLyCBCS.Forms.SystemForms
                     .SearchAsync(keyword);
 
             dgvAuditLogs.DataSource = data;
+        }
+
+        private void SetupDataGridView()
+        {
+            DataGridViewHelper
+                .SetupDefaultStyle(dgvAuditLogs);
+
+            dgvAuditLogs.RowTemplate.Height = 35;
+
+            dgvAuditLogs.AutoSizeRowsMode =
+                DataGridViewAutoSizeRowsMode.None;
+
+            dgvAuditLogs.SelectionMode =
+                DataGridViewSelectionMode.FullRowSelect;
+
+            dgvAuditLogs.MultiSelect = false;
+
+            dgvAuditLogs.ReadOnly = true;
+
+            dgvAuditLogs.AllowUserToAddRows = false;
+
+            dgvAuditLogs.AllowUserToDeleteRows = false;
+        }
+
+        private void dgvAuditLogs_CellFormatting(
+            object? sender,
+            DataGridViewCellFormattingEventArgs e)
+        {
+            var style = e.CellStyle;
+
+            if (e.RowIndex < 0)
+                return;
+
+            if (style == null)
+                return;
+
+            string columnName =
+                dgvAuditLogs.Columns[e.ColumnIndex]
+                .Name;
+
+            if (columnName != "Action")
+                return;
+
+            string action =
+                e.Value?.ToString() ?? "";
+
+            if (action == "LOGIN")
+            {
+                style.BackColor =
+                    Color.FromArgb(
+                        39,
+                        174,
+                        96);
+
+                style.ForeColor =
+                    Color.White;
+
+                style.SelectionBackColor =
+                    Color.FromArgb(
+                        39,
+                        174,
+                        96);
+
+                style.SelectionForeColor =
+                    Color.White;
+            }
+            else if (action == "FAILED_LOGIN")
+            {
+                style.BackColor =
+                    Color.FromArgb(
+                        231,
+                        76,
+                        60);
+
+                style.ForeColor =
+                    Color.White;
+
+                style.SelectionBackColor =
+                    Color.FromArgb(
+                        231,
+                        76,
+                        60);
+
+                style.SelectionForeColor =
+                    Color.White;
+            }
+            else if (action == "LOGOUT")
+            {
+                style.BackColor =
+                    Color.FromArgb(
+                        243,
+                        156,
+                        18);
+
+                style.ForeColor =
+                    Color.White;
+
+                style.SelectionBackColor =
+                    Color.FromArgb(
+                        243,
+                        156,
+                        18);
+
+                style.SelectionForeColor =
+                    Color.White;
+            }
+            else if (action == "RESET_PASSWORD")
+            {
+                style.BackColor =
+                    Color.FromArgb(
+                        52,
+                        152,
+                        219);
+
+                style.ForeColor =
+                    Color.White;
+
+                style.SelectionBackColor =
+                    Color.FromArgb(
+                        52,
+                        152,
+                        219);
+
+                style.SelectionForeColor =
+                    Color.White;
+            }
+        }
+
+        private void SetupTooltips()
+        {
+            _toolTip.SetToolTip(
+                btnSearch,
+                "Tìm kiếm nhật ký");
+
+            _toolTip.SetToolTip(
+                btnRefresh,
+                "Tải lại dữ liệu");
         }
     }
 }

@@ -116,6 +116,16 @@ namespace QuanLyCBCS.Helpers
 
             SetHeaderText(
                 dgv,
+                "QueQuanMoi",
+                "Quê quán");
+
+            SetHeaderText(
+                dgv,
+                "HKTTMoi",
+                "Hộ khẩu thường trú");
+
+            SetHeaderText(
+                dgv,
                 "CCCD",
                 "CCCD");
 
@@ -167,6 +177,16 @@ namespace QuanLyCBCS.Helpers
                 dgv,
                 "ChucVu",
                 180);
+
+            SetColumnWidth(
+                dgv,
+                "QueQuanMoi",
+                160);
+
+            SetColumnWidth(
+                dgv,
+                "HKTTMoi",
+                220);
 
             SetColumnWidth(
                 dgv,
@@ -260,6 +280,8 @@ namespace QuanLyCBCS.Helpers
                 "NgaySinh",
                 "CapBacHam",
                 "ChucVu",
+                "QueQuanMoi",
+                "HKTTMoi",
                 "CCCD",
                 "SoDienThoai"
             };
@@ -326,6 +348,60 @@ namespace QuanLyCBCS.Helpers
                     dgv,
                     true,
                     null);
+        }
+
+        public static void SetupDefaultStyle(
+            DataGridView dgv)
+        {
+            dgv.BorderStyle =
+                BorderStyle.None;
+
+            dgv.BackgroundColor =
+                Color.White;
+
+            dgv.EnableHeadersVisualStyles =
+                false;
+
+            dgv.ColumnHeadersDefaultCellStyle
+                .BackColor =
+                ThemeHelper.PrimaryColor;
+
+            dgv.ColumnHeadersDefaultCellStyle
+                .ForeColor =
+                Color.White;
+
+            dgv.ColumnHeadersDefaultCellStyle
+                .Font =
+                new Font(
+                    "Segoe UI",
+                    10,
+                    FontStyle.Bold);
+
+            dgv.ColumnHeadersHeight = 40;
+
+            dgv.RowTemplate.Height = 35;
+
+            dgv.SelectionMode =
+                DataGridViewSelectionMode
+                    .FullRowSelect;
+
+            dgv.MultiSelect = false;
+
+            dgv.ReadOnly = true;
+
+            dgv.AllowUserToAddRows = false;
+
+            dgv.AllowUserToDeleteRows = false;
+
+            dgv.AutoSizeRowsMode =
+                DataGridViewAutoSizeRowsMode.None;
+
+            dgv.AlternatingRowsDefaultCellStyle
+                .BackColor =
+                Color.FromArgb(
+                    248,
+                    249,
+                    250);
         }
     }
 }

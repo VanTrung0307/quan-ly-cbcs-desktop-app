@@ -12,6 +12,26 @@ namespace QuanLyCBCS.Forms.UserForms
             InitializeComponent();
 
             _service = new UserService();
+
+            toolTipMain.SetToolTip(
+                txtOldPassword,
+                "Mật khẩu hiện tại");
+
+            toolTipMain.SetToolTip(
+                txtNewPassword,
+                "Mật khẩu mới");
+
+            toolTipMain.SetToolTip(
+                txtConfirmPassword,
+                "Xác nhận mật khẩu mới");
+
+            toolTipMain.SetToolTip(
+                btnSave,
+                "Lưu thay đổi");
+
+            toolTipMain.SetToolTip(
+                btnCancel,
+                "Đóng cửa sổ");
         }
 
         private async void btnSave_Click(

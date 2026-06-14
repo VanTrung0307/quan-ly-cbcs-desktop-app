@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmPersonnelList));
             txtSearch = new TextBox();
             btnAdd = new Button();
             btnEdit = new Button();
@@ -100,7 +101,7 @@
             // btnAdd
             // 
             btnAdd.Font = new Font("Segoe UI", 10F);
-            btnAdd.Location = new Point(12, 50);
+            btnAdd.Location = new Point(12, 64);
             btnAdd.Name = "btnAdd";
             btnAdd.Size = new Size(115, 36);
             btnAdd.TabIndex = 1;
@@ -111,7 +112,7 @@
             // btnEdit
             // 
             btnEdit.Font = new Font("Segoe UI", 10F);
-            btnEdit.Location = new Point(12, 90);
+            btnEdit.Location = new Point(12, 104);
             btnEdit.Name = "btnEdit";
             btnEdit.Size = new Size(115, 36);
             btnEdit.TabIndex = 2;
@@ -121,7 +122,7 @@
             // btnDelete
             // 
             btnDelete.Font = new Font("Segoe UI", 10F);
-            btnDelete.Location = new Point(12, 132);
+            btnDelete.Location = new Point(12, 146);
             btnDelete.Name = "btnDelete";
             btnDelete.Size = new Size(115, 36);
             btnDelete.TabIndex = 3;
@@ -132,12 +133,16 @@
             // btnRefresh
             // 
             btnRefresh.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnRefresh.Location = new Point(1535, 132);
+            btnRefresh.BackColor = Color.FromArgb(52, 73, 94);
+            btnRefresh.FlatAppearance.BorderSize = 0;
+            btnRefresh.FlatStyle = FlatStyle.Flat;
+            btnRefresh.ForeColor = Color.White;
+            btnRefresh.Location = new Point(1703, 164);
             btnRefresh.Name = "btnRefresh";
             btnRefresh.Size = new Size(120, 36);
             btnRefresh.TabIndex = 4;
             btnRefresh.Text = "⟳ Làm mới";
-            btnRefresh.UseVisualStyleBackColor = true;
+            btnRefresh.UseVisualStyleBackColor = false;
             // 
             // dgvPersonnel
             // 
@@ -145,14 +150,14 @@
             dgvPersonnel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvPersonnel.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvPersonnel.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvPersonnel.Location = new Point(1, 174);
+            dgvPersonnel.Location = new Point(1, 208);
             dgvPersonnel.MultiSelect = false;
             dgvPersonnel.Name = "dgvPersonnel";
             dgvPersonnel.ReadOnly = true;
             dgvPersonnel.RowHeadersVisible = false;
             dgvPersonnel.RowHeadersWidth = 51;
             dgvPersonnel.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvPersonnel.Size = new Size(1665, 276);
+            dgvPersonnel.Size = new Size(1840, 242);
             dgvPersonnel.TabIndex = 5;
             dgvPersonnel.CellClick += dgvPersonnel_CellClick;
             dgvPersonnel.CellDoubleClick += dgvPersonnel_CellDoubleClick;
@@ -160,12 +165,15 @@
             // btnExport
             // 
             btnExport.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnExport.Location = new Point(1409, 134);
+            btnExport.BackColor = Color.FromArgb(39, 174, 96);
+            btnExport.FlatStyle = FlatStyle.Flat;
+            btnExport.ForeColor = Color.White;
+            btnExport.Location = new Point(1577, 166);
             btnExport.Name = "btnExport";
             btnExport.Size = new Size(120, 36);
             btnExport.TabIndex = 6;
             btnExport.Text = "📊 Excel";
-            btnExport.UseVisualStyleBackColor = true;
+            btnExport.UseVisualStyleBackColor = false;
             btnExport.Click += btnExport_Click;
             // 
             // lblTongTitle
@@ -217,7 +225,7 @@
             pnlTongCBCS.Anchor = AnchorStyles.Top;
             pnlTongCBCS.Controls.Add(lblTongValue);
             pnlTongCBCS.Controls.Add(lblTongTitle);
-            pnlTongCBCS.Location = new Point(623, 12);
+            pnlTongCBCS.Location = new Point(719, 12);
             pnlTongCBCS.Margin = new Padding(15);
             pnlTongCBCS.Name = "pnlTongCBCS";
             pnlTongCBCS.Size = new Size(166, 114);
@@ -238,7 +246,7 @@
             pnlChienSi.Anchor = AnchorStyles.Top;
             pnlChienSi.Controls.Add(lblChienSiValue);
             pnlChienSi.Controls.Add(lblChienSiTitle);
-            pnlChienSi.Location = new Point(812, 12);
+            pnlChienSi.Location = new Point(908, 12);
             pnlChienSi.Margin = new Padding(15);
             pnlChienSi.Name = "pnlChienSi";
             pnlChienSi.Size = new Size(166, 114);
@@ -259,7 +267,7 @@
             pnlCanBo.Anchor = AnchorStyles.Top;
             pnlCanBo.Controls.Add(lblCanBoValue);
             pnlCanBo.Controls.Add(lblCanBoTitle);
-            pnlCanBo.Location = new Point(999, 12);
+            pnlCanBo.Location = new Point(1095, 12);
             pnlCanBo.Margin = new Padding(15);
             pnlCanBo.Name = "pnlCanBo";
             pnlCanBo.Size = new Size(166, 114);
@@ -281,7 +289,7 @@
             pnlDangVien.Anchor = AnchorStyles.Top;
             pnlDangVien.Controls.Add(lblDangVienValue);
             pnlDangVien.Controls.Add(lblDangVienTitle);
-            pnlDangVien.Location = new Point(1187, 12);
+            pnlDangVien.Location = new Point(1283, 12);
             pnlDangVien.Margin = new Padding(15);
             pnlDangVien.Name = "pnlDangVien";
             pnlDangVien.Size = new Size(166, 114);
@@ -300,23 +308,31 @@
             // btnBackup
             // 
             btnBackup.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnBackup.Location = new Point(1409, 90);
+            btnBackup.BackColor = Color.FromArgb(52, 152, 219);
+            btnBackup.FlatAppearance.BorderSize = 0;
+            btnBackup.FlatStyle = FlatStyle.Flat;
+            btnBackup.ForeColor = Color.White;
+            btnBackup.Location = new Point(1577, 122);
             btnBackup.Name = "btnBackup";
             btnBackup.Size = new Size(120, 36);
             btnBackup.TabIndex = 13;
             btnBackup.Text = "💽 Backup";
-            btnBackup.UseVisualStyleBackColor = true;
+            btnBackup.UseVisualStyleBackColor = false;
             btnBackup.Click += btnBackup_Click;
             // 
             // btnRestore
             // 
             btnRestore.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnRestore.Location = new Point(1535, 90);
+            btnRestore.BackColor = Color.FromArgb(243, 156, 18);
+            btnRestore.FlatAppearance.BorderSize = 0;
+            btnRestore.FlatStyle = FlatStyle.Flat;
+            btnRestore.ForeColor = Color.White;
+            btnRestore.Location = new Point(1703, 122);
             btnRestore.Name = "btnRestore";
             btnRestore.Size = new Size(120, 36);
             btnRestore.TabIndex = 14;
             btnRestore.Text = "🔄️ Restore";
-            btnRestore.UseVisualStyleBackColor = true;
+            btnRestore.UseVisualStyleBackColor = false;
             btnRestore.Click += btnRestore_Click;
             // 
             // lblCurrentUser
@@ -324,7 +340,7 @@
             lblCurrentUser.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblCurrentUser.AutoSize = true;
             lblCurrentUser.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblCurrentUser.Location = new Point(1447, 27);
+            lblCurrentUser.Location = new Point(1622, 27);
             lblCurrentUser.Name = "lblCurrentUser";
             lblCurrentUser.Size = new Size(104, 20);
             lblCurrentUser.TabIndex = 15;
@@ -338,7 +354,7 @@
             btnLogout.FlatStyle = FlatStyle.Flat;
             btnLogout.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnLogout.ForeColor = SystemColors.ButtonHighlight;
-            btnLogout.Location = new Point(1593, 9);
+            btnLogout.Location = new Point(1768, 9);
             btnLogout.Name = "btnLogout";
             btnLogout.Padding = new Padding(5);
             btnLogout.Size = new Size(48, 48);
@@ -350,7 +366,7 @@
             // btnUsers
             // 
             btnUsers.Font = new Font("Segoe UI", 10F);
-            btnUsers.Location = new Point(137, 50);
+            btnUsers.Location = new Point(137, 64);
             btnUsers.Name = "btnUsers";
             btnUsers.Size = new Size(164, 36);
             btnUsers.TabIndex = 17;
@@ -361,7 +377,7 @@
             // btnAuditLog
             // 
             btnAuditLog.Font = new Font("Segoe UI", 10F);
-            btnAuditLog.Location = new Point(137, 90);
+            btnAuditLog.Location = new Point(137, 104);
             btnAuditLog.Name = "btnAuditLog";
             btnAuditLog.Size = new Size(164, 36);
             btnAuditLog.TabIndex = 18;
@@ -444,7 +460,7 @@
             // btnChangePassword
             // 
             btnChangePassword.Font = new Font("Segoe UI", 10F);
-            btnChangePassword.Location = new Point(137, 132);
+            btnChangePassword.Location = new Point(137, 146);
             btnChangePassword.Name = "btnChangePassword";
             btnChangePassword.Size = new Size(164, 36);
             btnChangePassword.TabIndex = 28;
@@ -463,7 +479,7 @@
             pnlThongKe.Controls.Add(label3);
             pnlThongKe.Controls.Add(label2);
             pnlThongKe.Controls.Add(label1);
-            pnlThongKe.Location = new Point(321, 6);
+            pnlThongKe.Location = new Point(381, 9);
             pnlThongKe.Margin = new Padding(15);
             pnlThongKe.Name = "pnlThongKe";
             pnlThongKe.Size = new Size(271, 143);
@@ -484,7 +500,7 @@
             // 
             pnlSearch.BackColor = Color.White;
             pnlSearch.Controls.Add(txtSearch);
-            pnlSearch.Location = new Point(12, 6);
+            pnlSearch.Location = new Point(12, 12);
             pnlSearch.Name = "pnlSearch";
             pnlSearch.Padding = new Padding(5);
             pnlSearch.Size = new Size(289, 41);
@@ -496,7 +512,7 @@
             statusStrip1.Items.AddRange(new ToolStripItem[] { lblUser, lblRole, lblTime, lblRecordCount });
             statusStrip1.Location = new Point(0, 424);
             statusStrip1.Name = "statusStrip1";
-            statusStrip1.Size = new Size(1667, 26);
+            statusStrip1.Size = new Size(1842, 26);
             statusStrip1.TabIndex = 31;
             statusStrip1.Text = "statusStrip1";
             // 
@@ -527,7 +543,7 @@
             // cboDonVi
             // 
             cboDonVi.FormattingEnabled = true;
-            cboDonVi.Location = new Point(811, 140);
+            cboDonVi.Location = new Point(907, 174);
             cboDonVi.Name = "cboDonVi";
             cboDonVi.Size = new Size(166, 28);
             cboDonVi.TabIndex = 32;
@@ -537,7 +553,7 @@
             // cboCapBac
             // 
             cboCapBac.FormattingEnabled = true;
-            cboCapBac.Location = new Point(1000, 140);
+            cboCapBac.Location = new Point(1096, 174);
             cboCapBac.Name = "cboCapBac";
             cboCapBac.Size = new Size(166, 28);
             cboCapBac.TabIndex = 33;
@@ -547,7 +563,7 @@
             // cboChucVu
             // 
             cboChucVu.FormattingEnabled = true;
-            cboChucVu.Location = new Point(1187, 140);
+            cboChucVu.Location = new Point(1283, 174);
             cboChucVu.Name = "cboChucVu";
             cboChucVu.Size = new Size(166, 28);
             cboChucVu.TabIndex = 34;
@@ -558,7 +574,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1667, 450);
+            ClientSize = new Size(1842, 450);
             Controls.Add(cboChucVu);
             Controls.Add(cboCapBac);
             Controls.Add(cboDonVi);
@@ -582,6 +598,7 @@
             Controls.Add(pnlCanBo);
             Controls.Add(pnlChienSi);
             Controls.Add(pnlSearch);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FrmPersonnelList";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "FrmPersonnelList";

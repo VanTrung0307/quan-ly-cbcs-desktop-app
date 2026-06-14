@@ -1,6 +1,7 @@
 ﻿using QuanLyCBCS.Helpers;
 using QuanLyCBCS.Models;
 using QuanLyCBCS.Services;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace QuanLyCBCS.Forms.UserForms
 {
@@ -16,10 +17,27 @@ namespace QuanLyCBCS.Forms.UserForms
             cboRole.Items.Add("Admin");
             cboRole.Items.Add("User");
 
-            _userService =
-                new UserService();
-
             cboRole.SelectedIndex = 0;
+
+            toolTipMain.SetToolTip(
+                txtUsername,
+                "Tên đăng nhập hệ thống");
+
+            toolTipMain.SetToolTip(
+                txtPassword,
+                "Mật khẩu đăng nhập");
+
+            toolTipMain.SetToolTip(
+                cboRole,
+                "Vai trò người dùng");
+
+            toolTipMain.SetToolTip(
+                btnSave,
+                "Lưu thông tin");
+
+            toolTipMain.SetToolTip(
+                btnCancel,
+                "Đóng cửa sổ");
         }
 
         private async void btnSave_Click(

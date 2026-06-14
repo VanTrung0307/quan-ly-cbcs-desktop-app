@@ -96,7 +96,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             btn.Font =
                 new Font(
                     "Segoe UI",
-                    10,
+                    9,
                     FontStyle.Bold);
 
             RoundedControlHelper.SetRounded(
@@ -121,11 +121,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 btnDelete,
                 btnUsers,
                 btnAuditLog,
-                btnChangePassword,
-                btnExport,
-                btnBackup,
-                btnRestore,
-                btnRefresh);
+                btnChangePassword
+                );
 
             RegisterHoverEffect(
                 btnAdd,
@@ -133,11 +130,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 btnDelete,
                 btnUsers,
                 btnAuditLog,
-                btnChangePassword,
-                btnExport,
-                btnBackup,
-                btnRestore,
-                btnRefresh);
+                btnChangePassword
+                );
         }
 
         private void ConfigureTimers()
@@ -219,7 +213,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
                 sttColumn.Name = "STT";
                 sttColumn.HeaderText = "STT";
-                sttColumn.Width = 60;
+                sttColumn.Width = 50;
                 sttColumn.ReadOnly = true;
 
                 dgvPersonnel.Columns.Insert(
@@ -228,6 +222,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             }
 
             dgvPersonnel.Columns["STT"].Visible = true;
+            dgvPersonnel.Columns["STT"].Frozen = true;
 
             for (int i = 0;
                  i < dgvPersonnel.Rows.Count;
@@ -358,6 +353,19 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             DataGridViewHelper.ConfigureVisibleColumns(
                 dgvPersonnel);
+
+            dgvPersonnel.Columns["CCCD"]
+                .DefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleCenter;
+
+            dgvPersonnel.Columns["SoDienThoai"]
+                .DefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleCenter;
+
+            dgvPersonnel.ColumnHeadersHeight = 50;
+
+            dgvPersonnel.Columns["QueQuanMoi"].Width = 220;
+            dgvPersonnel.Columns["QueQuanMoi"].Width = 170;
         }
 
         private void SetupRoundedControls()
@@ -687,7 +695,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             DashboardHelper.ApplyPanelColor(
                 pnlTongCBCS,
-                ThemeHelper.PrimaryColor);
+                ThemeHelper.AccentColor);
 
             DashboardHelper.ApplyPanelColor(
                 pnlChienSi,
@@ -1073,6 +1081,68 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             _toolTip.SetToolTip(
                 btnLogout,
                 "Đăng xuất");
+
+            _toolTip.SetToolTip(
+                pnlTongCBCS,
+                "Tổng số cán bộ chiến sĩ hiện có");
+
+            _toolTip.SetToolTip(
+                pnlChienSi,
+                "Tổng số chiến sĩ");
+
+            _toolTip.SetToolTip(
+                pnlCanBo,
+                "Tổng số cán bộ");
+
+            _toolTip.SetToolTip(
+                pnlDangVien,
+                "Tổng số đảng viên");
+
+            _toolTip.SetToolTip(
+                pnlThongKe,
+                "Thông tin thống kê nhanh của đơn vị");
+
+            _toolTip.SetToolTip(
+                lblTongTitle,
+                "Tổng số cán bộ chiến sĩ hiện có"); 
+
+            _toolTip.SetToolTip(
+                lblChienSiTitle,
+                "Tổng số chiến sĩ");
+
+            _toolTip.SetToolTip(
+                lblCanBoTitle,
+                "Tổng số cán bộ");
+
+            _toolTip.SetToolTip(
+                lblDangVienTitle,
+                "Tổng số đảng viên");
+
+            _toolTip.SetToolTip(
+                lblThongke,
+                "Thông tin thống kê nhanh của đơn vị");
+        }
+
+        private void dgvPersonnel_CellMouseEnter(
+            object sender,
+            DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0)
+                return;
+
+            if (e.ColumnIndex < 0)
+                return;
+
+            var value =
+                dgvPersonnel.Rows[e.RowIndex]
+                    .Cells[e.ColumnIndex]
+                    .Value?
+                    .ToString();
+
+            dgvPersonnel.Rows[e.RowIndex]
+                .Cells[e.ColumnIndex]
+                .ToolTipText =
+                value ?? "";
         }
     }
 }
