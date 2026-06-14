@@ -28,8 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             tabMain = new TabControl();
             tabPage1 = new TabPage();
+            pnlHeader = new Panel();
+            lblSubTitle = new Label();
+            lblTitle = new Label();
             lblSoDienThoai = new Label();
             txtSoDienThoai = new TextBox();
             lblNgayCap = new Label();
@@ -50,16 +54,16 @@
             lblSoHieu = new Label();
             tabPage2 = new TabPage();
             txtHKTTCu = new TextBox();
-            lblHKTTCu = new Label();
             txtHKTTMoi = new TextBox();
-            lblHKTTMoi = new Label();
             txtTinhCu = new TextBox();
-            lblTinhCu = new Label();
             txtTinhMoi = new TextBox();
-            lblTinhMoi = new Label();
             txtQueQuanCu = new TextBox();
-            lblQueQuanCu = new Label();
             txtQueQuanMoi = new TextBox();
+            lblHKTTCu = new Label();
+            lblHKTTMoi = new Label();
+            lblTinhCu = new Label();
+            lblTinhMoi = new Label();
+            lblQueQuanCu = new Label();
             lblQueQuanMoi = new Label();
             tabPage3 = new TabPage();
             txtHeSoLuong = new TextBox();
@@ -104,12 +108,15 @@
             dtDangDuBi = new DateTimePicker();
             chkDangVien = new CheckBox();
             tabPage6 = new TabPage();
+            epValidation = new ErrorProvider(components);
             tabMain.SuspendLayout();
             tabPage1.SuspendLayout();
+            pnlHeader.SuspendLayout();
             tabPage2.SuspendLayout();
             tabPage3.SuspendLayout();
             tabPage4.SuspendLayout();
             tabPage5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)epValidation).BeginInit();
             SuspendLayout();
             // 
             // tabMain
@@ -121,14 +128,17 @@
             tabMain.Controls.Add(tabPage5);
             tabMain.Controls.Add(tabPage6);
             tabMain.Dock = DockStyle.Fill;
+            tabMain.ItemSize = new Size(120, 35);
             tabMain.Location = new Point(0, 0);
             tabMain.Name = "tabMain";
             tabMain.SelectedIndex = 0;
-            tabMain.Size = new Size(800, 509);
+            tabMain.Size = new Size(878, 541);
+            tabMain.SizeMode = TabSizeMode.Fixed;
             tabMain.TabIndex = 0;
             // 
             // tabPage1
             // 
+            tabPage1.Controls.Add(pnlHeader);
             tabPage1.Controls.Add(lblSoDienThoai);
             tabPage1.Controls.Add(txtSoDienThoai);
             tabPage1.Controls.Add(lblNgayCap);
@@ -147,18 +157,52 @@
             tabPage1.Controls.Add(lblHoTen);
             tabPage1.Controls.Add(txtSoHieu);
             tabPage1.Controls.Add(lblSoHieu);
-            tabPage1.Location = new Point(4, 29);
+            tabPage1.Location = new Point(4, 39);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(792, 476);
+            tabPage1.Size = new Size(870, 498);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Thông tin cơ bản";
             tabPage1.UseVisualStyleBackColor = true;
             // 
+            // pnlHeader
+            // 
+            pnlHeader.BackColor = Color.FromArgb(44, 62, 80);
+            pnlHeader.Controls.Add(lblSubTitle);
+            pnlHeader.Controls.Add(lblTitle);
+            pnlHeader.Dock = DockStyle.Top;
+            pnlHeader.Location = new Point(3, 3);
+            pnlHeader.Name = "pnlHeader";
+            pnlHeader.Size = new Size(864, 60);
+            pnlHeader.TabIndex = 18;
+            // 
+            // lblSubTitle
+            // 
+            lblSubTitle.Dock = DockStyle.Bottom;
+            lblSubTitle.ForeColor = Color.Gainsboro;
+            lblSubTitle.Location = new Point(0, 39);
+            lblSubTitle.Name = "lblSubTitle";
+            lblSubTitle.Size = new Size(864, 21);
+            lblSubTitle.TabIndex = 19;
+            lblSubTitle.Text = "label1";
+            lblSubTitle.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblTitle
+            // 
+            lblTitle.Dock = DockStyle.Fill;
+            lblTitle.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
+            lblTitle.ForeColor = Color.White;
+            lblTitle.Location = new Point(0, 0);
+            lblTitle.Name = "lblTitle";
+            lblTitle.Size = new Size(864, 60);
+            lblTitle.TabIndex = 0;
+            lblTitle.Text = "THÔNG TIN CBCS";
+            lblTitle.TextAlign = ContentAlignment.TopCenter;
+            // 
             // lblSoDienThoai
             // 
             lblSoDienThoai.AutoSize = true;
-            lblSoDienThoai.Location = new Point(414, 275);
+            lblSoDienThoai.Location = new Point(447, 305);
             lblSoDienThoai.Name = "lblSoDienThoai";
             lblSoDienThoai.Size = new Size(102, 20);
             lblSoDienThoai.TabIndex = 17;
@@ -166,7 +210,7 @@
             // 
             // txtSoDienThoai
             // 
-            txtSoDienThoai.Location = new Point(522, 272);
+            txtSoDienThoai.Location = new Point(555, 302);
             txtSoDienThoai.Name = "txtSoDienThoai";
             txtSoDienThoai.Size = new Size(231, 27);
             txtSoDienThoai.TabIndex = 16;
@@ -174,7 +218,7 @@
             // lblNgayCap
             // 
             lblNgayCap.AutoSize = true;
-            lblNgayCap.Location = new Point(414, 206);
+            lblNgayCap.Location = new Point(447, 236);
             lblNgayCap.Name = "lblNgayCap";
             lblNgayCap.Size = new Size(72, 20);
             lblNgayCap.TabIndex = 15;
@@ -184,7 +228,7 @@
             // 
             dtNgayCapCCCD.CustomFormat = "dd/MM/yyyy";
             dtNgayCapCCCD.Format = DateTimePickerFormat.Custom;
-            dtNgayCapCCCD.Location = new Point(522, 202);
+            dtNgayCapCCCD.Location = new Point(555, 232);
             dtNgayCapCCCD.Name = "dtNgayCapCCCD";
             dtNgayCapCCCD.Size = new Size(198, 27);
             dtNgayCapCCCD.TabIndex = 14;
@@ -193,7 +237,7 @@
             // lblCCCD
             // 
             lblCCCD.AutoSize = true;
-            lblCCCD.Location = new Point(414, 140);
+            lblCCCD.Location = new Point(447, 170);
             lblCCCD.Name = "lblCCCD";
             lblCCCD.Size = new Size(47, 20);
             lblCCCD.TabIndex = 13;
@@ -201,7 +245,7 @@
             // 
             // txtCCCD
             // 
-            txtCCCD.Location = new Point(522, 137);
+            txtCCCD.Location = new Point(555, 167);
             txtCCCD.Name = "txtCCCD";
             txtCCCD.Size = new Size(231, 27);
             txtCCCD.TabIndex = 12;
@@ -209,7 +253,7 @@
             // lblNoiSinh
             // 
             lblNoiSinh.AutoSize = true;
-            lblNoiSinh.Location = new Point(414, 79);
+            lblNoiSinh.Location = new Point(447, 109);
             lblNoiSinh.Name = "lblNoiSinh";
             lblNoiSinh.Size = new Size(63, 20);
             lblNoiSinh.TabIndex = 11;
@@ -217,7 +261,7 @@
             // 
             // txtNoiSinh
             // 
-            txtNoiSinh.Location = new Point(522, 72);
+            txtNoiSinh.Location = new Point(555, 102);
             txtNoiSinh.Name = "txtNoiSinh";
             txtNoiSinh.Size = new Size(231, 27);
             txtNoiSinh.TabIndex = 10;
@@ -225,7 +269,7 @@
             // lblNgaySinh
             // 
             lblNgaySinh.AutoSize = true;
-            lblNgaySinh.Location = new Point(22, 344);
+            lblNgaySinh.Location = new Point(55, 374);
             lblNgaySinh.Name = "lblNgaySinh";
             lblNgaySinh.Size = new Size(74, 20);
             lblNgaySinh.TabIndex = 9;
@@ -235,7 +279,7 @@
             // 
             dtNgaySinh.CustomFormat = "dd/MM/yyyy";
             dtNgaySinh.Format = DateTimePickerFormat.Custom;
-            dtNgaySinh.Location = new Point(103, 339);
+            dtNgaySinh.Location = new Point(136, 369);
             dtNgaySinh.Name = "dtNgaySinh";
             dtNgaySinh.Size = new Size(198, 27);
             dtNgaySinh.TabIndex = 8;
@@ -244,7 +288,7 @@
             // lblGioiTinh
             // 
             lblGioiTinh.AutoSize = true;
-            lblGioiTinh.Location = new Point(22, 275);
+            lblGioiTinh.Location = new Point(55, 305);
             lblGioiTinh.Name = "lblGioiTinh";
             lblGioiTinh.Size = new Size(65, 20);
             lblGioiTinh.TabIndex = 7;
@@ -254,7 +298,7 @@
             // 
             cboGioiTinh.FormattingEnabled = true;
             cboGioiTinh.Items.AddRange(new object[] { "Nam", "Nữ" });
-            cboGioiTinh.Location = new Point(103, 272);
+            cboGioiTinh.Location = new Point(136, 302);
             cboGioiTinh.Name = "cboGioiTinh";
             cboGioiTinh.Size = new Size(151, 28);
             cboGioiTinh.TabIndex = 6;
@@ -262,7 +306,7 @@
             // lblType
             // 
             lblType.AutoSize = true;
-            lblType.Location = new Point(22, 209);
+            lblType.Location = new Point(55, 239);
             lblType.Name = "lblType";
             lblType.Size = new Size(37, 20);
             lblType.TabIndex = 5;
@@ -272,14 +316,14 @@
             // 
             cboPersonnelType.FormattingEnabled = true;
             cboPersonnelType.Items.AddRange(new object[] { "Chiến sĩ", "Cán bộ" });
-            cboPersonnelType.Location = new Point(103, 206);
+            cboPersonnelType.Location = new Point(136, 236);
             cboPersonnelType.Name = "cboPersonnelType";
             cboPersonnelType.Size = new Size(151, 28);
             cboPersonnelType.TabIndex = 4;
             // 
             // txtHoTen
             // 
-            txtHoTen.Location = new Point(103, 137);
+            txtHoTen.Location = new Point(136, 167);
             txtHoTen.Name = "txtHoTen";
             txtHoTen.Size = new Size(198, 27);
             txtHoTen.TabIndex = 3;
@@ -287,7 +331,7 @@
             // lblHoTen
             // 
             lblHoTen.AutoSize = true;
-            lblHoTen.Location = new Point(22, 140);
+            lblHoTen.Location = new Point(55, 170);
             lblHoTen.Name = "lblHoTen";
             lblHoTen.Size = new Size(75, 20);
             lblHoTen.TabIndex = 2;
@@ -295,7 +339,7 @@
             // 
             // txtSoHieu
             // 
-            txtSoHieu.Location = new Point(103, 72);
+            txtSoHieu.Location = new Point(136, 102);
             txtSoHieu.Name = "txtSoHieu";
             txtSoHieu.Size = new Size(198, 27);
             txtSoHieu.TabIndex = 1;
@@ -303,7 +347,7 @@
             // lblSoHieu
             // 
             lblSoHieu.AutoSize = true;
-            lblSoHieu.Location = new Point(22, 79);
+            lblSoHieu.Location = new Point(55, 109);
             lblSoHieu.Name = "lblSoHieu";
             lblSoHieu.Size = new Size(58, 20);
             lblSoHieu.TabIndex = 0;
@@ -312,120 +356,120 @@
             // tabPage2
             // 
             tabPage2.Controls.Add(txtHKTTCu);
-            tabPage2.Controls.Add(lblHKTTCu);
             tabPage2.Controls.Add(txtHKTTMoi);
-            tabPage2.Controls.Add(lblHKTTMoi);
             tabPage2.Controls.Add(txtTinhCu);
-            tabPage2.Controls.Add(lblTinhCu);
             tabPage2.Controls.Add(txtTinhMoi);
-            tabPage2.Controls.Add(lblTinhMoi);
             tabPage2.Controls.Add(txtQueQuanCu);
-            tabPage2.Controls.Add(lblQueQuanCu);
             tabPage2.Controls.Add(txtQueQuanMoi);
+            tabPage2.Controls.Add(lblHKTTCu);
+            tabPage2.Controls.Add(lblHKTTMoi);
+            tabPage2.Controls.Add(lblTinhCu);
+            tabPage2.Controls.Add(lblTinhMoi);
+            tabPage2.Controls.Add(lblQueQuanCu);
             tabPage2.Controls.Add(lblQueQuanMoi);
-            tabPage2.Location = new Point(4, 29);
+            tabPage2.Location = new Point(4, 39);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(792, 476);
+            tabPage2.Size = new Size(870, 498);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Địa chỉ";
             tabPage2.UseVisualStyleBackColor = true;
             // 
             // txtHKTTCu
             // 
-            txtHKTTCu.Location = new Point(421, 311);
+            txtHKTTCu.Location = new Point(469, 341);
             txtHKTTCu.Multiline = true;
             txtHKTTCu.Name = "txtHKTTCu";
             txtHKTTCu.Size = new Size(339, 129);
             txtHKTTCu.TabIndex = 13;
             // 
-            // lblHKTTCu
-            // 
-            lblHKTTCu.AutoSize = true;
-            lblHKTTCu.Location = new Point(421, 288);
-            lblHKTTCu.Name = "lblHKTTCu";
-            lblHKTTCu.Size = new Size(145, 20);
-            lblHKTTCu.TabIndex = 12;
-            lblHKTTCu.Text = "HKTT (sau sáp nhập)";
-            // 
             // txtHKTTMoi
             // 
-            txtHKTTMoi.Location = new Point(18, 311);
+            txtHKTTMoi.Location = new Point(66, 341);
             txtHKTTMoi.Multiline = true;
             txtHKTTMoi.Name = "txtHKTTMoi";
             txtHKTTMoi.Size = new Size(339, 129);
             txtHKTTMoi.TabIndex = 11;
             // 
-            // lblHKTTMoi
-            // 
-            lblHKTTMoi.AutoSize = true;
-            lblHKTTMoi.Location = new Point(18, 288);
-            lblHKTTMoi.Name = "lblHKTTMoi";
-            lblHKTTMoi.Size = new Size(145, 20);
-            lblHKTTMoi.TabIndex = 10;
-            lblHKTTMoi.Text = "HKTT (sau sáp nhập)";
-            // 
             // txtTinhCu
             // 
-            txtTinhCu.Location = new Point(421, 220);
+            txtTinhCu.Location = new Point(469, 250);
             txtTinhCu.Name = "txtTinhCu";
             txtTinhCu.Size = new Size(339, 27);
             txtTinhCu.TabIndex = 9;
             // 
-            // lblTinhCu
-            // 
-            lblTinhCu.AutoSize = true;
-            lblTinhCu.Location = new Point(421, 197);
-            lblTinhCu.Name = "lblTinhCu";
-            lblTinhCu.Size = new Size(150, 20);
-            lblTinhCu.TabIndex = 8;
-            lblTinhCu.Text = "Tỉnh (trước sáp nhập)";
-            // 
             // txtTinhMoi
             // 
-            txtTinhMoi.Location = new Point(18, 220);
+            txtTinhMoi.Location = new Point(66, 250);
             txtTinhMoi.Name = "txtTinhMoi";
             txtTinhMoi.Size = new Size(339, 27);
             txtTinhMoi.TabIndex = 7;
             // 
-            // lblTinhMoi
-            // 
-            lblTinhMoi.AutoSize = true;
-            lblTinhMoi.Location = new Point(18, 197);
-            lblTinhMoi.Name = "lblTinhMoi";
-            lblTinhMoi.Size = new Size(137, 20);
-            lblTinhMoi.TabIndex = 6;
-            lblTinhMoi.Text = "Tỉnh (sau sáp nhập)";
-            // 
             // txtQueQuanCu
             // 
-            txtQueQuanCu.Location = new Point(421, 45);
+            txtQueQuanCu.Location = new Point(469, 75);
             txtQueQuanCu.Multiline = true;
             txtQueQuanCu.Name = "txtQueQuanCu";
             txtQueQuanCu.Size = new Size(339, 129);
             txtQueQuanCu.TabIndex = 5;
             // 
-            // lblQueQuanCu
-            // 
-            lblQueQuanCu.AutoSize = true;
-            lblQueQuanCu.Location = new Point(421, 22);
-            lblQueQuanCu.Name = "lblQueQuanCu";
-            lblQueQuanCu.Size = new Size(186, 20);
-            lblQueQuanCu.TabIndex = 4;
-            lblQueQuanCu.Text = "Quê quán (trước sáp nhập)";
-            // 
             // txtQueQuanMoi
             // 
-            txtQueQuanMoi.Location = new Point(18, 45);
+            txtQueQuanMoi.Location = new Point(66, 75);
             txtQueQuanMoi.Multiline = true;
             txtQueQuanMoi.Name = "txtQueQuanMoi";
             txtQueQuanMoi.Size = new Size(339, 129);
             txtQueQuanMoi.TabIndex = 3;
             // 
+            // lblHKTTCu
+            // 
+            lblHKTTCu.AutoSize = true;
+            lblHKTTCu.Location = new Point(469, 318);
+            lblHKTTCu.Name = "lblHKTTCu";
+            lblHKTTCu.Size = new Size(145, 20);
+            lblHKTTCu.TabIndex = 12;
+            lblHKTTCu.Text = "HKTT (sau sáp nhập)";
+            // 
+            // lblHKTTMoi
+            // 
+            lblHKTTMoi.AutoSize = true;
+            lblHKTTMoi.Location = new Point(66, 318);
+            lblHKTTMoi.Name = "lblHKTTMoi";
+            lblHKTTMoi.Size = new Size(145, 20);
+            lblHKTTMoi.TabIndex = 10;
+            lblHKTTMoi.Text = "HKTT (sau sáp nhập)";
+            // 
+            // lblTinhCu
+            // 
+            lblTinhCu.AutoSize = true;
+            lblTinhCu.Location = new Point(469, 227);
+            lblTinhCu.Name = "lblTinhCu";
+            lblTinhCu.Size = new Size(150, 20);
+            lblTinhCu.TabIndex = 8;
+            lblTinhCu.Text = "Tỉnh (trước sáp nhập)";
+            // 
+            // lblTinhMoi
+            // 
+            lblTinhMoi.AutoSize = true;
+            lblTinhMoi.Location = new Point(66, 227);
+            lblTinhMoi.Name = "lblTinhMoi";
+            lblTinhMoi.Size = new Size(137, 20);
+            lblTinhMoi.TabIndex = 6;
+            lblTinhMoi.Text = "Tỉnh (sau sáp nhập)";
+            // 
+            // lblQueQuanCu
+            // 
+            lblQueQuanCu.AutoSize = true;
+            lblQueQuanCu.Location = new Point(469, 52);
+            lblQueQuanCu.Name = "lblQueQuanCu";
+            lblQueQuanCu.Size = new Size(186, 20);
+            lblQueQuanCu.TabIndex = 4;
+            lblQueQuanCu.Text = "Quê quán (trước sáp nhập)";
+            // 
             // lblQueQuanMoi
             // 
             lblQueQuanMoi.AutoSize = true;
-            lblQueQuanMoi.Location = new Point(18, 22);
+            lblQueQuanMoi.Location = new Point(66, 52);
             lblQueQuanMoi.Name = "lblQueQuanMoi";
             lblQueQuanMoi.Size = new Size(173, 20);
             lblQueQuanMoi.TabIndex = 2;
@@ -451,17 +495,17 @@
             tabPage3.Controls.Add(lblViTriCongTac);
             tabPage3.Controls.Add(txtDonVi);
             tabPage3.Controls.Add(lblDonVi);
-            tabPage3.Location = new Point(4, 29);
+            tabPage3.Location = new Point(4, 39);
             tabPage3.Name = "tabPage3";
             tabPage3.Padding = new Padding(3);
-            tabPage3.Size = new Size(792, 476);
+            tabPage3.Size = new Size(870, 498);
             tabPage3.TabIndex = 2;
             tabPage3.Text = "Công tác";
             tabPage3.UseVisualStyleBackColor = true;
             // 
             // txtHeSoLuong
             // 
-            txtHeSoLuong.Location = new Point(556, 284);
+            txtHeSoLuong.Location = new Point(614, 321);
             txtHeSoLuong.Name = "txtHeSoLuong";
             txtHeSoLuong.Size = new Size(84, 27);
             txtHeSoLuong.TabIndex = 27;
@@ -469,7 +513,7 @@
             // lblHeSoLuong
             // 
             lblHeSoLuong.AutoSize = true;
-            lblHeSoLuong.Location = new Point(460, 287);
+            lblHeSoLuong.Location = new Point(518, 324);
             lblHeSoLuong.Name = "lblHeSoLuong";
             lblHeSoLuong.Size = new Size(90, 20);
             lblHeSoLuong.TabIndex = 26;
@@ -478,7 +522,7 @@
             // lblNgayBoNhiem
             // 
             lblNgayBoNhiem.AutoSize = true;
-            lblNgayBoNhiem.Location = new Point(460, 204);
+            lblNgayBoNhiem.Location = new Point(518, 241);
             lblNgayBoNhiem.Name = "lblNgayBoNhiem";
             lblNgayBoNhiem.Size = new Size(111, 20);
             lblNgayBoNhiem.TabIndex = 25;
@@ -488,7 +532,7 @@
             // 
             dtNgayBoNhiem.CustomFormat = "dd/MM/yyyy";
             dtNgayBoNhiem.Format = DateTimePickerFormat.Custom;
-            dtNgayBoNhiem.Location = new Point(460, 229);
+            dtNgayBoNhiem.Location = new Point(518, 266);
             dtNgayBoNhiem.Name = "dtNgayBoNhiem";
             dtNgayBoNhiem.Size = new Size(198, 27);
             dtNgayBoNhiem.TabIndex = 24;
@@ -496,7 +540,7 @@
             // 
             // txtChucVu
             // 
-            txtChucVu.Location = new Point(556, 135);
+            txtChucVu.Location = new Point(614, 172);
             txtChucVu.Name = "txtChucVu";
             txtChucVu.Size = new Size(198, 27);
             txtChucVu.TabIndex = 23;
@@ -504,7 +548,7 @@
             // lblChucVu
             // 
             lblChucVu.AutoSize = true;
-            lblChucVu.Location = new Point(460, 141);
+            lblChucVu.Location = new Point(518, 178);
             lblChucVu.Name = "lblChucVu";
             lblChucVu.Size = new Size(61, 20);
             lblChucVu.TabIndex = 22;
@@ -513,7 +557,7 @@
             // lblThangNamNhanCongTac
             // 
             lblThangNamNhanCongTac.AutoSize = true;
-            lblThangNamNhanCongTac.Location = new Point(460, 67);
+            lblThangNamNhanCongTac.Location = new Point(518, 104);
             lblThangNamNhanCongTac.Name = "lblThangNamNhanCongTac";
             lblThangNamNhanCongTac.Size = new Size(180, 20);
             lblThangNamNhanCongTac.TabIndex = 21;
@@ -523,7 +567,7 @@
             // 
             dtThangNamNhanCongTac.CustomFormat = "MM/yyyy";
             dtThangNamNhanCongTac.Format = DateTimePickerFormat.Custom;
-            dtThangNamNhanCongTac.Location = new Point(460, 90);
+            dtThangNamNhanCongTac.Location = new Point(518, 127);
             dtThangNamNhanCongTac.Name = "dtThangNamNhanCongTac";
             dtThangNamNhanCongTac.Size = new Size(198, 27);
             dtThangNamNhanCongTac.TabIndex = 20;
@@ -532,7 +576,7 @@
             // lblThangNamVaoNganh
             // 
             lblThangNamVaoNganh.AutoSize = true;
-            lblThangNamVaoNganh.Location = new Point(38, 335);
+            lblThangNamVaoNganh.Location = new Point(96, 372);
             lblThangNamVaoNganh.Name = "lblThangNamVaoNganh";
             lblThangNamVaoNganh.Size = new Size(156, 20);
             lblThangNamVaoNganh.TabIndex = 19;
@@ -542,7 +586,7 @@
             // 
             dtThangNamVaoNganh.CustomFormat = "MM/yyyy";
             dtThangNamVaoNganh.Format = DateTimePickerFormat.Custom;
-            dtThangNamVaoNganh.Location = new Point(201, 332);
+            dtThangNamVaoNganh.Location = new Point(259, 369);
             dtThangNamVaoNganh.Name = "dtThangNamVaoNganh";
             dtThangNamVaoNganh.Size = new Size(198, 27);
             dtThangNamVaoNganh.TabIndex = 18;
@@ -551,7 +595,7 @@
             // lblNgayNhanCapBac
             // 
             lblNgayNhanCapBac.AutoSize = true;
-            lblNgayNhanCapBac.Location = new Point(38, 270);
+            lblNgayNhanCapBac.Location = new Point(96, 307);
             lblNgayNhanCapBac.Name = "lblNgayNhanCapBac";
             lblNgayNhanCapBac.Size = new Size(136, 20);
             lblNgayNhanCapBac.TabIndex = 17;
@@ -561,7 +605,7 @@
             // 
             dtNgayNhanCapBac.CustomFormat = "dd/MM/yyyy";
             dtNgayNhanCapBac.Format = DateTimePickerFormat.Custom;
-            dtNgayNhanCapBac.Location = new Point(201, 267);
+            dtNgayNhanCapBac.Location = new Point(259, 304);
             dtNgayNhanCapBac.Name = "dtNgayNhanCapBac";
             dtNgayNhanCapBac.Size = new Size(198, 27);
             dtNgayNhanCapBac.TabIndex = 16;
@@ -569,7 +613,7 @@
             // 
             // txtCapBacHam
             // 
-            txtCapBacHam.Location = new Point(201, 200);
+            txtCapBacHam.Location = new Point(259, 237);
             txtCapBacHam.Name = "txtCapBacHam";
             txtCapBacHam.Size = new Size(198, 27);
             txtCapBacHam.TabIndex = 7;
@@ -577,7 +621,7 @@
             // lblCapBacHam
             // 
             lblCapBacHam.AutoSize = true;
-            lblCapBacHam.Location = new Point(38, 205);
+            lblCapBacHam.Location = new Point(96, 242);
             lblCapBacHam.Name = "lblCapBacHam";
             lblCapBacHam.Size = new Size(96, 20);
             lblCapBacHam.TabIndex = 6;
@@ -585,7 +629,7 @@
             // 
             // txtViTriCongTac
             // 
-            txtViTriCongTac.Location = new Point(201, 135);
+            txtViTriCongTac.Location = new Point(259, 172);
             txtViTriCongTac.Name = "txtViTriCongTac";
             txtViTriCongTac.Size = new Size(198, 27);
             txtViTriCongTac.TabIndex = 5;
@@ -593,7 +637,7 @@
             // lblViTriCongTac
             // 
             lblViTriCongTac.AutoSize = true;
-            lblViTriCongTac.Location = new Point(38, 140);
+            lblViTriCongTac.Location = new Point(96, 177);
             lblViTriCongTac.Name = "lblViTriCongTac";
             lblViTriCongTac.Size = new Size(101, 20);
             lblViTriCongTac.TabIndex = 4;
@@ -601,7 +645,7 @@
             // 
             // txtDonVi
             // 
-            txtDonVi.Location = new Point(201, 67);
+            txtDonVi.Location = new Point(259, 104);
             txtDonVi.Name = "txtDonVi";
             txtDonVi.Size = new Size(198, 27);
             txtDonVi.TabIndex = 3;
@@ -609,7 +653,7 @@
             // lblDonVi
             // 
             lblDonVi.AutoSize = true;
-            lblDonVi.Location = new Point(38, 72);
+            lblDonVi.Location = new Point(96, 109);
             lblDonVi.Name = "lblDonVi";
             lblDonVi.Size = new Size(52, 20);
             lblDonVi.TabIndex = 2;
@@ -631,10 +675,10 @@
             tabPage4.Controls.Add(lblTrinhDoNgoaiNgu);
             tabPage4.Controls.Add(txtTrinhDoTinHoc);
             tabPage4.Controls.Add(lblTrinhDoTinHoc);
-            tabPage4.Location = new Point(4, 29);
+            tabPage4.Location = new Point(4, 39);
             tabPage4.Name = "tabPage4";
             tabPage4.Padding = new Padding(3);
-            tabPage4.Size = new Size(792, 476);
+            tabPage4.Size = new Size(870, 498);
             tabPage4.TabIndex = 3;
             tabPage4.Text = "Đào tạo";
             tabPage4.UseVisualStyleBackColor = true;
@@ -642,7 +686,7 @@
             // lblThangNamTotNghiep
             // 
             lblThangNamTotNghiep.AutoSize = true;
-            lblThangNamTotNghiep.Location = new Point(447, 176);
+            lblThangNamTotNghiep.Location = new Point(495, 225);
             lblThangNamTotNghiep.Name = "lblThangNamTotNghiep";
             lblThangNamTotNghiep.Size = new Size(156, 20);
             lblThangNamTotNghiep.TabIndex = 21;
@@ -652,7 +696,7 @@
             // 
             dtThangNamTotNghiep.CustomFormat = "MM/yyyy";
             dtThangNamTotNghiep.Format = DateTimePickerFormat.Custom;
-            dtThangNamTotNghiep.Location = new Point(447, 199);
+            dtThangNamTotNghiep.Location = new Point(495, 248);
             dtThangNamTotNghiep.Name = "dtThangNamTotNghiep";
             dtThangNamTotNghiep.Size = new Size(198, 27);
             dtThangNamTotNghiep.TabIndex = 20;
@@ -660,7 +704,7 @@
             // 
             // txtTrinhDoLyLuanChinhTri
             // 
-            txtTrinhDoLyLuanChinhTri.Location = new Point(447, 275);
+            txtTrinhDoLyLuanChinhTri.Location = new Point(495, 324);
             txtTrinhDoLyLuanChinhTri.Name = "txtTrinhDoLyLuanChinhTri";
             txtTrinhDoLyLuanChinhTri.Size = new Size(299, 27);
             txtTrinhDoLyLuanChinhTri.TabIndex = 15;
@@ -668,7 +712,7 @@
             // lblTrinhDoLyLuanChinhTri
             // 
             lblTrinhDoLyLuanChinhTri.AutoSize = true;
-            lblTrinhDoLyLuanChinhTri.Location = new Point(447, 252);
+            lblTrinhDoLyLuanChinhTri.Location = new Point(495, 301);
             lblTrinhDoLyLuanChinhTri.Name = "lblTrinhDoLyLuanChinhTri";
             lblTrinhDoLyLuanChinhTri.Size = new Size(111, 20);
             lblTrinhDoLyLuanChinhTri.TabIndex = 14;
@@ -676,7 +720,7 @@
             // 
             // txtChuyenNganhDaoTao
             // 
-            txtChuyenNganhDaoTao.Location = new Point(447, 120);
+            txtChuyenNganhDaoTao.Location = new Point(495, 169);
             txtChuyenNganhDaoTao.Name = "txtChuyenNganhDaoTao";
             txtChuyenNganhDaoTao.Size = new Size(299, 27);
             txtChuyenNganhDaoTao.TabIndex = 13;
@@ -684,7 +728,7 @@
             // lblChuyenNganhDaoTao
             // 
             lblChuyenNganhDaoTao.AutoSize = true;
-            lblChuyenNganhDaoTao.Location = new Point(447, 97);
+            lblChuyenNganhDaoTao.Location = new Point(495, 146);
             lblChuyenNganhDaoTao.Name = "lblChuyenNganhDaoTao";
             lblChuyenNganhDaoTao.Size = new Size(158, 20);
             lblChuyenNganhDaoTao.TabIndex = 12;
@@ -692,7 +736,7 @@
             // 
             // txtTrinhDoChuyenMon
             // 
-            txtTrinhDoChuyenMon.Location = new Point(185, 286);
+            txtTrinhDoChuyenMon.Location = new Point(233, 335);
             txtTrinhDoChuyenMon.Name = "txtTrinhDoChuyenMon";
             txtTrinhDoChuyenMon.Size = new Size(198, 27);
             txtTrinhDoChuyenMon.TabIndex = 11;
@@ -700,7 +744,7 @@
             // lblTrinhDoChuyenMon
             // 
             lblTrinhDoChuyenMon.AutoSize = true;
-            lblTrinhDoChuyenMon.Location = new Point(27, 289);
+            lblTrinhDoChuyenMon.Location = new Point(75, 338);
             lblTrinhDoChuyenMon.Name = "lblTrinhDoChuyenMon";
             lblTrinhDoChuyenMon.Size = new Size(91, 20);
             lblTrinhDoChuyenMon.TabIndex = 10;
@@ -708,7 +752,7 @@
             // 
             // txtTrinhDoVanHoa
             // 
-            txtTrinhDoVanHoa.Location = new Point(185, 218);
+            txtTrinhDoVanHoa.Location = new Point(233, 267);
             txtTrinhDoVanHoa.Name = "txtTrinhDoVanHoa";
             txtTrinhDoVanHoa.Size = new Size(198, 27);
             txtTrinhDoVanHoa.TabIndex = 9;
@@ -716,7 +760,7 @@
             // lblTrinhDoVanHoa
             // 
             lblTrinhDoVanHoa.AutoSize = true;
-            lblTrinhDoVanHoa.Location = new Point(27, 221);
+            lblTrinhDoVanHoa.Location = new Point(75, 270);
             lblTrinhDoVanHoa.Name = "lblTrinhDoVanHoa";
             lblTrinhDoVanHoa.Size = new Size(119, 20);
             lblTrinhDoVanHoa.TabIndex = 8;
@@ -724,7 +768,7 @@
             // 
             // txtTrinhDoNgoaiNgu
             // 
-            txtTrinhDoNgoaiNgu.Location = new Point(185, 155);
+            txtTrinhDoNgoaiNgu.Location = new Point(233, 204);
             txtTrinhDoNgoaiNgu.Name = "txtTrinhDoNgoaiNgu";
             txtTrinhDoNgoaiNgu.Size = new Size(198, 27);
             txtTrinhDoNgoaiNgu.TabIndex = 7;
@@ -732,7 +776,7 @@
             // lblTrinhDoNgoaiNgu
             // 
             lblTrinhDoNgoaiNgu.AutoSize = true;
-            lblTrinhDoNgoaiNgu.Location = new Point(27, 158);
+            lblTrinhDoNgoaiNgu.Location = new Point(75, 207);
             lblTrinhDoNgoaiNgu.Name = "lblTrinhDoNgoaiNgu";
             lblTrinhDoNgoaiNgu.Size = new Size(135, 20);
             lblTrinhDoNgoaiNgu.TabIndex = 6;
@@ -740,7 +784,7 @@
             // 
             // txtTrinhDoTinHoc
             // 
-            txtTrinhDoTinHoc.Location = new Point(185, 94);
+            txtTrinhDoTinHoc.Location = new Point(233, 143);
             txtTrinhDoTinHoc.Name = "txtTrinhDoTinHoc";
             txtTrinhDoTinHoc.Size = new Size(198, 27);
             txtTrinhDoTinHoc.TabIndex = 5;
@@ -748,7 +792,7 @@
             // lblTrinhDoTinHoc
             // 
             lblTrinhDoTinHoc.AutoSize = true;
-            lblTrinhDoTinHoc.Location = new Point(27, 97);
+            lblTrinhDoTinHoc.Location = new Point(75, 146);
             lblTrinhDoTinHoc.Name = "lblTrinhDoTinHoc";
             lblTrinhDoTinHoc.Size = new Size(112, 20);
             lblTrinhDoTinHoc.TabIndex = 4;
@@ -763,28 +807,30 @@
             tabPage5.Controls.Add(lblDangDuBi);
             tabPage5.Controls.Add(dtDangDuBi);
             tabPage5.Controls.Add(chkDangVien);
-            tabPage5.Location = new Point(4, 29);
+            tabPage5.Location = new Point(4, 39);
             tabPage5.Name = "tabPage5";
             tabPage5.Padding = new Padding(3);
-            tabPage5.Size = new Size(792, 476);
+            tabPage5.Size = new Size(870, 498);
             tabPage5.TabIndex = 4;
             tabPage5.Text = "Đảng";
             tabPage5.UseVisualStyleBackColor = true;
             // 
             // btnCancel
             // 
-            btnCancel.Location = new Point(589, 246);
+            btnCancel.ForeColor = Color.Red;
+            btnCancel.Location = new Point(442, 325);
             btnCancel.Name = "btnCancel";
-            btnCancel.Size = new Size(94, 29);
+            btnCancel.Size = new Size(140, 45);
             btnCancel.TabIndex = 15;
             btnCancel.Text = "❌ Huỷ";
             btnCancel.UseVisualStyleBackColor = true;
             // 
             // btnSave
             // 
-            btnSave.Location = new Point(460, 246);
+            btnSave.ForeColor = Color.FromArgb(0, 192, 0);
+            btnSave.Location = new Point(277, 325);
             btnSave.Name = "btnSave";
-            btnSave.Size = new Size(94, 29);
+            btnSave.Size = new Size(140, 45);
             btnSave.TabIndex = 14;
             btnSave.Text = "💾 Lưu";
             btnSave.UseVisualStyleBackColor = true;
@@ -793,7 +839,7 @@
             // lblDangChinhThuc
             // 
             lblDangChinhThuc.AutoSize = true;
-            lblDangChinhThuc.Location = new Point(63, 162);
+            lblDangChinhThuc.Location = new Point(230, 249);
             lblDangChinhThuc.Name = "lblDangChinhThuc";
             lblDangChinhThuc.Size = new Size(148, 20);
             lblDangChinhThuc.TabIndex = 13;
@@ -804,7 +850,7 @@
             dtDangChinhThuc.CustomFormat = "dd/MM/yyyy";
             dtDangChinhThuc.Enabled = false;
             dtDangChinhThuc.Format = DateTimePickerFormat.Custom;
-            dtDangChinhThuc.Location = new Point(217, 157);
+            dtDangChinhThuc.Location = new Point(384, 244);
             dtDangChinhThuc.Name = "dtDangChinhThuc";
             dtDangChinhThuc.Size = new Size(198, 27);
             dtDangChinhThuc.TabIndex = 12;
@@ -813,7 +859,7 @@
             // lblDangDuBi
             // 
             lblDangDuBi.AutoSize = true;
-            lblDangDuBi.Location = new Point(63, 119);
+            lblDangDuBi.Location = new Point(230, 206);
             lblDangDuBi.Name = "lblDangDuBi";
             lblDangDuBi.Size = new Size(115, 20);
             lblDangDuBi.TabIndex = 11;
@@ -824,7 +870,7 @@
             dtDangDuBi.CustomFormat = "dd/MM/yyyy";
             dtDangDuBi.Enabled = false;
             dtDangDuBi.Format = DateTimePickerFormat.Custom;
-            dtDangDuBi.Location = new Point(217, 114);
+            dtDangDuBi.Location = new Point(384, 201);
             dtDangDuBi.Name = "dtDangDuBi";
             dtDangDuBi.Size = new Size(198, 27);
             dtDangDuBi.TabIndex = 10;
@@ -833,7 +879,7 @@
             // chkDangVien
             // 
             chkDangVien.AutoSize = true;
-            chkDangVien.Location = new Point(61, 73);
+            chkDangVien.Location = new Point(228, 160);
             chkDangVien.Name = "chkDangVien";
             chkDangVien.Size = new Size(98, 24);
             chkDangVien.TabIndex = 0;
@@ -843,19 +889,23 @@
             // 
             // tabPage6
             // 
-            tabPage6.Location = new Point(4, 29);
+            tabPage6.Location = new Point(4, 39);
             tabPage6.Name = "tabPage6";
             tabPage6.Padding = new Padding(3);
-            tabPage6.Size = new Size(792, 476);
+            tabPage6.Size = new Size(870, 498);
             tabPage6.TabIndex = 5;
             tabPage6.Text = "Khác";
             tabPage6.UseVisualStyleBackColor = true;
+            // 
+            // epValidation
+            // 
+            epValidation.ContainerControl = this;
             // 
             // FrmPersonnelDetail
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 509);
+            ClientSize = new Size(878, 541);
             Controls.Add(tabMain);
             Name = "FrmPersonnelDetail";
             StartPosition = FormStartPosition.CenterScreen;
@@ -865,6 +915,7 @@
             tabMain.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
             tabPage1.PerformLayout();
+            pnlHeader.ResumeLayout(false);
             tabPage2.ResumeLayout(false);
             tabPage2.PerformLayout();
             tabPage3.ResumeLayout(false);
@@ -873,6 +924,7 @@
             tabPage4.PerformLayout();
             tabPage5.ResumeLayout(false);
             tabPage5.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)epValidation).EndInit();
             ResumeLayout(false);
         }
 
@@ -903,24 +955,10 @@
         private DateTimePicker dtNgayCapCCCD;
         private Label lblSoDienThoai;
         private TextBox txtSoDienThoai;
-        private TextBox txtQueQuanMoi;
-        private Label lblQueQuanMoi;
-        private TextBox txtQueQuanCu;
-        private Label lblQueQuanCu;
-        private TextBox txtHKTTCu;
-        private Label lblHKTTCu;
-        private TextBox txtHKTTMoi;
-        private Label lblHKTTMoi;
-        private TextBox txtTinhCu;
-        private Label lblTinhCu;
-        private TextBox txtTinhMoi;
-        private Label lblTinhMoi;
         private TextBox txtCapBacHam;
         private Label lblCapBacHam;
         private TextBox txtViTriCongTac;
         private Label lblViTriCongTac;
-        private TextBox txtDonVi;
-        private Label lblDonVi;
         private TextBox txtHeSoLuong;
         private Label lblHeSoLuong;
         private Label lblNgayBoNhiem;
@@ -954,5 +992,23 @@
         private DateTimePicker dtDangDuBi;
         private Button btnCancel;
         private Button btnSave;
+        private TextBox txtDonVi;
+        private Label lblDonVi;
+        private TextBox txtHKTTCu;
+        private TextBox txtHKTTMoi;
+        private TextBox txtTinhCu;
+        private TextBox txtTinhMoi;
+        private TextBox txtQueQuanCu;
+        private TextBox txtQueQuanMoi;
+        private Label lblHKTTCu;
+        private Label lblHKTTMoi;
+        private Label lblTinhCu;
+        private Label lblTinhMoi;
+        private Label lblQueQuanCu;
+        private Label lblQueQuanMoi;
+        private Panel pnlHeader;
+        private Label lblTitle;
+        private Label lblSubTitle;
+        private ErrorProvider epValidation;
     }
 }

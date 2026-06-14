@@ -1,5 +1,4 @@
-﻿using DocumentFormat.OpenXml.Wordprocessing;
-using QuanLyCBCS.Enums;
+﻿using QuanLyCBCS.Enums;
 using QuanLyCBCS.Helpers;
 using QuanLyCBCS.Models;
 using QuanLyCBCS.Services;
@@ -12,10 +11,11 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
         private readonly FormMode _mode;
 
-        private readonly int _personnelId;
+        private readonly int? _personnelId;
 
         private readonly AuditLogService _auditService =
-    new AuditLogService();
+            new AuditLogService();
+
         public FrmPersonnelDetail(
             FormMode mode,
             int personnelId = 0)
@@ -35,6 +35,26 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             dtNgaySinh.CustomFormat =
                 "dd/MM/yyyy";
+
+            StartPosition =
+                FormStartPosition.CenterScreen;
+
+            Size =
+                new Size(
+                    1200,
+                    750);
+
+            txtSoHieu.TextChanged +=
+                (_, _) => ClearError(txtSoHieu);
+
+            txtHoTen.TextChanged +=
+                (_, _) => ClearError(txtHoTen);
+
+            txtCCCD.TextChanged +=
+                (_, _) => ClearError(txtCCCD);
+
+            txtSoDienThoai.TextChanged +=
+                (_, _) => ClearError(txtSoDienThoai);
         }
 
         private void chkDangVien_CheckedChanged(
@@ -305,11 +325,14 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
+            if (!ValidateForm())
+                return;
+
             if (_mode == FormMode.Add)
             {
                 await SaveAddAsync();
             }
-            else if (_mode == FormMode.Edit)
+            else
             {
                 await SaveEditAsync();
             }
@@ -318,9 +341,18 @@ namespace QuanLyCBCS.Forms.PersonnelForms
         private async Task LoadPersonnelAsync()
         {
 
+            if (!_personnelId.HasValue)
+            {
+                MessageBox.Show(
+                    "Không xác định CBCS.");
+
+                return;
+            }
+
             var p =
                 await _service
-                .GetByIdAsync(_personnelId);
+                    .GetByIdAsync(
+                        _personnelId.Value);
 
             if (p == null)
             {
@@ -448,6 +480,14 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
+            SetupButtons();
+
+            SetupTabControl();
+
+            SetupTextBoxes();
+
+            SetupHeader();
+
             if (_mode == FormMode.Edit)
             {
                 await LoadPersonnelAsync();
@@ -456,6 +496,14 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
         private async Task SaveEditAsync()
         {
+            if (!_personnelId.HasValue)
+            {
+                MessageBox.Show(
+                    "Không xác định CBCS.");
+
+                return;
+            }
+
             bool isValid =
                 await ValidateInputAsync();
 
@@ -464,7 +512,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             var p =
                 await _service
-                .GetByIdAsync(_personnelId);
+                .GetByIdAsync(_personnelId.Value);
 
             if (p == null)
                 return;
@@ -485,6 +533,263 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 DialogResult.OK;
 
             Close();
+        }
+
+        private void StyleActionButton(
+            Button button,
+            Color color)
+        {
+            button.FlatStyle =
+                FlatStyle.Flat;
+
+            button.FlatAppearance.BorderSize = 0;
+
+            button.BackColor =
+                color;
+
+            button.ForeColor =
+                Color.White;
+
+            button.Font =
+                new Font(
+                    "Segoe UI",
+                    10,
+                    FontStyle.Bold);
+
+            RoundedControlHelper
+                .SetRounded(
+                    button,
+                    12);
+        }
+
+        private void SetupButtons()
+        {
+            StyleActionButton(
+                btnSave,
+                Color.FromArgb(
+                    39,
+                    174,
+                    96));
+
+            StyleActionButton(
+                btnCancel,
+                Color.FromArgb(
+                    231,
+                    76,
+                    60));
+        }
+
+        private void SetupTabControl()
+        {
+            tabMain.Appearance =
+                TabAppearance.FlatButtons;
+
+            tabMain.SizeMode =
+                TabSizeMode.Fixed;
+
+            tabMain.ItemSize =
+                new Size(
+                    120,
+                    35);
+        }
+
+        private void StyleTextBox(
+            TextBox txt)
+        {
+            txt.Font =
+                new Font(
+                    "Segoe UI",
+                    10);
+
+            txt.BorderStyle =
+                BorderStyle.FixedSingle;
+        }
+
+        private void SetupTextBoxes()
+        {
+            StyleTextBox(txtSoHieu);
+
+            StyleTextBox(txtHoTen);
+
+            StyleTextBox(txtNoiSinh);
+
+            StyleTextBox(txtCCCD);
+
+            StyleTextBox(txtSoDienThoai);
+
+            StyleTextBox(txtChucVu);
+
+            StyleTextBox(txtCapBacHam);
+
+            StyleTextBox(txtDonVi);
+        }
+
+        private void SetupHeader()
+        {
+            if (_mode == FormMode.Add)
+            {
+                lblTitle.Text =
+                    "THÊM CBCS MỚI";
+
+                lblSubTitle.Text =
+                    "Nhập thông tin cán bộ chiến sĩ";
+            }
+            else
+            {
+                lblTitle.Text =
+                    "CẬP NHẬT CBCS";
+
+                lblSubTitle.Text =
+                    "Chỉnh sửa hồ sơ cán bộ chiến sĩ";
+            }
+        }
+
+        private void ClearValidationErrors()
+        {
+            epValidation.Clear();
+        }
+
+        private bool ValidateForm()
+        {
+            epValidation.Clear();
+
+            Control? firstErrorControl = null;
+
+            bool isValid = true;
+
+            if (!ValidationHelper.IsRequired(txtSoHieu.Text))
+            {
+                epValidation.SetError(
+                    txtSoHieu,
+                    "Nhập số hiệu");
+
+                firstErrorControl ??= txtSoHieu;
+
+                isValid = false;
+            }
+
+            if (!ValidationHelper.IsRequired(txtHoTen.Text))
+            {
+                epValidation.SetError(
+                    txtHoTen,
+                    "Nhập họ tên");
+
+                firstErrorControl ??= txtHoTen;
+
+                isValid = false;
+            }
+
+            if (!ValidationHelper.IsCCCD(txtCCCD.Text))
+            {
+                epValidation.SetError(
+                    txtCCCD,
+                    "CCCD phải gồm 12 số");
+
+                firstErrorControl ??= txtCCCD;
+
+                isValid = false;
+            }
+
+            if (!ValidationHelper.IsPhoneNumber(
+                    txtSoDienThoai.Text))
+            {
+                epValidation.SetError(
+                    txtSoDienThoai,
+                    "SĐT không hợp lệ");
+
+                firstErrorControl ??= txtSoDienThoai;
+
+                isValid = false;
+            }
+
+            if (cboGioiTinh.SelectedIndex < 0)
+            {
+                epValidation.SetError(
+                    cboGioiTinh,
+                    "Chọn giới tính");
+
+                firstErrorControl ??= cboGioiTinh;
+
+                isValid = false;
+            }
+
+            if (cboPersonnelType.SelectedIndex < 0)
+            {
+                epValidation.SetError(
+                    cboPersonnelType,
+                    "Chọn loại CBCS");
+
+                firstErrorControl ??= cboPersonnelType;
+
+                isValid = false;
+            }
+
+            if (firstErrorControl != null)
+            {
+                FocusControl(
+                    firstErrorControl);
+            }
+
+            if (!isValid)
+            {
+                FocusControl(firstErrorControl!);
+
+                return false;
+            }
+
+            return isValid;
+        }
+
+        private void txtHoTen_TextChanged(
+            object sender,
+            EventArgs e)
+        {
+            ClearError(txtHoTen);
+        }
+
+        private void txtCCCD_TextChanged(
+            object sender,
+            EventArgs e)
+        {
+            ClearError(txtCCCD);
+        }
+
+        private void txtSoHieu_TextChanged(
+            object sender,
+            EventArgs e)
+        {
+            ClearError(txtSoHieu);
+        }
+
+        private void ClearError(
+            Control control)
+        {
+            epValidation.SetError(
+                control,
+                string.Empty);
+        }
+
+        private void FocusControl(
+            Control control)
+        {
+            Control? current = control;
+
+            while (current != null)
+            {
+                if (current is TabPage page)
+                {
+                    if (page.Parent is TabControl tabControl)
+                    {
+                        tabControl.SelectedTab = page;
+                    }
+
+                    break;
+                }
+
+                current = current.Parent;
+            }
+
+            control.Focus();
         }
     }
 }
