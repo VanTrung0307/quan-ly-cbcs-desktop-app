@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             txtSearch = new TextBox();
             btnAdd = new Button();
             btnEdit = new Button();
@@ -73,6 +74,7 @@
             cboDonVi = new ComboBox();
             cboCapBac = new ComboBox();
             cboChucVu = new ComboBox();
+            toolTip1 = new ToolTip(components);
             ((System.ComponentModel.ISupportInitialize)dgvPersonnel).BeginInit();
             pnlTongCBCS.SuspendLayout();
             pnlChienSi.SuspendLayout();
@@ -651,5 +653,6 @@
         private ComboBox cboDonVi;
         private ComboBox cboCapBac;
         private ComboBox cboChucVu;
+        private ToolTip toolTip1;
     }
 }

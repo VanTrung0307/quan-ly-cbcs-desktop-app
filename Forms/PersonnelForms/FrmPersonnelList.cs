@@ -6,7 +6,6 @@ using QuanLyCBCS.Forms.UserForms;
 using QuanLyCBCS.Helpers;
 using QuanLyCBCS.Models;
 using QuanLyCBCS.Services;
-using System.Drawing;
 
 namespace QuanLyCBCS.Forms.PersonnelForms
 {
@@ -27,6 +26,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             new AuditLogService();
 
         private bool _filterLoaded;
+        private ToolTip _toolTip = new();
 
         public FrmPersonnelList()
         {
@@ -433,6 +433,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             SetupDataGridView();
 
             SetupStatusBar();
+
+            SetupTooltips();
 
             await LoadPersonnelAsync();
 
@@ -1028,6 +1030,49 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 return;
 
             ApplyFilter();
+        }
+
+        private void SetupTooltips()
+        {
+            _toolTip.SetToolTip(
+                btnAdd,
+                "Thêm CBCS mới");
+
+            _toolTip.SetToolTip(
+                btnEdit,
+                "Chỉnh sửa CBCS");
+
+            _toolTip.SetToolTip(
+                btnDelete,
+                "Xóa CBCS");
+
+            _toolTip.SetToolTip(
+                btnUsers,
+                "Quản lý tài khoản");
+
+            _toolTip.SetToolTip(
+                btnAuditLog,
+                "Nhật ký hệ thống");
+
+            _toolTip.SetToolTip(
+                btnExport,
+                "Xuất Excel");
+
+            _toolTip.SetToolTip(
+                btnBackup,
+                "Sao lưu dữ liệu");
+
+            _toolTip.SetToolTip(
+                btnRestore,
+                "Khôi phục dữ liệu");
+
+            _toolTip.SetToolTip(
+                btnRefresh,
+                "Tải lại dữ liệu");
+
+            _toolTip.SetToolTip(
+                btnLogout,
+                "Đăng xuất");
         }
     }
 }
