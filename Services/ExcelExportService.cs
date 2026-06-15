@@ -1,4 +1,5 @@
 ﻿using ClosedXML.Excel;
+using QuanLyCBCS.Helpers;
 using QuanLyCBCS.Models;
 
 namespace QuanLyCBCS.Services;
@@ -45,9 +46,27 @@ public class ExcelExportService
             workbook.Worksheets
             .Add("CHIEN SI");
 
-        CreateHeader(ws);
+        ws.Cell(1, 1).Value =
+            "DANH SÁCH CHIẾN SĨ";
 
-        int row = 2;
+        ws.Range(1, 1, 1, 31).Merge();
+
+        ws.Cell(1, 1).Style.Font.Bold = true;
+        ws.Cell(1, 1).Style.Font.FontSize = 18;
+        ws.Cell(1, 1).Style.Alignment.Horizontal =
+            XLAlignmentHorizontalValues.Center;
+
+        ws.Cell(2, 1).Value =
+            $"Ngày xuất: {DateTime.Now:dd/MM/yyyy HH:mm}";
+
+        ws.Cell(3, 1).Value =
+            $"Người xuất: {CurrentUser.Username}";
+
+        CreateHeader(
+            ws,
+            5);
+
+        int row = 6;
 
         for (int i = 0; i < data.Count; i++)
         {
@@ -135,8 +154,11 @@ public class ExcelExportService
             row++;
         }
 
-        FormatWorksheet(ws, 31);
-    }
+        FormatWorksheet(
+            ws,
+            31,
+            5); ;
+            }
 
     // =====================================
     // CAN BO
@@ -150,13 +172,31 @@ public class ExcelExportService
             workbook.Worksheets
             .Add("CAN BO");
 
-        CreateHeader(ws);
+        ws.Cell(1, 1).Value =
+            "DANH SÁCH CÁN BỘ";
 
-        ws.Cell(1, 32).Value = "Hệ số lương";
-        ws.Cell(1, 33).Value = "Chức vụ";
-        ws.Cell(1, 34).Value = "Ngày bổ nhiệm";
+        ws.Range(1, 1, 1, 34).Merge();
 
-        int row = 2;
+        ws.Cell(1, 1).Style.Font.Bold = true;
+        ws.Cell(1, 1).Style.Font.FontSize = 18;
+        ws.Cell(1, 1).Style.Alignment.Horizontal =
+            XLAlignmentHorizontalValues.Center;
+
+        ws.Cell(2, 1).Value =
+            $"Ngày xuất: {DateTime.Now:dd/MM/yyyy HH:mm}";
+
+        ws.Cell(3, 1).Value =
+            $"Người xuất: {CurrentUser.Username}";
+
+        CreateHeader(
+            ws,
+            5);
+
+        ws.Cell(5, 32).Value = "Hệ số lương";
+        ws.Cell(5, 33).Value = "Chức vụ";
+        ws.Cell(5, 34).Value = "Ngày bổ nhiệm";
+
+        int row = 6;
 
         for (int i = 0; i < data.Count; i++)
         {
@@ -254,54 +294,59 @@ public class ExcelExportService
             row++;
         }
 
-        FormatWorksheet(ws, 34);
-    }
+        FormatWorksheet(
+            ws,
+            34,
+            5);
+            }
 
     private void CreateHeader(
-        IXLWorksheet ws)
+        IXLWorksheet ws,
+        int headerRow)
     {
-        ws.Cell(1, 1).Value = "STT";
-        ws.Cell(1, 2).Value = "Số hiệu";
-        ws.Cell(1, 3).Value = "Họ tên";
-        ws.Cell(1, 4).Value = "Đơn vị";
-        ws.Cell(1, 5).Value = "Giới tính";
-        ws.Cell(1, 6).Value = "Ngày sinh";
-        ws.Cell(1, 7).Value = "Nơi sinh";
-        ws.Cell(1, 8).Value = "Quê quán mới";
-        ws.Cell(1, 9).Value = "Quê quán cũ";
-        ws.Cell(1, 10).Value = "HKTT mới";
-        ws.Cell(1, 11).Value = "HKTT cũ";
-        ws.Cell(1, 12).Value = "Vị trí công tác";
-        ws.Cell(1, 13).Value = "Cấp bậc hàm";
-        ws.Cell(1, 14).Value = "Ngày nhận cấp bậc";
-        ws.Cell(1, 15).Value = "Vào ngành";
-        ws.Cell(1, 16).Value = "Thâm niên ngành";
-        ws.Cell(1, 17).Value = "Nhận công tác";
-        ws.Cell(1, 18).Value = "Thâm niên đơn vị";
-        ws.Cell(1, 19).Value = "Tin học";
-        ws.Cell(1, 20).Value = "Ngoại ngữ";
-        ws.Cell(1, 21).Value = "Văn hóa";
-        ws.Cell(1, 22).Value = "Chuyên môn";
-        ws.Cell(1, 23).Value = "Chuyên ngành";
-        ws.Cell(1, 24).Value = "Tốt nghiệp";
-        ws.Cell(1, 25).Value = "Đảng viên";
-        ws.Cell(1, 26).Value = "Đảng dự bị";
-        ws.Cell(1, 27).Value = "Đảng chính thức";
-        ws.Cell(1, 28).Value = "LLCT";
-        ws.Cell(1, 29).Value = "CCCD";
-        ws.Cell(1, 30).Value = "Ngày cấp CCCD";
-        ws.Cell(1, 31).Value = "Số điện thoại";
+        ws.Cell(headerRow, 1).Value = "STT";
+        ws.Cell(headerRow, 2).Value = "Số hiệu";
+        ws.Cell(headerRow, 3).Value = "Họ tên";
+        ws.Cell(headerRow, 4).Value = "Đơn vị";
+        ws.Cell(headerRow, 5).Value = "Giới tính";
+        ws.Cell(headerRow, 6).Value = "Ngày sinh";
+        ws.Cell(headerRow, 7).Value = "Nơi sinh";
+        ws.Cell(headerRow, 8).Value = "Quê quán mới";
+        ws.Cell(headerRow, 9).Value = "Quê quán cũ";
+        ws.Cell(headerRow, 10).Value = "HKTT mới";
+        ws.Cell(headerRow, 11).Value = "HKTT cũ";
+        ws.Cell(headerRow, 12).Value = "Vị trí công tác";
+        ws.Cell(headerRow, 13).Value = "Cấp bậc hàm";
+        ws.Cell(headerRow, 14).Value = "Ngày nhận cấp bậc";
+        ws.Cell(headerRow, 15).Value = "Vào ngành";
+        ws.Cell(headerRow, 16).Value = "Thâm niên ngành";
+        ws.Cell(headerRow, 17).Value = "Nhận công tác";
+        ws.Cell(headerRow, 18).Value = "Thâm niên đơn vị";
+        ws.Cell(headerRow, 19).Value = "Tin học";
+        ws.Cell(headerRow, 20).Value = "Ngoại ngữ";
+        ws.Cell(headerRow, 21).Value = "Văn hóa";
+        ws.Cell(headerRow, 22).Value = "Chuyên môn";
+        ws.Cell(headerRow, 23).Value = "Chuyên ngành";
+        ws.Cell(headerRow, 24).Value = "Tốt nghiệp";
+        ws.Cell(headerRow, 25).Value = "Đảng viên";
+        ws.Cell(headerRow, 26).Value = "Đảng dự bị";
+        ws.Cell(headerRow, 27).Value = "Đảng chính thức";
+        ws.Cell(headerRow, 28).Value = "LLCT";
+        ws.Cell(headerRow, 29).Value = "CCCD";
+        ws.Cell(headerRow, 30).Value = "Ngày cấp CCCD";
+        ws.Cell(headerRow, 31).Value = "Số điện thoại";
     }
 
     private void FormatWorksheet(
         IXLWorksheet ws,
-        int totalColumns)
+        int totalColumns,
+        int headerRow)
     {
         var headerRange =
             ws.Range(
+                headerRow,
                 1,
-                1,
-                1,
+                headerRow,
                 totalColumns);
 
         headerRange.Style.Font.Bold = true;
@@ -312,54 +357,35 @@ public class ExcelExportService
         headerRange.Style.Fill.BackgroundColor =
             XLColor.LightBlue;
 
-        ws.SheetView.FreezeRows(1);
+        ws.SheetView.FreezeRows(5);
 
         var usedRange =
             ws.RangeUsed();
 
         if (usedRange != null)
         {
-            usedRange.Style.Border
-                .OutsideBorder =
+            usedRange.Style.Border.OutsideBorder =
                 XLBorderStyleValues.Thin;
 
-            usedRange.Style.Border
-                .InsideBorder =
+            usedRange.Style.Border.InsideBorder =
                 XLBorderStyleValues.Thin;
-
-            usedRange.SetAutoFilter();
         }
 
-        ws.Column(1)
-            .Style.Alignment.Horizontal =
-            XLAlignmentHorizontalValues.Center;
+        // FILTER CHỈ TỪ HEADER TRỞ XUỐNG
+        var lastRow =
+            ws.LastRowUsed();
 
-        ws.Column(6)
-            .Style.Alignment.Horizontal =
-            XLAlignmentHorizontalValues.Center;
+        if (lastRow != null)
+        {
+            ws.Range(
+                headerRow,
+                1,
+                lastRow.RowNumber(),
+                totalColumns)
+                .SetAutoFilter();
+        }
 
-        ws.Column(14)
-            .Style.Alignment.Horizontal =
-            XLAlignmentHorizontalValues.Center;
-
-        ws.Column(24)
-            .Style.Alignment.Horizontal =
-            XLAlignmentHorizontalValues.Center;
-
-        ws.Column(26)
-            .Style.Alignment.Horizontal =
-            XLAlignmentHorizontalValues.Center;
-
-        ws.Column(27)
-            .Style.Alignment.Horizontal =
-            XLAlignmentHorizontalValues.Center;
-
-        ws.Column(30)
-            .Style.Alignment.Horizontal =
-            XLAlignmentHorizontalValues.Center;
-
-        ws.Columns()
-            .AdjustToContents();
+        ws.Columns().AdjustToContents();
     }
 
     private string FormatDate(

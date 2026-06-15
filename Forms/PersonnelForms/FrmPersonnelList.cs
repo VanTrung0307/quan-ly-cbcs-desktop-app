@@ -6,6 +6,7 @@ using QuanLyCBCS.Forms.UserForms;
 using QuanLyCBCS.Helpers;
 using QuanLyCBCS.Models;
 using QuanLyCBCS.Services;
+using System.Diagnostics;
 
 namespace QuanLyCBCS.Forms.PersonnelForms
 {
@@ -572,24 +573,59 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
-            var list =
-                await _service.GetAllAsync();
+            try
+            {
+                SaveFileDialog saveDialog =
+                    new SaveFileDialog();
 
-            ExcelExportService excel =
-                new ExcelExportService();
+                saveDialog.Filter =
+                    "Excel File (*.xlsx)|*.xlsx";
 
-            string filePath =
-                Path.Combine(
-                    Environment.GetFolderPath(
-                        Environment.SpecialFolder.Desktop),
-                    "CBCS.xlsx");
+                saveDialog.FileName =
+                    $"DanhSachCBCS_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
 
-            excel.ExportPersonnel(
-                list,
-                filePath);
+                if (saveDialog.ShowDialog()
+                    != DialogResult.OK)
+                {
+                    return;
+                }
 
-            MessageBox.Show(
-                "Xuất Excel thành công!");
+                var list =
+                    await _service.GetAllAsync();
+
+                ExcelExportService excel =
+                    new ExcelExportService();
+
+                excel.ExportPersonnel(
+                    list,
+                    saveDialog.FileName);
+
+                await _auditService.AddLogAsync(
+                    "EXPORT_EXCEL",
+                    saveDialog.FileName);
+
+                MessageBox.Show(
+                    "Xuất Excel thành công!",
+                    "Thông báo",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+
+                Process.Start(
+                    new ProcessStartInfo
+                    {
+                        FileName =
+                            saveDialog.FileName,
+                        UseShellExecute = true
+                    });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    ex.Message,
+                    "Lỗi",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
         }
 
         private void ApplyDashboardLabelColor()
