@@ -43,6 +43,9 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             SetupSearchBox();
 
             ConfigureTimers();
+
+            txtSearch.TextChanged += (_, _) => SearchPersonnel();
+            txtSearch.KeyDown += txtSearch_KeyDown;
         }
 
         private bool IsAdmin =>
@@ -258,81 +261,42 @@ namespace QuanLyCBCS.Forms.PersonnelForms
         }
 
         private void SearchPersonnel()
-        {
-            string keyword =
-                txtSearch.Text.Trim();
+{
+    string keyword =
+        txtSearch.Text.Trim();
 
-            if (string.IsNullOrWhiteSpace(keyword))
-            {
-                dgvPersonnel.DataSource =
-                    _allPersonnel;
+    if (string.IsNullOrWhiteSpace(keyword))
+    {
+        dgvPersonnel.DataSource =
+            _allPersonnel;
 
-                AddSttColumn();
+        AddSttColumn();
 
-                UpdateRecordCount(
-                    _allPersonnel.Count);
+        UpdateRecordCount(
+            _allPersonnel.Count);
 
-                return;
-            }
+        return;
+    }
 
-            string keywordNoSign =
-                VietnameseHelper
-                    .RemoveVietnameseSigns(
-                        keyword)
-                    .ToLower();
+    var result =
+        _allPersonnel
+        .Where(x =>
+            PersonnelSearchHelper
+                .IsMatch(
+                    x,
+                    keyword))
+        .ToList();
 
-            var result =
-                _allPersonnel
-                .Where(x =>
-                    (x.HoTen != null &&
-                     VietnameseHelper
-                        .RemoveVietnameseSigns(
-                            x.HoTen)
-                        .ToLower()
-                        .Contains(keywordNoSign))
+    dgvPersonnel.DataSource =
+        result;
 
-                    ||
+    CustomizeDataGridView();
 
-                    (x.SoHieu != null &&
-                     x.SoHieu
-                        .ToLower()
-                        .Contains(keywordNoSign))
+    AddSttColumn();
 
-                    ||
-
-                    (x.DonVi != null &&
-                     VietnameseHelper
-                        .RemoveVietnameseSigns(
-                            x.DonVi)
-                        .ToLower()
-                        .Contains(keywordNoSign))
-
-                    ||
-
-                    (x.ChucVu != null &&
-                     VietnameseHelper
-                        .RemoveVietnameseSigns(
-                            x.ChucVu)
-                        .ToLower()
-                        .Contains(keywordNoSign))
-
-                    ||
-
-                    (x.CCCD != null &&
-                     x.CCCD.Contains(keyword))
-                )
-                .ToList();
-
-            dgvPersonnel.DataSource =
-                result;
-
-            CustomizeDataGridView();
-
-            AddSttColumn();
-
-            UpdateRecordCount(
-                result.Count);
-        }
+    UpdateRecordCount(
+        result.Count);
+}
 
         private void CustomizeDataGridView()
         {
@@ -1143,6 +1107,16 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 .Cells[e.ColumnIndex]
                 .ToolTipText =
                 value ?? "";
+        }
+
+        private void txtSearch_KeyDown(
+            object? sender,
+            KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+            {
+                txtSearch.Clear();
+            }
         }
     }
 }
