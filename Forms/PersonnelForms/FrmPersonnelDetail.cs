@@ -63,6 +63,18 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 .SetupPersonnelDetailToolTips(
                     this,
                     toolTipMain);
+
+            FormNavigationHelper
+                .SetupEnterNavigation(
+                    this);
+
+            txtHoTen.Leave += txtHoTen_Leave;
+            txtSoHieu.Leave += txtSoHieu_Leave;
+            txtNoiSinh.Leave += txtNoiSinh_Leave;
+            txtQueQuanMoi.Leave += Address_Leave;
+            txtQueQuanCu.Leave += Address_Leave;
+            txtTinhMoi.Leave += Address_Leave;
+            txtTinhCu.Leave += Address_Leave;
         }
 
         private void chkDangVien_CheckedChanged(
@@ -824,6 +836,49 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             {
                 txtHeSoLuong.Text = "";
             }
+        }
+
+        private void txtHoTen_Leave(
+            object? sender,
+            EventArgs e)
+        {
+            txtHoTen.Text =
+                ValidationHelper
+                    .ToTitleCase(
+                        txtHoTen.Text);
+        }
+
+        private void txtSoHieu_Leave(
+            object? sender,
+            EventArgs e)
+        {
+            txtSoHieu.Text =
+                txtSoHieu.Text
+                    .Trim()
+                    .ToUpper();
+        }
+
+        private void txtNoiSinh_Leave(
+            object? sender,
+            EventArgs e)
+        {
+            txtNoiSinh.Text =
+                ValidationHelper
+                    .ToTitleCase(
+                        txtNoiSinh.Text);
+        }
+
+        private void Address_Leave(
+            object? sender,
+            EventArgs e)
+        {
+            TextBox txt =
+                (TextBox)sender!;
+
+            txt.Text =
+                ValidationHelper
+                    .ToTitleCase(
+                        txt.Text);
         }
     }
 }

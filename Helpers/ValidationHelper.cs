@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using System.Globalization;
 
 namespace QuanLyCBCS.Helpers;
 
@@ -140,5 +141,18 @@ public static class ValidationHelper
             value,
             out decimal result)
             && result >= 0;
+    }
+
+    public static string ToTitleCase(
+        string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+            return string.Empty;
+
+        return CultureInfo
+            .CurrentCulture
+            .TextInfo
+            .ToTitleCase(
+                text.ToLower());
     }
 }

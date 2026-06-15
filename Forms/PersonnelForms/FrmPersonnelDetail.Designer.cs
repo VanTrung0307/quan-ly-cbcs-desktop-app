@@ -32,6 +32,9 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmPersonnelDetail));
             tabMain = new TabControl();
             tabPage1 = new TabPage();
+            lblVaType = new Label();
+            lblVaHoTen = new Label();
+            lblVaSoHieu = new Label();
             pnlHeader = new Panel();
             lblSubTitle = new Label();
             lblTitle = new Label();
@@ -111,6 +114,9 @@
             tabPage6 = new TabPage();
             epValidation = new ErrorProvider(components);
             toolTipMain = new ToolTip(components);
+            lblVaGioiTinh = new Label();
+            lblVaCCCD = new Label();
+            lblVaSDT = new Label();
             tabMain.SuspendLayout();
             tabPage1.SuspendLayout();
             pnlHeader.SuspendLayout();
@@ -140,6 +146,13 @@
             // 
             // tabPage1
             // 
+            tabPage1.Controls.Add(lblVaSDT);
+            tabPage1.Controls.Add(lblVaCCCD);
+            tabPage1.Controls.Add(lblVaGioiTinh);
+            tabPage1.Controls.Add(lblGioiTinh);
+            tabPage1.Controls.Add(lblVaType);
+            tabPage1.Controls.Add(lblVaHoTen);
+            tabPage1.Controls.Add(lblVaSoHieu);
             tabPage1.Controls.Add(pnlHeader);
             tabPage1.Controls.Add(lblSoDienThoai);
             tabPage1.Controls.Add(txtSoDienThoai);
@@ -151,7 +164,6 @@
             tabPage1.Controls.Add(txtNoiSinh);
             tabPage1.Controls.Add(lblNgaySinh);
             tabPage1.Controls.Add(dtNgaySinh);
-            tabPage1.Controls.Add(lblGioiTinh);
             tabPage1.Controls.Add(cboGioiTinh);
             tabPage1.Controls.Add(lblType);
             tabPage1.Controls.Add(cboPersonnelType);
@@ -166,6 +178,39 @@
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Thông tin cơ bản";
             tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // lblVaType
+            // 
+            lblVaType.AutoSize = true;
+            lblVaType.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblVaType.ForeColor = Color.Red;
+            lblVaType.Location = new Point(90, 242);
+            lblVaType.Name = "lblVaType";
+            lblVaType.Size = new Size(18, 23);
+            lblVaType.TabIndex = 21;
+            lblVaType.Text = "*";
+            // 
+            // lblVaHoTen
+            // 
+            lblVaHoTen.AutoSize = true;
+            lblVaHoTen.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblVaHoTen.ForeColor = Color.Red;
+            lblVaHoTen.Location = new Point(130, 177);
+            lblVaHoTen.Name = "lblVaHoTen";
+            lblVaHoTen.Size = new Size(18, 23);
+            lblVaHoTen.TabIndex = 20;
+            lblVaHoTen.Text = "*";
+            // 
+            // lblVaSoHieu
+            // 
+            lblVaSoHieu.AutoSize = true;
+            lblVaSoHieu.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblVaSoHieu.ForeColor = Color.Red;
+            lblVaSoHieu.Location = new Point(115, 113);
+            lblVaSoHieu.Name = "lblVaSoHieu";
+            lblVaSoHieu.Size = new Size(18, 23);
+            lblVaSoHieu.TabIndex = 19;
+            lblVaSoHieu.Text = "*";
             // 
             // pnlHeader
             // 
@@ -212,7 +257,7 @@
             // 
             // txtSoDienThoai
             // 
-            txtSoDienThoai.Location = new Point(559, 312);
+            txtSoDienThoai.Location = new Point(583, 312);
             txtSoDienThoai.Name = "txtSoDienThoai";
             txtSoDienThoai.PlaceholderText = " Nhập số điện thoại";
             txtSoDienThoai.Size = new Size(231, 27);
@@ -231,7 +276,7 @@
             // 
             dtNgayCapCCCD.CustomFormat = "dd/MM/yyyy";
             dtNgayCapCCCD.Format = DateTimePickerFormat.Custom;
-            dtNgayCapCCCD.Location = new Point(559, 242);
+            dtNgayCapCCCD.Location = new Point(583, 242);
             dtNgayCapCCCD.Name = "dtNgayCapCCCD";
             dtNgayCapCCCD.Size = new Size(198, 27);
             dtNgayCapCCCD.TabIndex = 14;
@@ -248,7 +293,7 @@
             // 
             // txtCCCD
             // 
-            txtCCCD.Location = new Point(559, 177);
+            txtCCCD.Location = new Point(583, 177);
             txtCCCD.Name = "txtCCCD";
             txtCCCD.PlaceholderText = " Nhập số CCCD";
             txtCCCD.Size = new Size(231, 27);
@@ -265,7 +310,7 @@
             // 
             // txtNoiSinh
             // 
-            txtNoiSinh.Location = new Point(559, 112);
+            txtNoiSinh.Location = new Point(583, 112);
             txtNoiSinh.Name = "txtNoiSinh";
             txtNoiSinh.PlaceholderText = " Nhập nơi sinh";
             txtNoiSinh.Size = new Size(231, 27);
@@ -284,7 +329,7 @@
             // 
             dtNgaySinh.CustomFormat = "dd/MM/yyyy";
             dtNgaySinh.Format = DateTimePickerFormat.Custom;
-            dtNgaySinh.Location = new Point(140, 379);
+            dtNgaySinh.Location = new Point(154, 379);
             dtNgaySinh.Name = "dtNgaySinh";
             dtNgaySinh.Size = new Size(198, 27);
             dtNgaySinh.TabIndex = 8;
@@ -303,7 +348,7 @@
             // 
             cboGioiTinh.FormattingEnabled = true;
             cboGioiTinh.Items.AddRange(new object[] { "Nam", "Nữ" });
-            cboGioiTinh.Location = new Point(140, 312);
+            cboGioiTinh.Location = new Point(154, 312);
             cboGioiTinh.Name = "cboGioiTinh";
             cboGioiTinh.Size = new Size(151, 28);
             cboGioiTinh.TabIndex = 6;
@@ -321,14 +366,14 @@
             // 
             cboPersonnelType.FormattingEnabled = true;
             cboPersonnelType.Items.AddRange(new object[] { "Chiến sĩ", "Cán bộ" });
-            cboPersonnelType.Location = new Point(140, 246);
+            cboPersonnelType.Location = new Point(154, 246);
             cboPersonnelType.Name = "cboPersonnelType";
             cboPersonnelType.Size = new Size(151, 28);
             cboPersonnelType.TabIndex = 4;
             // 
             // txtHoTen
             // 
-            txtHoTen.Location = new Point(140, 177);
+            txtHoTen.Location = new Point(154, 177);
             txtHoTen.Name = "txtHoTen";
             txtHoTen.PlaceholderText = " Nhập họ và tên";
             txtHoTen.Size = new Size(198, 27);
@@ -345,7 +390,7 @@
             // 
             // txtSoHieu
             // 
-            txtSoHieu.Location = new Point(140, 112);
+            txtSoHieu.Location = new Point(154, 112);
             txtSoHieu.Name = "txtSoHieu";
             txtSoHieu.PlaceholderText = " Nhập số hiệu";
             txtSoHieu.Size = new Size(198, 27);
@@ -942,6 +987,39 @@
             toolTipMain.ReshowDelay = 100;
             toolTipMain.ShowAlways = true;
             // 
+            // lblVaGioiTinh
+            // 
+            lblVaGioiTinh.AutoSize = true;
+            lblVaGioiTinh.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblVaGioiTinh.ForeColor = Color.Red;
+            lblVaGioiTinh.Location = new Point(115, 312);
+            lblVaGioiTinh.Name = "lblVaGioiTinh";
+            lblVaGioiTinh.Size = new Size(18, 23);
+            lblVaGioiTinh.TabIndex = 22;
+            lblVaGioiTinh.Text = "*";
+            // 
+            // lblVaCCCD
+            // 
+            lblVaCCCD.AutoSize = true;
+            lblVaCCCD.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblVaCCCD.ForeColor = Color.Red;
+            lblVaCCCD.Location = new Point(496, 177);
+            lblVaCCCD.Name = "lblVaCCCD";
+            lblVaCCCD.Size = new Size(18, 23);
+            lblVaCCCD.TabIndex = 23;
+            lblVaCCCD.Text = "*";
+            // 
+            // lblVaSDT
+            // 
+            lblVaSDT.AutoSize = true;
+            lblVaSDT.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblVaSDT.ForeColor = Color.Red;
+            lblVaSDT.Location = new Point(549, 312);
+            lblVaSDT.Name = "lblVaSDT";
+            lblVaSDT.Size = new Size(18, 23);
+            lblVaSDT.TabIndex = 24;
+            lblVaSDT.Text = "*";
+            // 
             // FrmPersonnelDetail
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -1053,5 +1131,11 @@
         private ErrorProvider epValidation;
         private ToolTip toolTipMain;
         public ComboBox cboCapBacHam;
+        private Label lblVaSoHieu;
+        private Label lblVaType;
+        private Label lblVaHoTen;
+        private Label lblVaGioiTinh;
+        private Label lblVaSDT;
+        private Label lblVaCCCD;
     }
 }
