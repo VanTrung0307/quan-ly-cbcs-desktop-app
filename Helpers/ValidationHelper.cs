@@ -132,4 +132,13 @@ public static class ValidationHelper
         ep.SetError(txt, "");
         return true;
     }
+
+    public static bool IsHeSoLuong(
+        string value)
+    {
+        return decimal.TryParse(
+            value,
+            out decimal result)
+            && result >= 0;
+    }
 }

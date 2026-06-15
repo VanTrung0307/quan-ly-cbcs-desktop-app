@@ -51,7 +51,15 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             txtSoDienThoai.TextChanged +=
                 (_, _) => ClearError(txtSoDienThoai);
 
-             ToolTipHelper
+            txtCCCD.KeyPress += TxtNumberOnly_KeyPress;
+
+            txtSoDienThoai.KeyPress += TxtNumberOnly_KeyPress;
+
+            txtHeSoLuong.KeyPress += TxtHeSoLuong_KeyPress;
+
+            txtHeSoLuong.Leave += TxtHeSoLuong_Leave;
+
+            ToolTipHelper
                 .SetupPersonnelDetailToolTips(
                     this,
                     toolTipMain);
@@ -627,6 +635,22 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 isValid = false;
             }
 
+            if (!string.IsNullOrWhiteSpace(
+                    txtHeSoLuong.Text)
+                &&
+                !ValidationHelper.IsHeSoLuong(
+                    txtHeSoLuong.Text))
+            {
+                epValidation.SetError(
+                    txtHeSoLuong,
+                    "Hệ số lương không hợp lệ");
+
+                firstErrorControl ??=
+                    txtHeSoLuong;
+
+                isValid = false;
+            }
+
             if (cboGioiTinh.SelectedIndex < 0)
             {
                 epValidation.SetError(
@@ -715,6 +739,91 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             }
 
             control.Focus();
+        }
+
+        private void TxtNumberOnly_KeyPress(
+            object? sender,
+            KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar)
+                && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void TxtHeSoLuong_KeyPress(
+            object? sender,
+            KeyPressEventArgs e)
+        {
+            TextBox txt =
+                (TextBox)sender!;
+
+            // Backspace
+
+            if (char.IsControl(e.KeyChar))
+                return;
+
+            // Số
+
+            if (char.IsDigit(e.KeyChar))
+            {
+                string futureText =
+                    txt.Text.Insert(
+                        txt.SelectionStart,
+                        e.KeyChar.ToString());
+
+                int dotIndex =
+                    futureText.IndexOf('.');
+
+                if (dotIndex >= 0)
+                {
+                    string decimalPart =
+                        futureText[(dotIndex + 1)..];
+
+                    if (decimalPart.Length > 1)
+                    {
+                        e.Handled = true;
+                    }
+                }
+
+                return;
+            }
+
+            // Dấu chấm
+
+            if (e.KeyChar == '.')
+            {
+                if (txt.Text.Contains('.'))
+                {
+                    e.Handled = true;
+                }
+
+                return;
+            }
+
+            e.Handled = true;
+        }
+
+        private void TxtHeSoLuong_Leave(
+            object? sender,
+            EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(
+                txtHeSoLuong.Text))
+                return;
+
+            if (decimal.TryParse(
+                txtHeSoLuong.Text,
+                out decimal value))
+            {
+                txtHeSoLuong.Text =
+                    value.ToString("0.0");
+            }
+            else
+            {
+                txtHeSoLuong.Text = "";
+            }
         }
     }
 }
