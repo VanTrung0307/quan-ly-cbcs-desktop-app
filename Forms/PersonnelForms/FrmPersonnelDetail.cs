@@ -75,6 +75,10 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             txtQueQuanCu.Leave += Address_Leave;
             txtTinhMoi.Leave += Address_Leave;
             txtTinhCu.Leave += Address_Leave;
+
+            dtNgaySinh.MaxDate = DateTime.Today;
+
+            dtNgaySinh.ValueChanged += (_, _) => UpdateAge();
         }
 
         private void chkDangVien_CheckedChanged(
@@ -86,6 +90,21 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             dtDangChinhThuc.Enabled =
                 chkDangVien.Checked;
+
+            bool enabled =
+                chkDangVien.Checked;
+
+            dtDangDuBi.Enabled =
+                enabled;
+
+            dtDangChinhThuc.Enabled =
+                enabled;
+
+            lblDangDuBi.Enabled =
+                enabled;
+
+            lblDangChinhThuc.Enabled =
+                enabled;
         }
 
         private async Task<bool> ValidateInputAsync()
@@ -103,6 +122,53 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                     "Số hiệu đã tồn tại");
 
                 FocusControl(txtSoHieu);
+
+                return false;
+            }
+
+            bool cccdExists =
+                await _service
+                    .IsCCCDExistsAsync(
+                        txtCCCD.Text.Trim(),
+                        _mode == FormMode.Edit
+                            ? _personnelId
+                            : null);
+
+            if (cccdExists)
+            {
+                epValidation.SetError(
+                    txtCCCD,
+                    "CCCD đã tồn tại");
+
+                FocusControl(txtCCCD);
+
+                return false;
+            }
+
+            bool phoneExists =
+                await _service
+                    .IsPhoneExistsAsync(
+                        txtSoDienThoai.Text.Trim(),
+                        _mode == FormMode.Edit
+                            ? _personnelId
+                            : null);
+
+            if (phoneExists)
+            {
+                epValidation.SetError(
+                    txtSoDienThoai,
+                    "Số điện thoại đã tồn tại");
+
+                FocusControl(txtSoDienThoai);
+
+                return false;
+            }
+
+            if (dtNgaySinh.Value > DateTime.Today)
+            {
+                epValidation.SetError(
+                    dtNgaySinh,
+                    "Ngày sinh không hợp lệ");
 
                 return false;
             }
@@ -450,6 +516,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             {
                 await LoadPersonnelAsync();
             }
+
+            UpdateAge();
         }
 
         private async Task SaveEditAsync()
@@ -879,6 +947,22 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 ValidationHelper
                     .ToTitleCase(
                         txt.Text);
+        }
+
+        private void UpdateAge()
+        {
+            int age =
+                DateTime.Today.Year
+                - dtNgaySinh.Value.Year;
+
+            if (dtNgaySinh.Value.Date >
+                DateTime.Today.AddYears(-age))
+            {
+                age--;
+            }
+
+            lblTuoi.Text =
+                $"- {age} tuổi";
         }
     }
 }

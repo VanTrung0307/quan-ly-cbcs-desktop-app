@@ -32,6 +32,11 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmPersonnelDetail));
             tabMain = new TabControl();
             tabPage1 = new TabPage();
+            lblTuoi = new Label();
+            lblVaSDT = new Label();
+            lblVaCCCD = new Label();
+            lblVaGioiTinh = new Label();
+            lblGioiTinh = new Label();
             lblVaType = new Label();
             lblVaHoTen = new Label();
             lblVaSoHieu = new Label();
@@ -48,7 +53,6 @@
             txtNoiSinh = new TextBox();
             lblNgaySinh = new Label();
             dtNgaySinh = new DateTimePicker();
-            lblGioiTinh = new Label();
             cboGioiTinh = new ComboBox();
             lblType = new Label();
             cboPersonnelType = new ComboBox();
@@ -114,9 +118,6 @@
             tabPage6 = new TabPage();
             epValidation = new ErrorProvider(components);
             toolTipMain = new ToolTip(components);
-            lblVaGioiTinh = new Label();
-            lblVaCCCD = new Label();
-            lblVaSDT = new Label();
             tabMain.SuspendLayout();
             tabPage1.SuspendLayout();
             pnlHeader.SuspendLayout();
@@ -146,6 +147,7 @@
             // 
             // tabPage1
             // 
+            tabPage1.Controls.Add(lblTuoi);
             tabPage1.Controls.Add(lblVaSDT);
             tabPage1.Controls.Add(lblVaCCCD);
             tabPage1.Controls.Add(lblVaGioiTinh);
@@ -178,6 +180,57 @@
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Thông tin cơ bản";
             tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // lblTuoi
+            // 
+            lblTuoi.AutoSize = true;
+            lblTuoi.Location = new Point(358, 384);
+            lblTuoi.Name = "lblTuoi";
+            lblTuoi.Size = new Size(35, 20);
+            lblTuoi.TabIndex = 25;
+            lblTuoi.Text = "tuổi";
+            // 
+            // lblVaSDT
+            // 
+            lblVaSDT.AutoSize = true;
+            lblVaSDT.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblVaSDT.ForeColor = Color.Red;
+            lblVaSDT.Location = new Point(549, 312);
+            lblVaSDT.Name = "lblVaSDT";
+            lblVaSDT.Size = new Size(18, 23);
+            lblVaSDT.TabIndex = 24;
+            lblVaSDT.Text = "*";
+            // 
+            // lblVaCCCD
+            // 
+            lblVaCCCD.AutoSize = true;
+            lblVaCCCD.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblVaCCCD.ForeColor = Color.Red;
+            lblVaCCCD.Location = new Point(496, 177);
+            lblVaCCCD.Name = "lblVaCCCD";
+            lblVaCCCD.Size = new Size(18, 23);
+            lblVaCCCD.TabIndex = 23;
+            lblVaCCCD.Text = "*";
+            // 
+            // lblVaGioiTinh
+            // 
+            lblVaGioiTinh.AutoSize = true;
+            lblVaGioiTinh.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblVaGioiTinh.ForeColor = Color.Red;
+            lblVaGioiTinh.Location = new Point(115, 312);
+            lblVaGioiTinh.Name = "lblVaGioiTinh";
+            lblVaGioiTinh.Size = new Size(18, 23);
+            lblVaGioiTinh.TabIndex = 22;
+            lblVaGioiTinh.Text = "*";
+            // 
+            // lblGioiTinh
+            // 
+            lblGioiTinh.AutoSize = true;
+            lblGioiTinh.Location = new Point(59, 315);
+            lblGioiTinh.Name = "lblGioiTinh";
+            lblGioiTinh.Size = new Size(65, 20);
+            lblGioiTinh.TabIndex = 7;
+            lblGioiTinh.Text = "Giới tính";
             // 
             // lblVaType
             // 
@@ -334,15 +387,6 @@
             dtNgaySinh.Size = new Size(198, 27);
             dtNgaySinh.TabIndex = 8;
             dtNgaySinh.Value = new DateTime(2026, 6, 11, 0, 0, 0, 0);
-            // 
-            // lblGioiTinh
-            // 
-            lblGioiTinh.AutoSize = true;
-            lblGioiTinh.Location = new Point(59, 315);
-            lblGioiTinh.Name = "lblGioiTinh";
-            lblGioiTinh.Size = new Size(65, 20);
-            lblGioiTinh.TabIndex = 7;
-            lblGioiTinh.Text = "Giới tính";
             // 
             // cboGioiTinh
             // 
@@ -987,39 +1031,6 @@
             toolTipMain.ReshowDelay = 100;
             toolTipMain.ShowAlways = true;
             // 
-            // lblVaGioiTinh
-            // 
-            lblVaGioiTinh.AutoSize = true;
-            lblVaGioiTinh.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            lblVaGioiTinh.ForeColor = Color.Red;
-            lblVaGioiTinh.Location = new Point(115, 312);
-            lblVaGioiTinh.Name = "lblVaGioiTinh";
-            lblVaGioiTinh.Size = new Size(18, 23);
-            lblVaGioiTinh.TabIndex = 22;
-            lblVaGioiTinh.Text = "*";
-            // 
-            // lblVaCCCD
-            // 
-            lblVaCCCD.AutoSize = true;
-            lblVaCCCD.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            lblVaCCCD.ForeColor = Color.Red;
-            lblVaCCCD.Location = new Point(496, 177);
-            lblVaCCCD.Name = "lblVaCCCD";
-            lblVaCCCD.Size = new Size(18, 23);
-            lblVaCCCD.TabIndex = 23;
-            lblVaCCCD.Text = "*";
-            // 
-            // lblVaSDT
-            // 
-            lblVaSDT.AutoSize = true;
-            lblVaSDT.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            lblVaSDT.ForeColor = Color.Red;
-            lblVaSDT.Location = new Point(549, 312);
-            lblVaSDT.Name = "lblVaSDT";
-            lblVaSDT.Size = new Size(18, 23);
-            lblVaSDT.TabIndex = 24;
-            lblVaSDT.Text = "*";
-            // 
             // FrmPersonnelDetail
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -1137,5 +1148,6 @@
         private Label lblVaGioiTinh;
         private Label lblVaSDT;
         private Label lblVaCCCD;
+        private Label lblTuoi;
     }
 }

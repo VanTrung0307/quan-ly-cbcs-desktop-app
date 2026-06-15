@@ -275,4 +275,36 @@ public class PersonnelService
 
         return dto;
     }
+
+    public async Task<bool>
+        IsCCCDExistsAsync(
+            string cccd,
+            int? ignorePersonnelId = null)
+    {
+        using ApplicationDbContext db =
+            new ApplicationDbContext();
+
+        return await db.Personnel.AnyAsync(x =>
+            x.CCCD == cccd
+            &&
+            (!ignorePersonnelId.HasValue
+             ||
+             x.PersonnelID != ignorePersonnelId.Value));
+    }
+
+    public async Task<bool>
+        IsPhoneExistsAsync(
+            string phone,
+            int? ignorePersonnelId = null)
+    {
+        using ApplicationDbContext db =
+            new ApplicationDbContext();
+
+        return await db.Personnel.AnyAsync(x =>
+            x.SoDienThoai == phone
+            &&
+            (!ignorePersonnelId.HasValue
+             ||
+             x.PersonnelID != ignorePersonnelId.Value));
+    }
 }
