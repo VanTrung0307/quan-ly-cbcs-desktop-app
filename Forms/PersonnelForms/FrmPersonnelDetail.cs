@@ -70,81 +70,19 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
         private async Task<bool> ValidateInputAsync()
         {
-            // Họ tên
-
-            if (string.IsNullOrWhiteSpace(
-                txtHoTen.Text))
-            {
-                MessageBox.Show(
-                    "Vui lòng nhập họ tên");
-
-                txtHoTen.Focus();
-
-                return false;
-            }
-
-            // Số hiệu
-
-            if (string.IsNullOrWhiteSpace(
-                txtSoHieu.Text))
-            {
-                MessageBox.Show(
-                    "Vui lòng nhập số hiệu");
-
-                txtSoHieu.Focus();
-
-                return false;
-            }
-
-            // CCCD
-
-            if (!string.IsNullOrWhiteSpace(
-                txtCCCD.Text))
-            {
-                if (!ValidationHelper
-                    .IsCCCD(txtCCCD.Text))
-                {
-                    MessageBox.Show(
-                        "CCCD không hợp lệ");
-
-                    txtCCCD.Focus();
-
-                    return false;
-                }
-            }
-
-            // Số điện thoại
-
-            if (!string.IsNullOrWhiteSpace(
-                txtSoDienThoai.Text))
-            {
-                if (!ValidationHelper
-                    .IsPhoneNumber(
-                        txtSoDienThoai.Text))
-                {
-                    MessageBox.Show(
-                        "Số điện thoại không hợp lệ");
-
-                    txtSoDienThoai.Focus();
-
-                    return false;
-                }
-            }
-
-            // Trùng số hiệu
-
             bool soHieuExists =
                 await _service
-                .IsSoHieuExistsAsync(
-                    txtSoHieu.Text);
+                    .IsSoHieuExistsAsync(
+                        txtSoHieu.Text);
 
             if (_mode == FormMode.Add
                 && soHieuExists)
             {
-                MessageBox.Show(
+                epValidation.SetError(
+                    txtSoHieu,
                     "Số hiệu đã tồn tại");
 
-                txtSoHieu.Focus();
+                FocusControl(txtSoHieu);
 
                 return false;
             }
@@ -655,48 +593,37 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             bool isValid = true;
 
-            if (!ValidationHelper.IsRequired(txtSoHieu.Text))
+            if (!ValidationHelper.ValidateRequired(
+                txtSoHieu,
+                epValidation,
+                "Nhập số hiệu"))
             {
-                epValidation.SetError(
-                    txtSoHieu,
-                    "Nhập số hiệu");
-
                 firstErrorControl ??= txtSoHieu;
-
                 isValid = false;
             }
 
-            if (!ValidationHelper.IsRequired(txtHoTen.Text))
+            if (!ValidationHelper.ValidateRequired(
+                txtHoTen,
+                epValidation,
+                "Nhập họ tên"))
             {
-                epValidation.SetError(
-                    txtHoTen,
-                    "Nhập họ tên");
-
                 firstErrorControl ??= txtHoTen;
-
                 isValid = false;
             }
 
-            if (!ValidationHelper.IsCCCD(txtCCCD.Text))
+            if (!ValidationHelper.ValidateCCCD(
+                txtCCCD,
+                epValidation))
             {
-                epValidation.SetError(
-                    txtCCCD,
-                    "CCCD phải gồm 12 số");
-
                 firstErrorControl ??= txtCCCD;
-
                 isValid = false;
             }
 
-            if (!ValidationHelper.IsPhoneNumber(
-                    txtSoDienThoai.Text))
+            if (!ValidationHelper.ValidatePhone(
+                txtSoDienThoai,
+                epValidation))
             {
-                epValidation.SetError(
-                    txtSoDienThoai,
-                    "SĐT không hợp lệ");
-
                 firstErrorControl ??= txtSoDienThoai;
-
                 isValid = false;
             }
 

@@ -8,34 +8,6 @@ namespace QuanLyCBCS.Helpers
             FrmPersonnelDetail frm,
             ToolTip toolTip)
         {
-            #region TAB MAIN
-
-            toolTip.SetToolTip(
-                frm.tabPage1,
-                "Thông tin cá nhân của CBCS");
-
-            toolTip.SetToolTip(
-                frm.tabPage2,
-                "Quê quán, HKTT, nơi ở hiện nay");
-
-            toolTip.SetToolTip(
-                frm.tabPage3,
-                "Thông tin đơn vị và chức vụ");
-
-            toolTip.SetToolTip(
-                frm.tabPage4,
-                "Trình độ chuyên môn");
-
-            toolTip.SetToolTip(
-                frm.tabPage5,
-                "Thông tin đảng viên");
-
-            toolTip.SetToolTip(
-                frm.tabPage6,
-                "Các thông tin bổ sung");
-
-            #endregion
-
             #region TAB THÔNG TIN CƠ BẢN
 
             toolTip.SetToolTip(
