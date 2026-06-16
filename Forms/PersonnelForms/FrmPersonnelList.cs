@@ -47,6 +47,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             txtSearch.TextChanged += (_, _) => SearchPersonnel();
             txtSearch.KeyDown += txtSearch_KeyDown;
+
+            dgvPersonnel.RowPrePaint += dgvPersonnel_RowPrePaint;
         }
 
         private bool IsAdmin =>
@@ -330,7 +332,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             dgvPersonnel.ColumnHeadersHeight = 50;
 
             dgvPersonnel.Columns["QueQuanMoi"].Width = 220;
-            dgvPersonnel.Columns["QueQuanMoi"].Width = 170;
+            dgvPersonnel.Columns["HKTTMoi"].Width = 170;
         }
 
         private void SetupRoundedControls()
@@ -1152,6 +1154,46 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             if (e.KeyCode == Keys.Escape)
             {
                 txtSearch.Clear();
+            }
+        }
+
+        private void dgvPersonnel_RowPrePaint(
+            object? sender,
+            DataGridViewRowPrePaintEventArgs e)
+        {
+            if (e.RowIndex < 0)
+                return;
+
+            DataGridViewRow row =
+                dgvPersonnel.Rows[e.RowIndex];
+
+            if (row.DataBoundItem
+                is not Personnel personnel)
+            {
+                return;
+            }
+
+            switch (personnel.PersonnelType)
+            {
+                case 1: // Chiến sĩ
+
+                    row.DefaultCellStyle.BackColor =
+                        Color.FromArgb(
+                            220,
+                            240,
+                            255);
+
+                    break;
+
+                case 2: // Cán bộ
+
+                    row.DefaultCellStyle.BackColor =
+                        Color.FromArgb(
+                            255,
+                            245,
+                            210);
+
+                    break;
             }
         }
     }

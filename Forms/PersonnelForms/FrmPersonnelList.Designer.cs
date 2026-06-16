@@ -390,41 +390,41 @@
             label1.AutoSize = true;
             label1.Location = new Point(13, 54);
             label1.Name = "label1";
-            label1.Size = new Size(44, 20);
+            label1.Size = new Size(69, 20);
             label1.TabIndex = 19;
-            label1.Text = "Nam:";
+            label1.Text = "👨 Nam:";
             // 
             // label2
             // 
             label2.AutoSize = true;
             label2.Location = new Point(13, 74);
             label2.Name = "label2";
-            label2.Size = new Size(32, 20);
+            label2.Size = new Size(57, 20);
             label2.TabIndex = 20;
-            label2.Text = "Nữ:";
+            label2.Text = "👩 Nữ:";
             // 
             // label3
             // 
             label3.AutoSize = true;
             label3.Location = new Point(13, 94);
             label3.Name = "label3";
-            label3.Size = new Size(62, 20);
+            label3.Size = new Size(87, 20);
             label3.TabIndex = 21;
-            label3.Text = "Tuổi TB:";
+            label3.Text = "🎂 Tuổi TB:";
             // 
             // label4
             // 
             label4.AutoSize = true;
             label4.Location = new Point(13, 114);
             label4.Name = "label4";
-            label4.Size = new Size(127, 20);
+            label4.Size = new Size(152, 20);
             label4.TabIndex = 22;
-            label4.Text = "Đơn vị đông nhất:";
+            label4.Text = "🏢 Đơn vị đông nhất:";
             // 
             // lblDonViDongNhat
             // 
             lblDonViDongNhat.AutoSize = true;
-            lblDonViDongNhat.Location = new Point(172, 114);
+            lblDonViDongNhat.Location = new Point(174, 114);
             lblDonViDongNhat.Name = "lblDonViDongNhat";
             lblDonViDongNhat.Size = new Size(21, 20);
             lblDonViDongNhat.TabIndex = 27;
@@ -433,7 +433,7 @@
             // lblTuoiTrungBinh
             // 
             lblTuoiTrungBinh.AutoSize = true;
-            lblTuoiTrungBinh.Location = new Point(172, 94);
+            lblTuoiTrungBinh.Location = new Point(174, 94);
             lblTuoiTrungBinh.Name = "lblTuoiTrungBinh";
             lblTuoiTrungBinh.Size = new Size(17, 20);
             lblTuoiTrungBinh.TabIndex = 26;
@@ -442,7 +442,7 @@
             // lblNu
             // 
             lblNu.AutoSize = true;
-            lblNu.Location = new Point(172, 74);
+            lblNu.Location = new Point(174, 74);
             lblNu.Name = "lblNu";
             lblNu.Size = new Size(17, 20);
             lblNu.TabIndex = 25;
@@ -451,7 +451,7 @@
             // lblNam
             // 
             lblNam.AutoSize = true;
-            lblNam.Location = new Point(172, 54);
+            lblNam.Location = new Point(174, 54);
             lblNam.Name = "lblNam";
             lblNam.Size = new Size(17, 20);
             lblNam.TabIndex = 24;
@@ -479,10 +479,10 @@
             pnlThongKe.Controls.Add(label3);
             pnlThongKe.Controls.Add(label2);
             pnlThongKe.Controls.Add(label1);
-            pnlThongKe.Location = new Point(426, 12);
+            pnlThongKe.Location = new Point(426, 14);
             pnlThongKe.Margin = new Padding(15);
             pnlThongKe.Name = "pnlThongKe";
-            pnlThongKe.Size = new Size(271, 143);
+            pnlThongKe.Size = new Size(278, 143);
             pnlThongKe.TabIndex = 29;
             // 
             // lblThongke
@@ -490,7 +490,7 @@
             lblThongke.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
             lblThongke.AutoSize = true;
             lblThongke.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold);
-            lblThongke.Location = new Point(83, 11);
+            lblThongke.Location = new Point(87, 11);
             lblThongke.Name = "lblThongke";
             lblThongke.Size = new Size(96, 23);
             lblThongke.TabIndex = 9;

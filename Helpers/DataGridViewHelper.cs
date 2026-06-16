@@ -74,6 +74,12 @@ namespace QuanLyCBCS.Helpers
             dgv.AllowUserToResizeRows = false;
 
             dgv.AllowUserToResizeColumns = false;
+
+            dgv.DefaultCellStyle.SelectionBackColor =
+                ThemeHelper.AccentColor;
+
+            dgv.DefaultCellStyle.SelectionForeColor =
+                Color.White;
         }
 
         public static void ConfigureColumnHeaders(
