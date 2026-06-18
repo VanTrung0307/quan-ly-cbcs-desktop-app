@@ -1,10 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <_LastSelectedProfileId>E:\QuanLyCBCS\Properties\PublishProfiles\FolderProfile.pubxml</_LastSelectedProfileId>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Update="Forms\Auth\FrmLogin.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Forms\CommonForms\FrmLoading.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\MissionForms\FrmMissionDetail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\MissionForms\FrmMissionList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\MissionForms\FrmMissionPersonnel.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Forms\PersonnelForms\FrmPersonnelDetail.cs">

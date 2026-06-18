@@ -76,6 +76,7 @@
             cboCapBac = new ComboBox();
             cboChucVu = new ComboBox();
             toolTip1 = new ToolTip(components);
+            btnMission = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvPersonnel).BeginInit();
             pnlTongCBCS.SuspendLayout();
             pnlChienSi.SuspendLayout();
@@ -150,14 +151,14 @@
             dgvPersonnel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvPersonnel.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvPersonnel.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvPersonnel.Location = new Point(1, 208);
+            dgvPersonnel.Location = new Point(1, 246);
             dgvPersonnel.MultiSelect = false;
             dgvPersonnel.Name = "dgvPersonnel";
             dgvPersonnel.ReadOnly = true;
             dgvPersonnel.RowHeadersVisible = false;
             dgvPersonnel.RowHeadersWidth = 51;
             dgvPersonnel.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvPersonnel.Size = new Size(1840, 242);
+            dgvPersonnel.Size = new Size(1840, 318);
             dgvPersonnel.TabIndex = 5;
             dgvPersonnel.CellClick += dgvPersonnel_CellClick;
             dgvPersonnel.CellDoubleClick += dgvPersonnel_CellDoubleClick;
@@ -366,7 +367,7 @@
             // btnUsers
             // 
             btnUsers.Font = new Font("Segoe UI", 10F);
-            btnUsers.Location = new Point(182, 59);
+            btnUsers.Location = new Point(12, 188);
             btnUsers.Name = "btnUsers";
             btnUsers.Size = new Size(164, 36);
             btnUsers.TabIndex = 17;
@@ -510,7 +511,7 @@
             // 
             statusStrip1.ImageScalingSize = new Size(20, 20);
             statusStrip1.Items.AddRange(new ToolStripItem[] { lblUser, lblRole, lblTime, lblRecordCount });
-            statusStrip1.Location = new Point(0, 424);
+            statusStrip1.Location = new Point(0, 538);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(1842, 26);
             statusStrip1.TabIndex = 31;
@@ -570,11 +571,23 @@
             cboChucVu.Text = "Chức vụ";
             cboChucVu.SelectedIndexChanged += FilterChanged;
             // 
+            // btnMission
+            // 
+            btnMission.Font = new Font("Segoe UI", 10F);
+            btnMission.Location = new Point(182, 59);
+            btnMission.Name = "btnMission";
+            btnMission.Size = new Size(164, 36);
+            btnMission.TabIndex = 35;
+            btnMission.Text = "📋 Công tác";
+            btnMission.UseVisualStyleBackColor = true;
+            btnMission.Click += btnMission_Click;
+            // 
             // FrmPersonnelList
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1842, 450);
+            ClientSize = new Size(1842, 564);
+            Controls.Add(btnMission);
             Controls.Add(cboChucVu);
             Controls.Add(cboCapBac);
             Controls.Add(cboDonVi);
@@ -671,5 +684,6 @@
         private ComboBox cboCapBac;
         private ComboBox cboChucVu;
         private ToolTip toolTip1;
+        private Button btnMission;
     }
 }

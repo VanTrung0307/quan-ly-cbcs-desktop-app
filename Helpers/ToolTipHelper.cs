@@ -1,4 +1,5 @@
 ﻿using QuanLyCBCS.Forms.PersonnelForms;
+using QuanLyCBCS.Forms.MissionForms;
 
 namespace QuanLyCBCS.Helpers
 {
@@ -163,6 +164,40 @@ namespace QuanLyCBCS.Helpers
                 "Ngày được công nhận là đảng viên chính thức");
 
             #endregion
+        }
+
+        public static void SetupPersonnelDetailToolTips(
+            FrmMissionDetail frm,
+            ToolTip toolTip)
+        {
+
+            toolTip.SetToolTip(
+                frm.txtMissionName,
+                "Nhập tên công tác");
+
+            toolTip.SetToolTip(
+                frm.cboMissionType,
+                "Chọn loại công tác");
+
+            toolTip.SetToolTip(
+                frm.txtLocation,
+                "Địa điểm thực hiện công tác");
+
+            toolTip.SetToolTip(
+                frm.dtpStartTime,
+                "Thời gian bắt đầu");
+
+            toolTip.SetToolTip(
+                frm.dtpEndTime,
+                "Thời gian kết thúc");
+
+            toolTip.SetToolTip(
+                frm.rtbDescription,
+                "Ghi chú hoặc mô tả công tác");
+
+            toolTip.SetToolTip(
+                frm.chkIsActive,
+                "Đánh dấu công tác đang hoạt động");
         }
     }
 }

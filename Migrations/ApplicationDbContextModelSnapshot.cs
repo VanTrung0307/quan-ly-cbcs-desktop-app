@@ -22,6 +22,95 @@ namespace QuanLyCBCS.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("QuanLyCBCS.Models.AuditLog", b =>
+                {
+                    b.Property<int>("AuditLogId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AuditLogId"));
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("AuditLogId");
+
+                    b.ToTable("AuditLogs");
+                });
+
+            modelBuilder.Entity("QuanLyCBCS.Models.Mission", b =>
+                {
+                    b.Property<int>("MissionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MissionId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MissionName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MissionType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("MissionId");
+
+                    b.ToTable("Missions");
+                });
+
+            modelBuilder.Entity("QuanLyCBCS.Models.MissionPersonnel", b =>
+                {
+                    b.Property<int>("MissionPersonnelId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MissionPersonnelId"));
+
+                    b.Property<int>("MissionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PersonnelId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MissionPersonnelId");
+
+                    b.HasIndex("MissionId");
+
+                    b.HasIndex("PersonnelId");
+
+                    b.ToTable("MissionPersonnel");
+                });
+
             modelBuilder.Entity("QuanLyCBCS.Models.Personnel", b =>
                 {
                     b.Property<int>("PersonnelID")
@@ -149,7 +238,67 @@ namespace QuanLyCBCS.Migrations
 
                     b.HasKey("PersonnelID");
 
-                    b.ToTable("Personnel", (string)null);
+                    b.ToTable("Personnel");
+                });
+
+            modelBuilder.Entity("QuanLyCBCS.Models.User", b =>
+                {
+                    b.Property<int>("UserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
+
+                    b.Property<int>("FailedLoginCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("LockedUntil")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("QuanLyCBCS.Models.MissionPersonnel", b =>
+                {
+                    b.HasOne("QuanLyCBCS.Models.Mission", "Mission")
+                        .WithMany("MissionPersonnel")
+                        .HasForeignKey("MissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("QuanLyCBCS.Models.Personnel", "Personnel")
+                        .WithMany("MissionPersonnel")
+                        .HasForeignKey("PersonnelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Mission");
+
+                    b.Navigation("Personnel");
+                });
+
+            modelBuilder.Entity("QuanLyCBCS.Models.Mission", b =>
+                {
+                    b.Navigation("MissionPersonnel");
+                });
+
+            modelBuilder.Entity("QuanLyCBCS.Models.Personnel", b =>
+                {
+                    b.Navigation("MissionPersonnel");
                 });
 #pragma warning restore 612, 618
         }

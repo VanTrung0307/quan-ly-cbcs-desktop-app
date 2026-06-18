@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuanLyCBCS.Data;
 using QuanLyCBCS.Enums;
+using QuanLyCBCS.Forms.MissionForms;
 using QuanLyCBCS.Forms.SystemForms;
 using QuanLyCBCS.Forms.UserForms;
 using QuanLyCBCS.Helpers;
@@ -127,7 +128,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 btnDelete,
                 btnUsers,
                 btnAuditLog,
-                btnChangePassword
+                btnChangePassword,
+                btnMission
                 );
 
             RegisterHoverEffect(
@@ -136,7 +138,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 btnDelete,
                 btnUsers,
                 btnAuditLog,
-                btnChangePassword
+                btnChangePassword,
+                btnMission
                 );
         }
 
@@ -1123,6 +1126,10 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             _toolTip.SetToolTip(
                 lblThongke,
                 "Thông tin thống kê nhanh của đơn vị");
+
+            _toolTip.SetToolTip(
+                btnMission,
+                "Quản lý công tác và phân công CBCS");
         }
 
         private void dgvPersonnel_CellMouseEnter(
@@ -1195,6 +1202,18 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
                     break;
             }
+        }
+
+        private void btnMission_Click(
+            object sender,
+            EventArgs e)
+        {
+            PermissionHelper.CheckAdmin();
+
+            FrmMissionList frm =
+                new FrmMissionList();
+
+            frm.ShowDialog();
         }
     }
 }

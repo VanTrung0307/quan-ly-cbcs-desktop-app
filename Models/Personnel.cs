@@ -118,4 +118,13 @@ public class Personnel
         = DateTime.Now;
 
     public DateTime? UpdatedAt { get; set; }
+
+    public virtual ICollection<MissionPersonnel>
+        MissionPersonnels
+    {
+        get;
+        set;
+    }
+    =
+    new List<MissionPersonnel>();
 }

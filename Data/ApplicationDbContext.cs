@@ -30,10 +30,29 @@ public class ApplicationDbContext : DbContext
     }
 
     protected override void OnModelCreating(
-        ModelBuilder modelBuilder)
+    ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Personnel>()
             .Property(x => x.HeSoLuong)
             .HasPrecision(5, 2);
+
+        modelBuilder.Entity<MissionPersonnel>()
+            .HasOne(x => x.Mission)
+            .WithMany(x => x.MissionPersonnels)
+            .HasForeignKey(x => x.MissionId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<MissionPersonnel>()
+            .HasOne(x => x.Personnel)
+            .WithMany(x => x.MissionPersonnels)
+            .HasForeignKey(x => x.PersonnelId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
+
+    public DbSet<Mission> Missions
+        => Set<Mission>();
+
+    public DbSet<MissionPersonnel>
+        MissionPersonnel
+            => Set<MissionPersonnel>();
 }
