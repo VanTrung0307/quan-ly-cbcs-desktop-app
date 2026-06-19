@@ -1,20 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuanLyCBCS.Data;
+using QuanLyCBCS.DTOs;
 using QuanLyCBCS.Models;
 
 namespace QuanLyCBCS.Services
 {
     public class MissionPersonnelService
     {
-        private readonly ApplicationDbContext
-            _db =
-                new();
-
         public async Task<List<MissionPersonnel>>
             GetByMissionAsync(
                 int missionId)
         {
-            return await _db
+            using ApplicationDbContext db = new();
+
+            return await db
                 .MissionPersonnel
                 .Include(x => x.Personnel)
                 .Where(x =>
@@ -26,8 +25,10 @@ namespace QuanLyCBCS.Services
             int missionId,
             int personnelId)
         {
+            using ApplicationDbContext db = new();
+
             bool exists =
-                await _db
+                await db
                     .MissionPersonnel
                     .AnyAsync(x =>
                         x.MissionId == missionId
@@ -45,17 +46,19 @@ namespace QuanLyCBCS.Services
                     AssignedAt = DateTime.Now
                 };
 
-            _db.MissionPersonnel.Add(item);
+            db.MissionPersonnel.Add(item);
 
-            await _db.SaveChangesAsync();
+            await db.SaveChangesAsync();
         }
 
         public async Task RemoveAsync(
             int missionId,
             int personnelId)
         {
+            using ApplicationDbContext db = new();
+
             var item =
-                await _db
+                await db
                     .MissionPersonnel
                     .FirstOrDefaultAsync(x =>
                         x.MissionId == missionId
@@ -65,9 +68,102 @@ namespace QuanLyCBCS.Services
             if (item == null)
                 return;
 
-            _db.MissionPersonnel.Remove(item);
+            db.MissionPersonnel.Remove(item);
 
-            await _db.SaveChangesAsync();
+            await db.SaveChangesAsync();
         }
+
+        public async Task<List<MissionPersonnelDto>>
+        GetAssignedPersonnelDtoAsync(int missionId)
+        {
+            using ApplicationDbContext db = new();
+
+            return await db
+                .MissionPersonnel
+                .AsNoTracking()
+                .Include(x => x.Personnel)
+                .Where(x => x.MissionId == missionId)
+                .Select(x =>
+                    new MissionPersonnelDto
+                    {
+                        PersonnelId = x.PersonnelId,
+
+                        SoHieu = x.Personnel!.SoHieu ?? "",
+
+                        HoTen = x.Personnel.HoTen ?? "",
+
+                        DonVi = x.Personnel.DonVi ?? "",
+
+                        CapBacHam = x.Personnel.CapBacHam ?? "",
+
+                        NgayPhanCong = x.AssignedAt,
+
+                        SoLanCongTac = 0
+                    })
+                .ToListAsync();
+        }
+
+        public async Task<List<MissionPersonnelDto>>
+        GetAvailablePersonnelDtoAsync(
+            int missionId)
+        {
+            using ApplicationDbContext db = new();
+
+            var assignedIds =
+                await db
+                    .MissionPersonnel
+                    .AsNoTracking()
+                    .Where(x =>
+                        x.MissionId == missionId)
+                    .Select(x =>
+                        x.PersonnelId)
+                    .ToListAsync();
+
+            return await db
+                .Personnel
+                .AsNoTracking()
+                .Where(x =>
+                    !assignedIds.Contains(
+                        x.PersonnelID))
+                .Select(x =>
+                    new MissionPersonnelDto
+                    {
+                        PersonnelId = x.PersonnelID,
+
+                        SoHieu = x.SoHieu ?? "",
+
+                        HoTen = x.HoTen ?? "",
+
+                        DonVi = x.DonVi ?? "",
+
+                        CapBacHam = x.CapBacHam ?? "",
+
+                        SoLanCongTac = 0
+                    })
+                .ToListAsync();
+        }
+
+        public async Task<List<Personnel>> GetAllAsync()
+        {
+            using ApplicationDbContext db = new();
+
+            return await db.Personnel
+                .OrderBy(x => x.HoTen)
+                .ToListAsync();
+        }
+
+        public async Task<int>
+        GetMissionCountAsync(
+            int personnelId)
+        {
+            using ApplicationDbContext db = new();
+
+            return await db
+                .MissionPersonnel
+                .CountAsync(x =>
+                    x.PersonnelId ==
+                    personnelId);
+        }
+
     }
 }

@@ -26,7 +26,8 @@ public class ApplicationDbContext : DbContext
             @"Server=.\VANTRUNG;
               Database=QuanLyCBCS;
               Trusted_Connection=True;
-              TrustServerCertificate=True");
+              TrustServerCertificate=True;
+              MultipleActiveResultSets=True");
     }
 
     protected override void OnModelCreating(

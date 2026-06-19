@@ -29,35 +29,35 @@
         private void InitializeComponent()
         {
             pnlHeader = new Panel();
-            lblTitle = new Label();
+            lblMissionId = new Label();
             lblMissionName = new Label();
+            lblTitle = new Label();
             lblSearch = new Label();
             txtSearch = new TextBox();
             btnRefresh = new Button();
             grpAvailable = new GroupBox();
             dgvAvailable = new DataGridView();
-            Column1 = new DataGridViewTextBoxColumn();
-            Column2 = new DataGridViewTextBoxColumn();
-            Column3 = new DataGridViewTextBoxColumn();
-            Column4 = new DataGridViewTextBoxColumn();
-            Column5 = new DataGridViewTextBoxColumn();
+            colSttAvailable = new DataGridViewTextBoxColumn();
+            colSoHieuAvailable = new DataGridViewTextBoxColumn();
+            colHoTenAvailable = new DataGridViewTextBoxColumn();
+            colDonViAvailable = new DataGridViewTextBoxColumn();
+            colCapBacAvailable = new DataGridViewTextBoxColumn();
             pnlAction = new Panel();
-            btnAdd = new Button();
             btnRemove = new Button();
+            btnAdd = new Button();
             grpAssigned = new GroupBox();
             dgvAssigned = new DataGridView();
+            colSttAssigned = new DataGridViewTextBoxColumn();
+            colSoHieuAssigned = new DataGridViewTextBoxColumn();
+            colHoTenAssigned = new DataGridViewTextBoxColumn();
+            colSoLanCTAssigned = new DataGridViewTextBoxColumn();
+            colSDonViAssigned = new DataGridViewTextBoxColumn();
+            colCapBacHamAssigned = new DataGridViewTextBoxColumn();
+            colNgayPhanCongAssigned = new DataGridViewTextBoxColumn();
             panel1 = new Panel();
-            lblAvailableCount = new Label();
             lblAssignedCount = new Label();
+            lblAvailableCount = new Label();
             btnClose = new Button();
-            dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
-            dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
-            dataGridViewTextBoxColumn3 = new DataGridViewTextBoxColumn();
-            Column7 = new DataGridViewTextBoxColumn();
-            dataGridViewTextBoxColumn4 = new DataGridViewTextBoxColumn();
-            dataGridViewTextBoxColumn5 = new DataGridViewTextBoxColumn();
-            Column6 = new DataGridViewTextBoxColumn();
-            lblMissionId = new Label();
             pnlHeader.SuspendLayout();
             grpAvailable.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvAvailable).BeginInit();
@@ -79,17 +79,15 @@
             pnlHeader.Size = new Size(1382, 90);
             pnlHeader.TabIndex = 0;
             // 
-            // lblTitle
+            // lblMissionId
             // 
-            lblTitle.Dock = DockStyle.Top;
-            lblTitle.Font = new Font("Segoe UI", 22F, FontStyle.Bold);
-            lblTitle.ForeColor = Color.White;
-            lblTitle.Location = new Point(0, 0);
-            lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(1382, 60);
-            lblTitle.TabIndex = 0;
-            lblTitle.Text = "PHÂN CÔNG CBCS";
-            lblTitle.TextAlign = ContentAlignment.MiddleCenter;
+            lblMissionId.AutoSize = true;
+            lblMissionId.Location = new Point(1281, 60);
+            lblMissionId.Name = "lblMissionId";
+            lblMissionId.Size = new Size(89, 20);
+            lblMissionId.TabIndex = 2;
+            lblMissionId.Text = "lblMissionId";
+            lblMissionId.Visible = false;
             // 
             // lblMissionName
             // 
@@ -101,6 +99,18 @@
             lblMissionName.Size = new Size(196, 25);
             lblMissionName.TabIndex = 1;
             lblMissionName.Text = "Công tác: Chưa chọn";
+            // 
+            // lblTitle
+            // 
+            lblTitle.Dock = DockStyle.Top;
+            lblTitle.Font = new Font("Segoe UI", 22F, FontStyle.Bold);
+            lblTitle.ForeColor = Color.White;
+            lblTitle.Location = new Point(0, 0);
+            lblTitle.Name = "lblTitle";
+            lblTitle.Size = new Size(1382, 60);
+            lblTitle.TabIndex = 0;
+            lblTitle.Text = "PHÂN CÔNG CBCS";
+            lblTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblSearch
             // 
@@ -145,7 +155,7 @@
             dgvAvailable.AllowUserToResizeRows = false;
             dgvAvailable.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvAvailable.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvAvailable.Columns.AddRange(new DataGridViewColumn[] { Column1, Column2, Column3, Column4, Column5 });
+            dgvAvailable.Columns.AddRange(new DataGridViewColumn[] { colSttAvailable, colSoHieuAvailable, colHoTenAvailable, colDonViAvailable, colCapBacAvailable });
             dgvAvailable.Dock = DockStyle.Fill;
             dgvAvailable.Location = new Point(3, 23);
             dgvAvailable.Name = "dgvAvailable";
@@ -156,40 +166,44 @@
             dgvAvailable.Size = new Size(544, 474);
             dgvAvailable.TabIndex = 6;
             // 
-            // Column1
+            // colSttAvailable
             // 
-            Column1.HeaderText = "STT";
-            Column1.MinimumWidth = 6;
-            Column1.Name = "Column1";
-            Column1.ReadOnly = true;
+            colSttAvailable.HeaderText = "STT";
+            colSttAvailable.MinimumWidth = 6;
+            colSttAvailable.Name = "colSttAvailable";
+            colSttAvailable.ReadOnly = true;
             // 
-            // Column2
+            // colSoHieuAvailable
             // 
-            Column2.HeaderText = "Số hiệu";
-            Column2.MinimumWidth = 6;
-            Column2.Name = "Column2";
-            Column2.ReadOnly = true;
+            colSoHieuAvailable.DataPropertyName = "SoHieu";
+            colSoHieuAvailable.HeaderText = "Số hiệu";
+            colSoHieuAvailable.MinimumWidth = 6;
+            colSoHieuAvailable.Name = "colSoHieuAvailable";
+            colSoHieuAvailable.ReadOnly = true;
             // 
-            // Column3
+            // colHoTenAvailable
             // 
-            Column3.HeaderText = "Họ tên";
-            Column3.MinimumWidth = 6;
-            Column3.Name = "Column3";
-            Column3.ReadOnly = true;
+            colHoTenAvailable.DataPropertyName = "HoTen";
+            colHoTenAvailable.HeaderText = "Họ tên";
+            colHoTenAvailable.MinimumWidth = 6;
+            colHoTenAvailable.Name = "colHoTenAvailable";
+            colHoTenAvailable.ReadOnly = true;
             // 
-            // Column4
+            // colDonViAvailable
             // 
-            Column4.HeaderText = "Đơn vị";
-            Column4.MinimumWidth = 6;
-            Column4.Name = "Column4";
-            Column4.ReadOnly = true;
+            colDonViAvailable.DataPropertyName = "DonVi";
+            colDonViAvailable.HeaderText = "Đơn vị";
+            colDonViAvailable.MinimumWidth = 6;
+            colDonViAvailable.Name = "colDonViAvailable";
+            colDonViAvailable.ReadOnly = true;
             // 
-            // Column5
+            // colCapBacAvailable
             // 
-            Column5.HeaderText = "Cấp bậc";
-            Column5.MinimumWidth = 6;
-            Column5.Name = "Column5";
-            Column5.ReadOnly = true;
+            colCapBacAvailable.DataPropertyName = "CapBacHam";
+            colCapBacAvailable.HeaderText = "Cấp bậc";
+            colCapBacAvailable.MinimumWidth = 6;
+            colCapBacAvailable.Name = "colCapBacAvailable";
+            colCapBacAvailable.ReadOnly = true;
             // 
             // pnlAction
             // 
@@ -200,16 +214,6 @@
             pnlAction.Size = new Size(120, 125);
             pnlAction.TabIndex = 6;
             // 
-            // btnAdd
-            // 
-            btnAdd.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            btnAdd.Location = new Point(20, 18);
-            btnAdd.Name = "btnAdd";
-            btnAdd.Size = new Size(80, 40);
-            btnAdd.TabIndex = 7;
-            btnAdd.Text = "▶▶";
-            btnAdd.UseVisualStyleBackColor = true;
-            // 
             // btnRemove
             // 
             btnRemove.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
@@ -219,6 +223,18 @@
             btnRemove.TabIndex = 8;
             btnRemove.Text = "◀◀";
             btnRemove.UseVisualStyleBackColor = true;
+            btnRemove.Click += btnRemove_Click;
+            // 
+            // btnAdd
+            // 
+            btnAdd.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btnAdd.Location = new Point(20, 18);
+            btnAdd.Name = "btnAdd";
+            btnAdd.Size = new Size(80, 40);
+            btnAdd.TabIndex = 7;
+            btnAdd.Text = "▶▶";
+            btnAdd.UseVisualStyleBackColor = true;
+            btnAdd.Click += btnAdd_Click;
             // 
             // grpAssigned
             // 
@@ -237,7 +253,7 @@
             dgvAssigned.AllowUserToResizeRows = false;
             dgvAssigned.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvAssigned.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvAssigned.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, dataGridViewTextBoxColumn2, dataGridViewTextBoxColumn3, Column7, dataGridViewTextBoxColumn4, dataGridViewTextBoxColumn5, Column6 });
+            dgvAssigned.Columns.AddRange(new DataGridViewColumn[] { colSttAssigned, colSoHieuAssigned, colHoTenAssigned, colSoLanCTAssigned, colSDonViAssigned, colCapBacHamAssigned, colNgayPhanCongAssigned });
             dgvAssigned.Dock = DockStyle.Fill;
             dgvAssigned.Location = new Point(3, 23);
             dgvAssigned.Name = "dgvAssigned";
@@ -247,6 +263,59 @@
             dgvAssigned.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvAssigned.Size = new Size(544, 474);
             dgvAssigned.TabIndex = 6;
+            // 
+            // colSttAssigned
+            // 
+            colSttAssigned.HeaderText = "STT";
+            colSttAssigned.MinimumWidth = 6;
+            colSttAssigned.Name = "colSttAssigned";
+            colSttAssigned.ReadOnly = true;
+            // 
+            // colSoHieuAssigned
+            // 
+            colSoHieuAssigned.DataPropertyName = "SoHieu";
+            colSoHieuAssigned.HeaderText = "Số hiệu";
+            colSoHieuAssigned.MinimumWidth = 6;
+            colSoHieuAssigned.Name = "colSoHieuAssigned";
+            colSoHieuAssigned.ReadOnly = true;
+            // 
+            // colHoTenAssigned
+            // 
+            colHoTenAssigned.DataPropertyName = "HoTen";
+            colHoTenAssigned.HeaderText = "Họ tên";
+            colHoTenAssigned.MinimumWidth = 6;
+            colHoTenAssigned.Name = "colHoTenAssigned";
+            colHoTenAssigned.ReadOnly = true;
+            // 
+            // colSoLanCTAssigned
+            // 
+            colSoLanCTAssigned.HeaderText = "Số lần CT";
+            colSoLanCTAssigned.MinimumWidth = 6;
+            colSoLanCTAssigned.Name = "colSoLanCTAssigned";
+            colSoLanCTAssigned.ReadOnly = true;
+            // 
+            // colSDonViAssigned
+            // 
+            colSDonViAssigned.DataPropertyName = "DonVi";
+            colSDonViAssigned.HeaderText = "Đơn vị";
+            colSDonViAssigned.MinimumWidth = 6;
+            colSDonViAssigned.Name = "colSDonViAssigned";
+            colSDonViAssigned.ReadOnly = true;
+            // 
+            // colCapBacHamAssigned
+            // 
+            colCapBacHamAssigned.DataPropertyName = "CapBacHam";
+            colCapBacHamAssigned.HeaderText = "Cấp bậc";
+            colCapBacHamAssigned.MinimumWidth = 6;
+            colCapBacHamAssigned.Name = "colCapBacHamAssigned";
+            colCapBacHamAssigned.ReadOnly = true;
+            // 
+            // colNgayPhanCongAssigned
+            // 
+            colNgayPhanCongAssigned.HeaderText = "Ngày phân công";
+            colNgayPhanCongAssigned.MinimumWidth = 6;
+            colNgayPhanCongAssigned.Name = "colNgayPhanCongAssigned";
+            colNgayPhanCongAssigned.ReadOnly = true;
             // 
             // panel1
             // 
@@ -258,15 +327,6 @@
             panel1.Size = new Size(1382, 40);
             panel1.TabIndex = 8;
             // 
-            // lblAvailableCount
-            // 
-            lblAvailableCount.AutoSize = true;
-            lblAvailableCount.Location = new Point(37, 11);
-            lblAvailableCount.Name = "lblAvailableCount";
-            lblAvailableCount.Size = new Size(171, 20);
-            lblAvailableCount.TabIndex = 0;
-            lblAvailableCount.Text = "Chưa phân công: 0 CBCS";
-            // 
             // lblAssignedCount
             // 
             lblAssignedCount.AutoSize = true;
@@ -275,6 +335,15 @@
             lblAssignedCount.Size = new Size(156, 20);
             lblAssignedCount.TabIndex = 1;
             lblAssignedCount.Text = "Đã phân công: 0 CBCS";
+            // 
+            // lblAvailableCount
+            // 
+            lblAvailableCount.AutoSize = true;
+            lblAvailableCount.Location = new Point(37, 11);
+            lblAvailableCount.Name = "lblAvailableCount";
+            lblAvailableCount.Size = new Size(171, 20);
+            lblAvailableCount.TabIndex = 0;
+            lblAvailableCount.Text = "Chưa phân công: 0 CBCS";
             // 
             // btnClose
             // 
@@ -286,65 +355,6 @@
             btnClose.TabIndex = 9;
             btnClose.Text = "❌ Đóng";
             btnClose.UseVisualStyleBackColor = false;
-            // 
-            // dataGridViewTextBoxColumn1
-            // 
-            dataGridViewTextBoxColumn1.HeaderText = "STT";
-            dataGridViewTextBoxColumn1.MinimumWidth = 6;
-            dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            dataGridViewTextBoxColumn1.ReadOnly = true;
-            // 
-            // dataGridViewTextBoxColumn2
-            // 
-            dataGridViewTextBoxColumn2.HeaderText = "Số hiệu";
-            dataGridViewTextBoxColumn2.MinimumWidth = 6;
-            dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
-            dataGridViewTextBoxColumn2.ReadOnly = true;
-            // 
-            // dataGridViewTextBoxColumn3
-            // 
-            dataGridViewTextBoxColumn3.HeaderText = "Họ tên";
-            dataGridViewTextBoxColumn3.MinimumWidth = 6;
-            dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
-            dataGridViewTextBoxColumn3.ReadOnly = true;
-            // 
-            // Column7
-            // 
-            Column7.HeaderText = "Số lần CT";
-            Column7.MinimumWidth = 6;
-            Column7.Name = "Column7";
-            Column7.ReadOnly = true;
-            // 
-            // dataGridViewTextBoxColumn4
-            // 
-            dataGridViewTextBoxColumn4.HeaderText = "Đơn vị";
-            dataGridViewTextBoxColumn4.MinimumWidth = 6;
-            dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
-            dataGridViewTextBoxColumn4.ReadOnly = true;
-            // 
-            // dataGridViewTextBoxColumn5
-            // 
-            dataGridViewTextBoxColumn5.HeaderText = "Cấp bậc";
-            dataGridViewTextBoxColumn5.MinimumWidth = 6;
-            dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
-            dataGridViewTextBoxColumn5.ReadOnly = true;
-            // 
-            // Column6
-            // 
-            Column6.HeaderText = "Ngày phân công";
-            Column6.MinimumWidth = 6;
-            Column6.Name = "Column6";
-            Column6.ReadOnly = true;
-            // 
-            // lblMissionId
-            // 
-            lblMissionId.AutoSize = true;
-            lblMissionId.Location = new Point(1281, 60);
-            lblMissionId.Name = "lblMissionId";
-            lblMissionId.Size = new Size(89, 20);
-            lblMissionId.TabIndex = 2;
-            lblMissionId.Text = "lblMissionId";
-            lblMissionId.Visible = false;
             // 
             // FrmMissionPersonnel
             // 
@@ -367,6 +377,7 @@
             ShowIcon = false;
             StartPosition = FormStartPosition.CenterParent;
             Text = "Phân công CBCS";
+            Load += FrmMissionPersonnel_Load;
             pnlHeader.ResumeLayout(false);
             pnlHeader.PerformLayout();
             grpAvailable.ResumeLayout(false);
@@ -390,11 +401,6 @@
         private Button btnRefresh;
         private GroupBox grpAvailable;
         private DataGridView dgvAvailable;
-        private DataGridViewTextBoxColumn Column1;
-        private DataGridViewTextBoxColumn Column2;
-        private DataGridViewTextBoxColumn Column3;
-        private DataGridViewTextBoxColumn Column4;
-        private DataGridViewTextBoxColumn Column5;
         private Panel pnlAction;
         private Button btnRemove;
         private Button btnAdd;
@@ -404,13 +410,18 @@
         private Label lblAvailableCount;
         private Label lblAssignedCount;
         private Button btnClose;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
-        private DataGridViewTextBoxColumn Column7;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
-        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
-        private DataGridViewTextBoxColumn Column6;
         private Label lblMissionId;
+        private DataGridViewTextBoxColumn colSttAvailable;
+        private DataGridViewTextBoxColumn colSoHieuAvailable;
+        private DataGridViewTextBoxColumn colHoTenAvailable;
+        private DataGridViewTextBoxColumn colDonViAvailable;
+        private DataGridViewTextBoxColumn colCapBacAvailable;
+        private DataGridViewTextBoxColumn colSttAssigned;
+        private DataGridViewTextBoxColumn colSoHieuAssigned;
+        private DataGridViewTextBoxColumn colHoTenAssigned;
+        private DataGridViewTextBoxColumn colSoLanCTAssigned;
+        private DataGridViewTextBoxColumn colSDonViAssigned;
+        private DataGridViewTextBoxColumn colCapBacHamAssigned;
+        private DataGridViewTextBoxColumn colNgayPhanCongAssigned;
     }
 }

@@ -64,9 +64,9 @@ namespace QuanLyCBCS.Forms.MissionForms
                 "MissionId"]
                 .Visible = false;
 
-            dgvMission.Columns[
-                "MissionPersonnel"]
-                .Visible = false;
+            //dgvMission.Columns[
+            //    "MissionPersonnel"]
+            //    .Visible = false;
 
             dgvMission.Columns[
                 "CreatedAt"]
