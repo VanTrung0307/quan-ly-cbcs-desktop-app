@@ -545,7 +545,7 @@
             // cboDonVi
             // 
             cboDonVi.FormattingEnabled = true;
-            cboDonVi.Location = new Point(907, 174);
+            cboDonVi.Location = new Point(907, 212);
             cboDonVi.Name = "cboDonVi";
             cboDonVi.Size = new Size(166, 28);
             cboDonVi.TabIndex = 32;
@@ -555,7 +555,7 @@
             // cboCapBac
             // 
             cboCapBac.FormattingEnabled = true;
-            cboCapBac.Location = new Point(1096, 174);
+            cboCapBac.Location = new Point(1096, 212);
             cboCapBac.Name = "cboCapBac";
             cboCapBac.Size = new Size(166, 28);
             cboCapBac.TabIndex = 33;
@@ -565,7 +565,7 @@
             // cboChucVu
             // 
             cboChucVu.FormattingEnabled = true;
-            cboChucVu.Location = new Point(1283, 174);
+            cboChucVu.Location = new Point(1283, 212);
             cboChucVu.Name = "cboChucVu";
             cboChucVu.Size = new Size(166, 28);
             cboChucVu.TabIndex = 34;
