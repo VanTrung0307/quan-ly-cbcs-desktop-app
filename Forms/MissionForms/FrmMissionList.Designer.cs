@@ -249,6 +249,7 @@
             btnMembers.TabIndex = 3;
             btnMembers.Text = "👥 Phân công";
             btnMembers.UseVisualStyleBackColor = true;
+            btnMembers.Click += btnAssign_Click;
             // 
             // btnDeleteMission
             // 

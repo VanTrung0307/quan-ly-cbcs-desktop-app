@@ -35,7 +35,7 @@ namespace QuanLyCBCS.Forms.MissionForms
             AddSttColumn();
 
             UpdateRecordCount(
-                _allMissions.Count);;
+                _allMissions.Count); ;
         }
 
         private async void
@@ -237,6 +237,31 @@ namespace QuanLyCBCS.Forms.MissionForms
 
                 await EditMissionAsync();
             }
+        }
+
+        private void btnAssign_Click(
+            object sender,
+            EventArgs e)
+        {
+            if (dgvMission.CurrentRow == null)
+            {
+                MessageBox.Show(
+                    "Vui lòng chọn công tác.");
+
+                return;
+            }
+
+            Mission mission =
+                (Mission)dgvMission
+                    .CurrentRow
+                    .DataBoundItem;
+
+            FrmMissionPersonnel frm =
+                new(
+                    mission.MissionId,
+                    mission.MissionName);
+
+            frm.ShowDialog();
         }
     }
 }

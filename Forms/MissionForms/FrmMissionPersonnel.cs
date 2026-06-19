@@ -1,20 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using QuanLyCBCS.Models;
+using QuanLyCBCS.Services;
 
 namespace QuanLyCBCS.Forms.MissionForms
 {
     public partial class FrmMissionPersonnel : Form
     {
-        public FrmMissionPersonnel()
+        private readonly int _missionId;
+
+        private readonly MissionPersonnelService
+            _missionPersonnelService =
+                new();
+
+        private readonly PersonnelService
+            _personnelService =
+                new();
+        public FrmMissionPersonnel(
+            int missionId,
+            string missionName)
         {
             InitializeComponent();
+
+            _missionId = missionId;
+
+            lblMissionName.Text =
+                $"Công tác: {missionName}";
         }
     }
 }
