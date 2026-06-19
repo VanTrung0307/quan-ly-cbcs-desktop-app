@@ -368,6 +368,7 @@
             btnClose.TabIndex = 9;
             btnClose.Text = "❌ Đóng";
             btnClose.UseVisualStyleBackColor = false;
+            btnClose.Click += btnClose_Click;
             // 
             // FrmMissionPersonnel
             // 

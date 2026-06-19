@@ -66,6 +66,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             btnDelete.Visible = IsAdmin;
             btnBackup.Visible = IsAdmin;
             btnRestore.Visible = IsAdmin;
+            btnStatistics.Visible = IsAdmin;
+            btnMission.Visible = IsAdmin;
         }
 
         protected override bool ProcessCmdKey(
@@ -129,7 +131,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 btnUsers,
                 btnAuditLog,
                 btnChangePassword,
-                btnMission
+                btnMission,
+                btnStatistics
                 );
 
             RegisterHoverEffect(
@@ -139,7 +142,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 btnUsers,
                 btnAuditLog,
                 btnChangePassword,
-                btnMission
+                btnMission,
+                btnStatistics
                 );
         }
 
@@ -267,42 +271,42 @@ namespace QuanLyCBCS.Forms.PersonnelForms
         }
 
         private void SearchPersonnel()
-{
-    string keyword =
-        txtSearch.Text.Trim();
+        {
+            string keyword =
+                txtSearch.Text.Trim();
 
-    if (string.IsNullOrWhiteSpace(keyword))
-    {
-        dgvPersonnel.DataSource =
-            _allPersonnel;
+            if (string.IsNullOrWhiteSpace(keyword))
+            {
+                dgvPersonnel.DataSource =
+                    _allPersonnel;
 
-        AddSttColumn();
+                AddSttColumn();
 
-        UpdateRecordCount(
-            _allPersonnel.Count);
+                UpdateRecordCount(
+                    _allPersonnel.Count);
 
-        return;
-    }
+                return;
+            }
 
-    var result =
-        _allPersonnel
-        .Where(x =>
-            PersonnelSearchHelper
-                .IsMatch(
-                    x,
-                    keyword))
-        .ToList();
+            var result =
+                _allPersonnel
+                .Where(x =>
+                    PersonnelSearchHelper
+                        .IsMatch(
+                            x,
+                            keyword))
+                .ToList();
 
-    dgvPersonnel.DataSource =
-        result;
+            dgvPersonnel.DataSource =
+                result;
 
-    CustomizeDataGridView();
+            CustomizeDataGridView();
 
-    AddSttColumn();
+            AddSttColumn();
 
-    UpdateRecordCount(
-        result.Count);
-}
+            UpdateRecordCount(
+                result.Count);
+        }
 
         private void CustomizeDataGridView()
         {
@@ -1109,7 +1113,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             _toolTip.SetToolTip(
                 lblTongTitle,
-                "Tổng số cán bộ chiến sĩ hiện có"); 
+                "Tổng số cán bộ chiến sĩ hiện có");
 
             _toolTip.SetToolTip(
                 lblChienSiTitle,
@@ -1212,6 +1216,16 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             FrmMissionList frm =
                 new FrmMissionList();
+
+            frm.ShowDialog();
+        }
+
+        private void btnStatistics_Click(
+            object sender,
+            EventArgs e)
+        {
+            FrmPersonnelMissionStatistics frm =
+                new();
 
             frm.ShowDialog();
         }

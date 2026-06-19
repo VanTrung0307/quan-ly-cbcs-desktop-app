@@ -77,6 +77,7 @@
             cboChucVu = new ComboBox();
             toolTip1 = new ToolTip(components);
             btnMission = new Button();
+            btnStatistics = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvPersonnel).BeginInit();
             pnlTongCBCS.SuspendLayout();
             pnlChienSi.SuspendLayout();
@@ -582,11 +583,22 @@
             btnMission.UseVisualStyleBackColor = true;
             btnMission.Click += btnMission_Click;
             // 
+            // btnStatistics
+            // 
+            btnStatistics.Location = new Point(182, 188);
+            btnStatistics.Name = "btnStatistics";
+            btnStatistics.Size = new Size(164, 36);
+            btnStatistics.TabIndex = 36;
+            btnStatistics.Text = "📊 Thống kê CT";
+            btnStatistics.UseVisualStyleBackColor = true;
+            btnStatistics.Click += btnStatistics_Click;
+            // 
             // FrmPersonnelList
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1842, 564);
+            Controls.Add(btnStatistics);
             Controls.Add(btnMission);
             Controls.Add(cboChucVu);
             Controls.Add(cboCapBac);
@@ -685,5 +697,6 @@
         private ComboBox cboChucVu;
         private ToolTip toolTip1;
         private Button btnMission;
+        private Button btnStatistics;
     }
 }

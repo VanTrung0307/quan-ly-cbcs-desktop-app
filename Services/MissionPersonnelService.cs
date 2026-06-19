@@ -171,5 +171,35 @@ namespace QuanLyCBCS.Services
                     personnelId);
         }
 
+        public async Task<List<PersonnelMissionStatisticDto>>
+            GetPersonnelMissionStatisticsAsync()
+        {
+            using ApplicationDbContext db = new();
+
+            return await db.Personnel
+                .AsNoTracking()
+                .Select(x =>
+                    new PersonnelMissionStatisticDto
+                    {
+                        PersonnelId = x.PersonnelID,
+
+                        SoHieu = x.SoHieu,
+
+                        HoTen = x.HoTen,
+
+                        DonVi = x.DonVi,
+
+                        CapBacHam = x.CapBacHam,
+
+                        SoLanCongTac =
+                            db.MissionPersonnel.Count(mp =>
+                                mp.PersonnelId ==
+                                x.PersonnelID)
+                    })
+                .OrderByDescending(x =>
+                    x.SoLanCongTac)
+                .ToListAsync();
+        }
+
     }
 }

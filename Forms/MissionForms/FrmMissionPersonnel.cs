@@ -205,5 +205,13 @@ namespace QuanLyCBCS.Forms.MissionForms
         {
             await RemoveSelectedPersonnelAsync();
         }
+
+        private void
+        btnClose_Click(
+            object sender,
+            EventArgs e)
+        {
+            Close();
+        }
     }
 }
