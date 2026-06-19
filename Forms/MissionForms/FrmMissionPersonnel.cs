@@ -116,45 +116,79 @@ namespace QuanLyCBCS.Forms.MissionForms
             dgvAssigned.RowHeadersVisible = false;
         }
 
-        private async void btnAdd_Click(
+        private async void btnAssign_Click(
             object sender,
             EventArgs e)
         {
-            if (dgvAvailable.CurrentRow == null)
-            {
-                MessageBox.Show(
-                    "Vui lòng chọn CBCS.");
-
-                return;
-            }
-
-            MissionPersonnelDto dto =
-                (MissionPersonnelDto)
-                dgvAvailable.CurrentRow.DataBoundItem;
-
-            await _missionPersonnelService
-                .AddAsync(
-                    _missionId,
-                    dto.PersonnelId);
-
-            await LoadPersonnelAsync();
+            await AssignSelectedPersonnelAsync();
         }
 
         private async void btnRemove_Click(
             object sender,
             EventArgs e)
         {
-            if (dgvAssigned.CurrentRow == null)
-            {
-                MessageBox.Show(
-                    "Vui lòng chọn CBCS cần hủy phân công.");
+            await RemoveSelectedPersonnelAsync();
+        }
 
+        private void txtSearch_TextChanged(
+            object sender,
+            EventArgs e)
+        {
+            string keyword =
+                txtSearch.Text
+                .Trim()
+                .ToLower();
+
+            dgvAvailable.DataSource =
+                _availablePersonnel
+                .Where(x =>
+                    x.HoTen.ToLower()
+                        .Contains(keyword)
+
+                    ||
+
+                    x.SoHieu.ToLower()
+                        .Contains(keyword))
+                .ToList();
+        }
+
+        private async void
+        dgvAvailable_CellDoubleClick(
+            object sender,
+            DataGridViewCellEventArgs e)
+        {
+            await AssignSelectedPersonnelAsync();
+        }
+
+        private async Task
+        AssignSelectedPersonnelAsync()
+        {
+            if (dgvAvailable.CurrentRow == null)
                 return;
-            }
 
             var selected =
                 (MissionPersonnelDto)
-                dgvAssigned.CurrentRow.DataBoundItem;
+                dgvAvailable.CurrentRow
+                    .DataBoundItem;
+
+            await _missionPersonnelService
+                .AddAsync(
+                    _missionId,
+                    selected.PersonnelId);
+
+            await LoadPersonnelAsync();
+        }
+
+        private async Task
+        RemoveSelectedPersonnelAsync()
+        {
+            if (dgvAssigned.CurrentRow == null)
+                return;
+
+            var selected =
+                (MissionPersonnelDto)
+                dgvAssigned.CurrentRow
+                    .DataBoundItem;
 
             await _missionPersonnelService
                 .RemoveAsync(
@@ -162,6 +196,14 @@ namespace QuanLyCBCS.Forms.MissionForms
                     selected.PersonnelId);
 
             await LoadPersonnelAsync();
+        }
+
+        private async void
+        dgvAssigned_CellDoubleClick(
+            object sender,
+            DataGridViewCellEventArgs e)
+        {
+            await RemoveSelectedPersonnelAsync();
         }
     }
 }

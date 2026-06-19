@@ -98,7 +98,10 @@ namespace QuanLyCBCS.Services
 
                         NgayPhanCong = x.AssignedAt,
 
-                        SoLanCongTac = 0
+                        SoLanCongTac =
+                            db.MissionPersonnel.Count(mp =>
+                                mp.PersonnelId ==
+                                x.PersonnelId)
                     })
                 .ToListAsync();
         }
@@ -138,7 +141,10 @@ namespace QuanLyCBCS.Services
 
                         CapBacHam = x.CapBacHam ?? "",
 
-                        SoLanCongTac = 0
+                        SoLanCongTac =
+                            db.MissionPersonnel.Count(mp =>
+                                mp.PersonnelId ==
+                                x.PersonnelID)
                     })
                 .ToListAsync();
         }

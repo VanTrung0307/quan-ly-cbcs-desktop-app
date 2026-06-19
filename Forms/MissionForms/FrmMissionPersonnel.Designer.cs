@@ -42,6 +42,7 @@
             colHoTenAvailable = new DataGridViewTextBoxColumn();
             colDonViAvailable = new DataGridViewTextBoxColumn();
             colCapBacAvailable = new DataGridViewTextBoxColumn();
+            colSoLanCT = new DataGridViewTextBoxColumn();
             pnlAction = new Panel();
             btnRemove = new Button();
             btnAdd = new Button();
@@ -128,6 +129,7 @@
             txtSearch.PlaceholderText = "Nhập họ tên, số hiệu...";
             txtSearch.Size = new Size(350, 27);
             txtSearch.TabIndex = 2;
+            txtSearch.TextChanged += txtSearch_TextChanged;
             // 
             // btnRefresh
             // 
@@ -155,7 +157,7 @@
             dgvAvailable.AllowUserToResizeRows = false;
             dgvAvailable.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvAvailable.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvAvailable.Columns.AddRange(new DataGridViewColumn[] { colSttAvailable, colSoHieuAvailable, colHoTenAvailable, colDonViAvailable, colCapBacAvailable });
+            dgvAvailable.Columns.AddRange(new DataGridViewColumn[] { colSttAvailable, colSoHieuAvailable, colHoTenAvailable, colDonViAvailable, colCapBacAvailable, colSoLanCT });
             dgvAvailable.Dock = DockStyle.Fill;
             dgvAvailable.Location = new Point(3, 23);
             dgvAvailable.Name = "dgvAvailable";
@@ -165,6 +167,7 @@
             dgvAvailable.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvAvailable.Size = new Size(544, 474);
             dgvAvailable.TabIndex = 6;
+            dgvAvailable.CellDoubleClick += dgvAvailable_CellDoubleClick;
             // 
             // colSttAvailable
             // 
@@ -205,6 +208,14 @@
             colCapBacAvailable.Name = "colCapBacAvailable";
             colCapBacAvailable.ReadOnly = true;
             // 
+            // colSoLanCT
+            // 
+            colSoLanCT.DataPropertyName = "SoLanCongTac";
+            colSoLanCT.HeaderText = "Số lần CT";
+            colSoLanCT.MinimumWidth = 6;
+            colSoLanCT.Name = "colSoLanCT";
+            colSoLanCT.ReadOnly = true;
+            // 
             // pnlAction
             // 
             pnlAction.Controls.Add(btnRemove);
@@ -234,7 +245,7 @@
             btnAdd.TabIndex = 7;
             btnAdd.Text = "▶▶";
             btnAdd.UseVisualStyleBackColor = true;
-            btnAdd.Click += btnAdd_Click;
+            btnAdd.Click += btnAssign_Click;
             // 
             // grpAssigned
             // 
@@ -263,6 +274,7 @@
             dgvAssigned.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvAssigned.Size = new Size(544, 474);
             dgvAssigned.TabIndex = 6;
+            dgvAssigned.CellDoubleClick += dgvAssigned_CellDoubleClick;
             // 
             // colSttAssigned
             // 
@@ -289,6 +301,7 @@
             // 
             // colSoLanCTAssigned
             // 
+            colSoLanCTAssigned.DataPropertyName = "SoLanCongTac";
             colSoLanCTAssigned.HeaderText = "Số lần CT";
             colSoLanCTAssigned.MinimumWidth = 6;
             colSoLanCTAssigned.Name = "colSoLanCTAssigned";
@@ -416,6 +429,7 @@
         private DataGridViewTextBoxColumn colHoTenAvailable;
         private DataGridViewTextBoxColumn colDonViAvailable;
         private DataGridViewTextBoxColumn colCapBacAvailable;
+        private DataGridViewTextBoxColumn colSoLanCT;
         private DataGridViewTextBoxColumn colSttAssigned;
         private DataGridViewTextBoxColumn colSoHieuAssigned;
         private DataGridViewTextBoxColumn colHoTenAssigned;
