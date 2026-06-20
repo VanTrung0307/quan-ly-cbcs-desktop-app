@@ -143,17 +143,20 @@ public class MissionService
             .Select(x =>
                 new PersonnelMissionStatisticDto
                 {
-                    PersonnelId =
-                        x.PersonnelID,
+                    PersonnelId = x.PersonnelID,
 
-                    HoTen =
-                        x.HoTen,
+                    SoHieu = x.SoHieu,
+
+                    HoTen = x.HoTen,
+
+                    DonVi = x.DonVi,
+
+                    CapBacHam = x.CapBacHam,
 
                     SoLanCongTac =
-                        db.MissionPersonnel
-                            .Count(mp =>
-                                mp.PersonnelId ==
-                                x.PersonnelID)
+                        db.MissionPersonnel.Count(
+                            mp => mp.PersonnelId ==
+                                  x.PersonnelID)
                 })
             .OrderByDescending(
                 x => x.SoLanCongTac)

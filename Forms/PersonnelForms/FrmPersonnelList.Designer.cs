@@ -170,9 +170,9 @@
             btnExport.BackColor = Color.FromArgb(39, 174, 96);
             btnExport.FlatStyle = FlatStyle.Flat;
             btnExport.ForeColor = Color.White;
-            btnExport.Location = new Point(1584, 206);
+            btnExport.Location = new Point(1584, 204);
             btnExport.Name = "btnExport";
-            btnExport.Size = new Size(120, 36);
+            btnExport.Size = new Size(120, 38);
             btnExport.TabIndex = 6;
             btnExport.Text = "📊 Excel";
             btnExport.UseVisualStyleBackColor = false;
