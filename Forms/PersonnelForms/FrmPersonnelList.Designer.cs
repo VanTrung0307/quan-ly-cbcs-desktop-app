@@ -462,7 +462,7 @@
             // btnChangePassword
             // 
             btnChangePassword.Font = new Font("Segoe UI", 10F);
-            btnChangePassword.Location = new Point(182, 143);
+            btnChangePassword.Location = new Point(182, 146);
             btnChangePassword.Name = "btnChangePassword";
             btnChangePassword.Size = new Size(164, 36);
             btnChangePassword.TabIndex = 28;

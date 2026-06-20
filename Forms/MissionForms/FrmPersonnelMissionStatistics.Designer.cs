@@ -44,6 +44,7 @@
             lblTotalMissionCount = new Label();
             txtSearch = new TextBox();
             btnTop10 = new Button();
+            btnHistory = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvStatistics).BeginInit();
             pnlHeader.SuspendLayout();
             SuspendLayout();
@@ -56,10 +57,10 @@
             lblTitle.ForeColor = Color.White;
             lblTitle.Location = new Point(0, 0);
             lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(1182, 61);
+            lblTitle.Size = new Size(1182, 73);
             lblTitle.TabIndex = 0;
             lblTitle.Text = "THỐNG KÊ CÔNG TÁC CBCS";
-            lblTitle.TextAlign = ContentAlignment.TopCenter;
+            lblTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // dgvStatistics
             // 
@@ -214,11 +215,22 @@
             btnTop10.UseVisualStyleBackColor = true;
             btnTop10.Click += btnTop10_Click;
             // 
+            // btnHistory
+            // 
+            btnHistory.Location = new Point(27, 267);
+            btnHistory.Name = "btnHistory";
+            btnHistory.Size = new Size(94, 29);
+            btnHistory.TabIndex = 16;
+            btnHistory.Text = "📜 Lịch sử";
+            btnHistory.UseVisualStyleBackColor = true;
+            btnHistory.Click += btnHistory_Click;
+            // 
             // FrmPersonnelMissionStatistics
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1182, 653);
+            Controls.Add(btnHistory);
             Controls.Add(btnTop10);
             Controls.Add(txtSearch);
             Controls.Add(lblTotalMissionCount);
@@ -255,5 +267,6 @@
         private Label lblTotalMissionCount;
         private TextBox txtSearch;
         private Button btnTop10;
+        private Button btnHistory;
     }
 }

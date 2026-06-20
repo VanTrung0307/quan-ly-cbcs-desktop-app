@@ -223,4 +223,35 @@ public partial class FrmPersonnelMissionStatistics : Form
                 .Take(10)
                 .ToList();
     }
+
+    private void btnHistory_Click(
+        object sender,
+        EventArgs e)
+    {
+        if (dgvStatistics.CurrentRow == null)
+        {
+            MessageBox.Show(
+                "Vui lòng chọn CBCS!",
+                "Thông báo",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning);
+
+            return;
+        }
+
+        var selected =
+            dgvStatistics.CurrentRow
+            .DataBoundItem
+            as PersonnelMissionStatisticDto;
+
+        if (selected == null)
+            return;
+
+        FrmPersonnelMissionHistory frm =
+            new FrmPersonnelMissionHistory(
+                selected.PersonnelId,
+                selected.HoTen);
+
+        frm.ShowDialog();
+    }
 }

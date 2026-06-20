@@ -201,5 +201,47 @@ namespace QuanLyCBCS.Services
                 .ToListAsync();
         }
 
+        public async Task<List<PersonnelMissionHistoryDto>>
+            GetPersonnelMissionHistoryAsync(
+                int personnelId)
+        {
+            using ApplicationDbContext db = new();
+
+            return await db
+                .MissionPersonnel
+                .AsNoTracking()
+                .Include(x => x.Mission)
+                .Where(x =>
+                    x.PersonnelId ==
+                    personnelId)
+                .OrderByDescending(x =>
+                    x.AssignedAt)
+                .Select(x =>
+                    new PersonnelMissionHistoryDto
+                    {
+                        NgayPhanCong =
+                            x.AssignedAt,
+
+                        TenCongTac =
+                            x.Mission!.MissionName,
+
+                        LoaiCongTac =
+                            x.Mission.MissionType ?? "",
+
+                        GhiChu =
+                            x.Mission.Description ?? "",
+
+                        DiaDiem =
+                            x.Mission.Location ?? "",
+
+                        BatDau =
+                            x.Mission.StartTime,
+
+                        KetThuc =
+                            x.Mission.EndTime
+                    })
+                .ToListAsync();
+        }
+
     }
 }
