@@ -8,6 +8,7 @@ using QuanLyCBCS.Helpers;
 using QuanLyCBCS.Models;
 using QuanLyCBCS.Services;
 using System.Diagnostics;
+using QuanLyCBCS.Forms.CommonForms;
 
 namespace QuanLyCBCS.Forms.PersonnelForms
 {
@@ -33,6 +34,9 @@ namespace QuanLyCBCS.Forms.PersonnelForms
         private FrmMissionDashboard?
            _missionDashboard;
 
+        private FrmNotificationCenter? _notificationForm;
+        private readonly NotificationService _notificationService;
+
         public FrmPersonnelList()
         {
             InitializeComponent();
@@ -56,6 +60,9 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             this.Shown +=
                 FrmPersonnelList_Shown;
+
+            _notificationService =
+                new NotificationService();
         }
 
         private bool IsAdmin =>
@@ -138,7 +145,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 btnAuditLog,
                 btnChangePassword,
                 btnMission,
-                btnStatistics
+                btnStatistics,
+                btnNotification
                 );
 
             RegisterHoverEffect(
@@ -149,7 +157,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 btnAuditLog,
                 btnChangePassword,
                 btnMission,
-                btnStatistics
+                btnStatistics,
+                btnNotification
                 );
         }
 
@@ -429,6 +438,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             LoadFilterData();
 
             await LoadDashboardAsync();
+            await LoadNotificationBadgeAsync();
         }
 
         private void dgvPersonnel_CellClick(
@@ -1257,6 +1267,32 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             EventArgs e)
         {
             ShowMissionDashboard();
+        }
+
+        private void btnNotification_Click(object sender, EventArgs e)
+        {
+            if (_notificationForm == null || _notificationForm.IsDisposed)
+            {
+                _notificationForm = new FrmNotificationCenter();
+                _notificationForm.Show();
+            }
+            else
+            {
+                _notificationForm.BringToFront();
+                _notificationForm.Focus();
+            }
+        }
+
+        private async Task LoadNotificationBadgeAsync()
+        {
+            int count =
+                await _notificationService
+                    .GetNotificationCountAsync();
+
+            btnNotification.Text =
+                count > 0
+                ? $"🔔 Thông báo ({count})"
+                : "🔔 Thông báo";
         }
     }
 }

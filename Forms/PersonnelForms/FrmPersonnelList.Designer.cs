@@ -78,6 +78,7 @@
             toolTip1 = new ToolTip(components);
             btnMission = new Button();
             btnStatistics = new Button();
+            btnNotification = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvPersonnel).BeginInit();
             pnlTongCBCS.SuspendLayout();
             pnlChienSi.SuspendLayout();
@@ -96,7 +97,7 @@
             txtSearch.Location = new Point(12, 6);
             txtSearch.Name = "txtSearch";
             txtSearch.PlaceholderText = "🔍 Tìm theo họ tên, số hiệu, CCCD, đơn vị...";
-            txtSearch.Size = new Size(489, 25);
+            txtSearch.Size = new Size(484, 25);
             txtSearch.TabIndex = 0;
             txtSearch.TextChanged += txtSearch_TextChanged;
             // 
@@ -342,7 +343,7 @@
             lblCurrentUser.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblCurrentUser.AutoSize = true;
             lblCurrentUser.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblCurrentUser.Location = new Point(1622, 27);
+            lblCurrentUser.Location = new Point(1610, 12);
             lblCurrentUser.Name = "lblCurrentUser";
             lblCurrentUser.Size = new Size(104, 20);
             lblCurrentUser.TabIndex = 15;
@@ -356,7 +357,7 @@
             btnLogout.FlatStyle = FlatStyle.Flat;
             btnLogout.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnLogout.ForeColor = SystemColors.ButtonHighlight;
-            btnLogout.Location = new Point(1768, 9);
+            btnLogout.Location = new Point(1782, 11);
             btnLogout.Name = "btnLogout";
             btnLogout.Padding = new Padding(5);
             btnLogout.Size = new Size(48, 48);
@@ -505,7 +506,7 @@
             pnlSearch.Location = new Point(12, 12);
             pnlSearch.Name = "pnlSearch";
             pnlSearch.Padding = new Padding(5);
-            pnlSearch.Size = new Size(509, 41);
+            pnlSearch.Size = new Size(504, 41);
             pnlSearch.TabIndex = 30;
             // 
             // statusStrip1
@@ -593,11 +594,22 @@
             btnStatistics.UseVisualStyleBackColor = true;
             btnStatistics.Click += btnStatistics_Click;
             // 
+            // btnNotification
+            // 
+            btnNotification.Location = new Point(352, 60);
+            btnNotification.Name = "btnNotification";
+            btnNotification.Size = new Size(164, 36);
+            btnNotification.TabIndex = 37;
+            btnNotification.Text = "🔔 Thông báo";
+            btnNotification.UseVisualStyleBackColor = true;
+            btnNotification.Click += btnNotification_Click;
+            // 
             // FrmPersonnelList
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1842, 564);
+            Controls.Add(btnNotification);
             Controls.Add(btnStatistics);
             Controls.Add(btnMission);
             Controls.Add(cboChucVu);
@@ -698,5 +710,6 @@
         private ToolTip toolTip1;
         private Button btnMission;
         private Button btnStatistics;
+        private Button btnNotification;
     }
 }

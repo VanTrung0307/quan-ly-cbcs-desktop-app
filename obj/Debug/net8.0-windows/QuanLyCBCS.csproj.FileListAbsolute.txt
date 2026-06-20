@@ -143,3 +143,4 @@ E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.MissionForms.FrmMissionP
 E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.MissionForms.FrmPersonnelMissionStatistics.resources
 E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.MissionForms.FrmPersonnelMissionHistory.resources
 E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.MissionForms.FrmMissionDashboard.resources
+E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.CommonForms.FrmNotificationCenter.resources
