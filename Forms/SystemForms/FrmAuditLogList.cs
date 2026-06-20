@@ -16,7 +16,18 @@ namespace QuanLyCBCS.Forms.SystemForms
         {
             InitializeComponent();
 
-            PermissionHelper.CheckAdmin();
+            if (!PermissionHelper.IsAdmin)
+            {
+                MessageBox.Show(
+                    "Bạn không có quyền truy cập chức năng này.",
+                    "Từ chối truy cập",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                BeginInvoke(() => Close());
+
+                return;
+            }
 
             SetupTooltips();
         }
@@ -47,7 +58,7 @@ namespace QuanLyCBCS.Forms.SystemForms
             object sender,
             EventArgs e)
         {
-            if (CurrentUser.Role != "Admin")
+            if (!PermissionHelper.IsAdmin)
             {
                 MessageBox.Show(
                     "Bạn không có quyền truy cập chức năng này.");

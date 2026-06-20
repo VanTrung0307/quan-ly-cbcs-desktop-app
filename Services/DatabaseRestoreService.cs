@@ -1,5 +1,4 @@
 ﻿using Microsoft.Data.SqlClient;
-using QuanLyCBCS.Helpers;
 
 namespace QuanLyCBCS.Services;
 
@@ -17,8 +16,6 @@ public class DatabaseRestoreService
     public async Task RestoreDatabaseAsync(
         string backupFilePath)
     {
-        PermissionHelper.CheckAdmin();
-
         string sql =
             $@"
                 USE master;

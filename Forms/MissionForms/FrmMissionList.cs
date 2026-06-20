@@ -1,5 +1,6 @@
-﻿using QuanLyCBCS.Services;
+﻿using QuanLyCBCS.Helpers;
 using QuanLyCBCS.Models;
+using QuanLyCBCS.Services;
 
 namespace QuanLyCBCS.Forms.MissionForms
 {
@@ -44,6 +45,15 @@ namespace QuanLyCBCS.Forms.MissionForms
             EventArgs e)
         {
             await LoadMissionAsync();
+
+            btnAddMission.Visible =
+                PermissionHelper.CanManageMission;
+
+            btnEditMission.Visible =
+                PermissionHelper.CanManageMission;
+
+            btnDeleteMission.Visible =
+                PermissionHelper.CanManageMission;
         }
 
         private void

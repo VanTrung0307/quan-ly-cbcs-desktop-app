@@ -12,7 +12,18 @@ namespace QuanLyCBCS.Forms.UserForms
         {
             InitializeComponent();
 
-            PermissionHelper.CheckAdmin();
+            if (!PermissionHelper.CanManageUsers)
+            {
+                MessageBox.Show(
+                    "Bạn không có quyền quản lý tài khoản.",
+                    "Từ chối truy cập",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                BeginInvoke(() => Close());
+
+                return;
+            }
         }
 
         private async Task
@@ -76,11 +87,17 @@ namespace QuanLyCBCS.Forms.UserForms
             object sender,
             EventArgs e)
         {
+            if (!PermissionHelper.CanManageUsers)
+                return;
+
             await LoadUsersAsync();
         }
 
         private async void btnAddUser_Click(object sender, EventArgs e)
         {
+            if (!PermissionHelper.CanManageUsers)
+                return;
+
             FrmUserDetail frm =
                 new FrmUserDetail();
 
@@ -104,8 +121,11 @@ namespace QuanLyCBCS.Forms.UserForms
 
         private async void btnDeleteUser_Click(object sender, EventArgs e)
         {
+            if (!PermissionHelper.CanManageUsers)
+                return;
+
             int userId =
-        GetSelectedUserId();
+                GetSelectedUserId();
 
             if (userId == 0)
                 return;
@@ -161,6 +181,9 @@ namespace QuanLyCBCS.Forms.UserForms
             object sender,
             EventArgs e)
         {
+            if (!PermissionHelper.CanManageUsers)
+                return;
+
             int userId =
                 GetSelectedUserId();
 

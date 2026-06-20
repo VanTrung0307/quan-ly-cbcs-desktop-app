@@ -65,22 +65,33 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 new NotificationService();
         }
 
-        private bool IsAdmin =>
-            CurrentUser.Role.Equals(
-        "Admin",
-        StringComparison.OrdinalIgnoreCase);
-
         private void ApplyPermission()
         {
-            btnUsers.Visible = IsAdmin;
-            btnAuditLog.Visible = IsAdmin;
-            btnAdd.Visible = IsAdmin;
-            btnEdit.Visible = IsAdmin;
-            btnDelete.Visible = IsAdmin;
-            btnBackup.Visible = IsAdmin;
-            btnRestore.Visible = IsAdmin;
-            btnStatistics.Visible = IsAdmin;
-            btnMission.Visible = IsAdmin;
+            btnUsers.Visible =
+                PermissionHelper.CanManageUsers;
+
+            btnAuditLog.Visible =
+                PermissionHelper.IsAdmin;
+
+            btnAdd.Visible =
+                PermissionHelper.CanManagePersonnel;
+
+            btnEdit.Visible =
+                PermissionHelper.CanManagePersonnel;
+
+            btnDelete.Visible =
+                PermissionHelper.CanManagePersonnel;
+
+            btnBackup.Visible =
+                PermissionHelper.CanBackupRestore;
+
+            btnRestore.Visible =
+                PermissionHelper.CanBackupRestore;
+
+            btnMission.Visible =
+                PermissionHelper.CanAssignMission;
+
+            btnStatistics.Visible = true;
         }
 
         protected override bool ProcessCmdKey(
@@ -219,15 +230,19 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             }
         }
 
-        private bool EnsureAdmin()
+        private bool CheckPermission(
+            bool hasPermission)
         {
-            if (IsAdmin)
+            if (hasPermission)
             {
                 return true;
             }
 
             MessageBox.Show(
-                "Bạn không có quyền thực hiện chức năng này.");
+                "Bạn không có quyền thực hiện chức năng này.",
+                "Thông báo",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning);
 
             return false;
         }
@@ -476,7 +491,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
-            if (!EnsureAdmin())
+            if (!CheckPermission(
+                    PermissionHelper.CanManagePersonnel))
             {
                 return;
             }
@@ -517,7 +533,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
-            if (!EnsureAdmin())
+            if (!CheckPermission(
+                    PermissionHelper.CanManagePersonnel))
             {
                 return;
             }
@@ -538,7 +555,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
-            if (!EnsureAdmin())
+            if (!CheckPermission(PermissionHelper.CanManagePersonnel))
             {
                 return;
             }
@@ -568,7 +585,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             DataGridViewCellEventArgs e)
         {
-            if (!IsAdmin)
+            if (!PermissionHelper.CanManagePersonnel)
             {
                 MessageBox.Show(
                     "Bạn không có quyền chỉnh sửa dữ liệu.",
@@ -743,7 +760,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
-            if (!EnsureAdmin())
+            if (!CheckPermission(
+                    PermissionHelper.CanManagePersonnel))
             {
                 return;
             }
@@ -798,7 +816,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
-            if (!EnsureAdmin())
+            if (!CheckPermission(
+                    PermissionHelper.CanManagePersonnel))
             {
                 return;
             }
@@ -873,7 +892,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
-            if (!EnsureAdmin())
+            if (!CheckPermission(
+                    PermissionHelper.CanManagePersonnel))
             {
                 return;
             }
@@ -888,7 +908,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
-            if (!EnsureAdmin())
+            if (!CheckPermission(
+                    PermissionHelper.CanManagePersonnel))
             {
                 return;
             }
@@ -1228,7 +1249,11 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
-            PermissionHelper.CheckAdmin();
+            if (!CheckPermission(
+                PermissionHelper.CanAssignMission))
+            {
+                return;
+            }
 
             FrmMissionList frm =
                 new FrmMissionList();

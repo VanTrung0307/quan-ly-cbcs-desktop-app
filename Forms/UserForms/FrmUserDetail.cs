@@ -12,7 +12,18 @@ namespace QuanLyCBCS.Forms.UserForms
         {
             InitializeComponent();
 
-            PermissionHelper.CheckAdmin();
+            if (!PermissionHelper.CanManageUsers)
+            {
+                MessageBox.Show(
+                    "Bạn không có quyền quản lý tài khoản.",
+                    "Từ chối truy cập",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                BeginInvoke(() => Close());
+
+                return;
+            }
 
             cboRole.Items.Add("Admin");
             cboRole.Items.Add("User");
@@ -44,6 +55,14 @@ namespace QuanLyCBCS.Forms.UserForms
             object sender,
             EventArgs e)
         {
+            if (!PermissionHelper.CanManageUsers)
+            {
+                MessageBox.Show(
+                    "Bạn không có quyền thực hiện chức năng này.");
+
+                return;
+            }
+
             string username =
                 txtUsername.Text.Trim();
 

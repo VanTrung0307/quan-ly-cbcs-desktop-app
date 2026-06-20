@@ -1,5 +1,4 @@
 ﻿using Microsoft.Data.SqlClient;
-using QuanLyCBCS.Helpers;
 
 namespace QuanLyCBCS.Services;
 
@@ -17,8 +16,6 @@ public class DatabaseBackupService
     public async Task BackupDatabaseAsync(
         string backupFilePath)
     {
-        PermissionHelper.CheckAdmin();
-
         string sql =
             $"""
             BACKUP DATABASE QuanLyCBCS
