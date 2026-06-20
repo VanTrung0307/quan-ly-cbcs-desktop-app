@@ -12,6 +12,10 @@ namespace QuanLyCBCS.Forms.MissionForms
 
         private Mission? _mission;
 
+        private readonly AuditLogService
+            _auditLogService =
+                new();
+
         public FrmMissionDetail()
         {
             InitializeComponent();
@@ -141,6 +145,11 @@ namespace QuanLyCBCS.Forms.MissionForms
 
                 await _missionService
                     .AddAsync(mission);
+
+                await _auditLogService
+                    .AddLogAsync(
+                        "THÊM CÔNG TÁC",
+                        mission.MissionName);
             }
             else
             {
@@ -167,6 +176,11 @@ namespace QuanLyCBCS.Forms.MissionForms
 
                 await _missionService
                     .UpdateAsync(_mission);
+
+                await _auditLogService
+                    .AddLogAsync(
+                        "CẬP NHẬT CÔNG TÁC",
+                        _mission.MissionName);
             }
 
             DialogResult =

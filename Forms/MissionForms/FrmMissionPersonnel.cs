@@ -16,6 +16,10 @@ namespace QuanLyCBCS.Forms.MissionForms
             _personnelService =
                 new();
 
+        private readonly AuditLogService
+            _auditLogService =
+                new();
+
         private List<MissionPersonnelDto>
             _availablePersonnel =
                 new();
@@ -176,6 +180,11 @@ namespace QuanLyCBCS.Forms.MissionForms
                     _missionId,
                     selected.PersonnelId);
 
+            await _auditLogService
+                .AddLogAsync(
+                    "PHÂN CÔNG CBCS",
+                    $"{selected.HoTen} -> {lblMissionName.Text}");
+
             await LoadPersonnelAsync();
         }
 
@@ -194,6 +203,11 @@ namespace QuanLyCBCS.Forms.MissionForms
                 .RemoveAsync(
                     _missionId,
                     selected.PersonnelId);
+
+            await _auditLogService
+                .AddLogAsync(
+                    "HỦY PHÂN CÔNG CBCS",
+                    $"{selected.HoTen} <- {lblMissionName.Text}");
 
             await LoadPersonnelAsync();
         }
