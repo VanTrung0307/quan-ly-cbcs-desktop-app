@@ -96,7 +96,7 @@
             txtSearch.Location = new Point(12, 6);
             txtSearch.Name = "txtSearch";
             txtSearch.PlaceholderText = "🔍 Tìm theo họ tên, số hiệu, CCCD, đơn vị...";
-            txtSearch.Size = new Size(376, 25);
+            txtSearch.Size = new Size(489, 25);
             txtSearch.TabIndex = 0;
             txtSearch.TextChanged += txtSearch_TextChanged;
             // 
@@ -139,7 +139,7 @@
             btnRefresh.FlatAppearance.BorderSize = 0;
             btnRefresh.FlatStyle = FlatStyle.Flat;
             btnRefresh.ForeColor = Color.White;
-            btnRefresh.Location = new Point(1703, 164);
+            btnRefresh.Location = new Point(1710, 204);
             btnRefresh.Name = "btnRefresh";
             btnRefresh.Size = new Size(120, 36);
             btnRefresh.TabIndex = 4;
@@ -170,7 +170,7 @@
             btnExport.BackColor = Color.FromArgb(39, 174, 96);
             btnExport.FlatStyle = FlatStyle.Flat;
             btnExport.ForeColor = Color.White;
-            btnExport.Location = new Point(1577, 166);
+            btnExport.Location = new Point(1584, 206);
             btnExport.Name = "btnExport";
             btnExport.Size = new Size(120, 36);
             btnExport.TabIndex = 6;
@@ -227,7 +227,7 @@
             pnlTongCBCS.Anchor = AnchorStyles.Top;
             pnlTongCBCS.Controls.Add(lblTongValue);
             pnlTongCBCS.Controls.Add(lblTongTitle);
-            pnlTongCBCS.Location = new Point(719, 12);
+            pnlTongCBCS.Location = new Point(832, 9);
             pnlTongCBCS.Margin = new Padding(15);
             pnlTongCBCS.Name = "pnlTongCBCS";
             pnlTongCBCS.Size = new Size(166, 114);
@@ -248,7 +248,7 @@
             pnlChienSi.Anchor = AnchorStyles.Top;
             pnlChienSi.Controls.Add(lblChienSiValue);
             pnlChienSi.Controls.Add(lblChienSiTitle);
-            pnlChienSi.Location = new Point(908, 12);
+            pnlChienSi.Location = new Point(1021, 9);
             pnlChienSi.Margin = new Padding(15);
             pnlChienSi.Name = "pnlChienSi";
             pnlChienSi.Size = new Size(166, 114);
@@ -269,7 +269,7 @@
             pnlCanBo.Anchor = AnchorStyles.Top;
             pnlCanBo.Controls.Add(lblCanBoValue);
             pnlCanBo.Controls.Add(lblCanBoTitle);
-            pnlCanBo.Location = new Point(1095, 12);
+            pnlCanBo.Location = new Point(1208, 9);
             pnlCanBo.Margin = new Padding(15);
             pnlCanBo.Name = "pnlCanBo";
             pnlCanBo.Size = new Size(166, 114);
@@ -291,7 +291,7 @@
             pnlDangVien.Anchor = AnchorStyles.Top;
             pnlDangVien.Controls.Add(lblDangVienValue);
             pnlDangVien.Controls.Add(lblDangVienTitle);
-            pnlDangVien.Location = new Point(1283, 12);
+            pnlDangVien.Location = new Point(1396, 9);
             pnlDangVien.Margin = new Padding(15);
             pnlDangVien.Name = "pnlDangVien";
             pnlDangVien.Size = new Size(166, 114);
@@ -314,7 +314,7 @@
             btnBackup.FlatAppearance.BorderSize = 0;
             btnBackup.FlatStyle = FlatStyle.Flat;
             btnBackup.ForeColor = Color.White;
-            btnBackup.Location = new Point(1577, 122);
+            btnBackup.Location = new Point(1584, 162);
             btnBackup.Name = "btnBackup";
             btnBackup.Size = new Size(120, 36);
             btnBackup.TabIndex = 13;
@@ -329,7 +329,7 @@
             btnRestore.FlatAppearance.BorderSize = 0;
             btnRestore.FlatStyle = FlatStyle.Flat;
             btnRestore.ForeColor = Color.White;
-            btnRestore.Location = new Point(1703, 122);
+            btnRestore.Location = new Point(1710, 162);
             btnRestore.Name = "btnRestore";
             btnRestore.Size = new Size(120, 36);
             btnRestore.TabIndex = 14;
@@ -481,7 +481,7 @@
             pnlThongKe.Controls.Add(label3);
             pnlThongKe.Controls.Add(label2);
             pnlThongKe.Controls.Add(label1);
-            pnlThongKe.Location = new Point(426, 14);
+            pnlThongKe.Location = new Point(539, 11);
             pnlThongKe.Margin = new Padding(15);
             pnlThongKe.Name = "pnlThongKe";
             pnlThongKe.Size = new Size(278, 143);
@@ -505,7 +505,7 @@
             pnlSearch.Location = new Point(12, 12);
             pnlSearch.Name = "pnlSearch";
             pnlSearch.Padding = new Padding(5);
-            pnlSearch.Size = new Size(396, 41);
+            pnlSearch.Size = new Size(509, 41);
             pnlSearch.TabIndex = 30;
             // 
             // statusStrip1

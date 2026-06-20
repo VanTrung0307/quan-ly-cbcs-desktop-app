@@ -10,6 +10,9 @@
     <Compile Update="Forms\CommonForms\FrmLoading.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Forms\MissionForms\FrmMissionDashboard.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Forms\MissionForms\FrmMissionDetail.cs">
       <SubType>Form</SubType>
     </Compile>

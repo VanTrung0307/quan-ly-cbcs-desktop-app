@@ -30,6 +30,9 @@ namespace QuanLyCBCS.Forms.PersonnelForms
         private bool _filterLoaded;
         private ToolTip _toolTip = new();
 
+        private FrmMissionDashboard?
+           _missionDashboard;
+
         public FrmPersonnelList()
         {
             InitializeComponent();
@@ -50,6 +53,9 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             txtSearch.KeyDown += txtSearch_KeyDown;
 
             dgvPersonnel.RowPrePaint += dgvPersonnel_RowPrePaint;
+
+            this.Shown +=
+                FrmPersonnelList_Shown;
         }
 
         private bool IsAdmin =>
@@ -1228,6 +1234,29 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 new();
 
             frm.ShowDialog();
+        }
+
+        public void ShowMissionDashboard()
+        {
+            if (_missionDashboard == null
+                || _missionDashboard.IsDisposed)
+            {
+                _missionDashboard =
+                    new FrmMissionDashboard();
+
+                _missionDashboard.Show();
+            }
+            else
+            {
+                _missionDashboard.Focus();
+            }
+        }
+
+        private void FrmPersonnelList_Shown(
+            object? sender,
+            EventArgs e)
+        {
+            ShowMissionDashboard();
         }
     }
 }
