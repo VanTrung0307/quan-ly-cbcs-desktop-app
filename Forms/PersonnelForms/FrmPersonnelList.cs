@@ -881,10 +881,17 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             }
         }
 
-        private void btnLogout_Click(
+        private async void btnLogout_Click(
             object sender,
             EventArgs e)
         {
+            AuditLogService auditService =
+                new AuditLogService();
+
+            await auditService.AddLogAsync(
+                "LOGOUT",
+                $"{CurrentUser.Username} đăng xuất");
+
             this.Close();
         }
 

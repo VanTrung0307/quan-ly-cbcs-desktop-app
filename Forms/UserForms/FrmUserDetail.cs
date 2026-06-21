@@ -110,7 +110,8 @@ namespace QuanLyCBCS.Forms.UserForms
                     Password =
                         PasswordHelper.HashPassword(
                             password),
-                    Role = role
+                    Role = role,
+                    MustChangePassword = true
                 };
 
             await _userService

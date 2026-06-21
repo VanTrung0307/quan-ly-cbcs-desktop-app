@@ -29,4 +29,6 @@ public class User
     public int FailedLoginCount { get; set; }
 
     public DateTime? LockedUntil { get; set; }
+
+    public bool MustChangePassword { get; set; } = true;
 }

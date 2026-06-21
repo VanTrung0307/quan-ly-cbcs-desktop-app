@@ -3,6 +3,7 @@ using QuanLyCBCS.Data;
 using QuanLyCBCS.Forms.CommonForms;
 using QuanLyCBCS.Forms.MissionForms;
 using QuanLyCBCS.Forms.PersonnelForms;
+using QuanLyCBCS.Forms.UserForms;
 using QuanLyCBCS.Helpers;
 using QuanLyCBCS.Models;
 using QuanLyCBCS.Services;
@@ -109,11 +110,11 @@ namespace QuanLyCBCS.Forms.Auth
 
                         user.FailedLoginCount = 0;
 
-                        await db.SaveChangesAsync();    
+                        await db.SaveChangesAsync();
 
                         await auditService.AddLogAsync(
-                            "ACCOUNT_LOCKED",
-                            $"Khóa tài khoản {user.Username}");
+                            "LOCK_ACCOUNT",
+                            $"Tài khoản {user.Username} bị khóa 15 phút");
 
                         MessageBox.Show(
                             "Tài khoản đã bị khóa 15 phút do đăng nhập sai quá nhiều lần.");
@@ -138,6 +139,33 @@ namespace QuanLyCBCS.Forms.Auth
 
                 CurrentUser.Role =
                     user.Role;
+
+                if (user.MustChangePassword)
+                {
+                    MessageBox.Show(
+                        "Bạn phải đổi mật khẩu trước khi sử dụng hệ thống.",
+                        "Thông báo",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+
+                    using FrmChangePassword frmChange =
+                        new FrmChangePassword();
+
+                    if (frmChange.ShowDialog() != DialogResult.OK)
+                    {
+                        return;
+                    }
+
+                    user =
+                        await db.Users
+                            .FirstOrDefaultAsync(
+                                x => x.UserId == user.UserId);
+
+                    if (user == null)
+                    {
+                        return;
+                    }
+                }
 
                 user.FailedLoginCount = 0;
                 user.LockedUntil = null;
@@ -175,11 +203,11 @@ namespace QuanLyCBCS.Forms.Auth
 
                 txtUsername.Focus();
             }
-            catch
+            catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Đăng nhập thất bại.",
-                    "Thông báo");
+                    ex.Message,
+                    "Lỗi");
             }
         }
 

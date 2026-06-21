@@ -35,6 +35,7 @@
             label2 = new Label();
             label1 = new Label();
             pnlToolbar = new Panel();
+            btnUnlock = new Button();
             btnRefresh = new Button();
             btnResetPassword = new Button();
             btnDeleteUser = new Button();
@@ -95,6 +96,7 @@
             // 
             // pnlToolbar
             // 
+            pnlToolbar.Controls.Add(btnUnlock);
             pnlToolbar.Controls.Add(btnRefresh);
             pnlToolbar.Controls.Add(btnResetPassword);
             pnlToolbar.Controls.Add(btnDeleteUser);
@@ -104,6 +106,18 @@
             pnlToolbar.Name = "pnlToolbar";
             pnlToolbar.Size = new Size(882, 55);
             pnlToolbar.TabIndex = 8;
+            // 
+            // btnUnlock
+            // 
+            btnUnlock.BackColor = Color.MediumVioletRed;
+            btnUnlock.ForeColor = Color.White;
+            btnUnlock.Location = new Point(564, 6);
+            btnUnlock.Name = "btnUnlock";
+            btnUnlock.Size = new Size(101, 36);
+            btnUnlock.TabIndex = 13;
+            btnUnlock.Text = "🔓 Mở khoá";
+            btnUnlock.UseVisualStyleBackColor = false;
+            btnUnlock.Click += btnUnlock_Click;
             // 
             // btnRefresh
             // 
@@ -216,5 +230,6 @@
         private StatusStrip statusStrip1;
         private ToolStripStatusLabel lblUserCount;
         private ToolTip toolTipMain;
+        private Button btnUnlock;
     }
 }

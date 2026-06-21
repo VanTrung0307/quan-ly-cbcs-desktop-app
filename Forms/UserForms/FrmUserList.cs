@@ -7,6 +7,9 @@ namespace QuanLyCBCS.Forms.UserForms
     public partial class FrmUserList : Form
     {
         private readonly UserService _userService = new();
+        private readonly AuditLogService _auditService =
+            new();
+        private int _selectedUserId;
 
         public FrmUserList()
         {
@@ -211,6 +214,10 @@ namespace QuanLyCBCS.Forms.UserForms
                 .ResetPasswordAsync(
                     userId);
 
+            await _auditService.AddLogAsync(
+                "RESET_PASSWORD",
+                $"Reset mật khẩu tài khoản ID: {_selectedUserId}");
+
             MessageBox.Show(
                 "Reset mật khẩu thành công.\nMật khẩu mới: 123456",
                 "Thông báo",
@@ -344,6 +351,63 @@ namespace QuanLyCBCS.Forms.UserForms
             EventArgs e)
         {
             await LoadUsersAsync();
+        }
+
+        private async void btnUnlock_Click(
+            object sender,
+            EventArgs e)
+        {
+            int userId = GetSelectedUserId();
+
+            if (userId == 0)
+            {
+                MessageBox.Show(
+                    "Vui lòng chọn tài khoản cần mở khóa!",
+                    "Thông báo",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                return;
+            }
+
+            DialogResult confirm =
+                MessageBox.Show(
+                    "Bạn có chắc muốn mở khóa tài khoản này?",
+                    "Xác nhận",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+            if (confirm != DialogResult.Yes)
+                return;
+
+            await _userService.UnlockUserAsync(
+                userId);
+
+            await _auditService.AddLogAsync(
+                "UNLOCK_ACCOUNT",
+                $"Mở khóa tài khoản ID: {userId}");
+
+            MessageBox.Show(
+                "Mở khóa thành công!",
+                "Thông báo",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+
+            await LoadUsersAsync();
+        }
+
+        private void dgvUsers_CellClick(
+            object sender,
+            DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0)
+                return;
+
+            _selectedUserId =
+                Convert.ToInt32(
+                    dgvUsers.Rows[e.RowIndex]
+                        .Cells["UserId"]
+                        .Value);
         }
     }
 }

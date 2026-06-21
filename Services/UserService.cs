@@ -135,13 +135,22 @@ public class UserService
             PasswordHelper.HashPassword(
                 "123456");
 
+        user.MustChangePassword = true;
+
         await db.SaveChangesAsync();
+
+        AuditLogService auditService =
+            new AuditLogService();
+
+        await auditService.AddLogAsync(
+            "FORCE_CHANGE_PASSWORD",
+            $"Tài khoản {user.Username} buộc đổi mật khẩu");
     }
 
     public async Task ChangePasswordAsync(
-    int userId,
-    string oldPassword,
-    string newPassword)
+        int userId,
+        string oldPassword,
+        string newPassword)
     {
         using ApplicationDbContext db =
             new ApplicationDbContext();
@@ -167,6 +176,29 @@ public class UserService
         user.Password =
             PasswordHelper.HashPassword(
                 newPassword);
+
+        user.MustChangePassword = false;
+
+        await db.SaveChangesAsync();
+    }
+
+    public async Task UnlockUserAsync(
+        int userId)
+    {
+        using ApplicationDbContext db =
+            new ApplicationDbContext();
+
+        User? user =
+            await db.Users
+                .FirstOrDefaultAsync(
+                    x => x.UserId == userId);
+
+        if (user == null)
+            return;
+
+        user.FailedLoginCount = 0;
+
+        user.LockedUntil = null;
 
         await db.SaveChangesAsync();
     }
