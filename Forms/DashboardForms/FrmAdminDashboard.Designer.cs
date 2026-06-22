@@ -49,6 +49,8 @@
             lblLockToday = new Label();
             btnRefresh = new Button();
             dgvRecentLogs = new DataGridView();
+            lblUnlockToday = new Label();
+            lblChangePasswordToday = new Label();
             grpPersonnel.SuspendLayout();
             grpUsers.SuspendLayout();
             grpMission.SuspendLayout();
@@ -195,13 +197,15 @@
             // 
             // grpSecurity
             // 
+            grpSecurity.Controls.Add(lblChangePasswordToday);
+            grpSecurity.Controls.Add(lblUnlockToday);
             grpSecurity.Controls.Add(lblResetToday);
             grpSecurity.Controls.Add(lblFailedLoginToday);
             grpSecurity.Controls.Add(lblLoginToday);
             grpSecurity.Controls.Add(lblLockToday);
-            grpSecurity.Location = new Point(1009, 30);
+            grpSecurity.Location = new Point(1018, 30);
             grpSecurity.Name = "grpSecurity";
-            grpSecurity.Size = new Size(250, 204);
+            grpSecurity.Size = new Size(250, 283);
             grpSecurity.TabIndex = 1;
             grpSecurity.TabStop = false;
             grpSecurity.Text = "Security";
@@ -244,7 +248,7 @@
             // 
             // btnRefresh
             // 
-            btnRefresh.Location = new Point(1119, 266);
+            btnRefresh.Location = new Point(884, 284);
             btnRefresh.Name = "btnRefresh";
             btnRefresh.Size = new Size(94, 29);
             btnRefresh.TabIndex = 2;
@@ -255,11 +259,29 @@
             // dgvRecentLogs
             // 
             dgvRecentLogs.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvRecentLogs.Location = new Point(154, 301);
+            dgvRecentLogs.Location = new Point(43, 319);
             dgvRecentLogs.Name = "dgvRecentLogs";
             dgvRecentLogs.RowHeadersWidth = 51;
-            dgvRecentLogs.Size = new Size(1059, 365);
+            dgvRecentLogs.Size = new Size(935, 365);
             dgvRecentLogs.TabIndex = 3;
+            // 
+            // lblUnlockToday
+            // 
+            lblUnlockToday.AutoSize = true;
+            lblUnlockToday.Location = new Point(37, 200);
+            lblUnlockToday.Name = "lblUnlockToday";
+            lblUnlockToday.Size = new Size(111, 20);
+            lblUnlockToday.TabIndex = 13;
+            lblUnlockToday.Text = "lblUnlockToday";
+            // 
+            // lblChangePasswordToday
+            // 
+            lblChangePasswordToday.AutoSize = true;
+            lblChangePasswordToday.Location = new Point(37, 242);
+            lblChangePasswordToday.Name = "lblChangePasswordToday";
+            lblChangePasswordToday.Size = new Size(177, 20);
+            lblChangePasswordToday.TabIndex = 14;
+            lblChangePasswordToday.Text = "lblChangePasswordToday";
             // 
             // FrmAdminDashboard
             // 
@@ -310,5 +332,7 @@
         private Label lblLockToday;
         private Button btnRefresh;
         private DataGridView dgvRecentLogs;
+        private Label lblUnlockToday;
+        private Label lblChangePasswordToday;
     }
 }

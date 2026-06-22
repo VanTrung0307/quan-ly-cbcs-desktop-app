@@ -24,5 +24,7 @@
         public int FailedLoginToday { get; set; }
         public int LockToday { get; set; }
         public int ResetToday { get; set; }
+        public int UnlockToday { get; set; }
+        public int ChangePasswordToday { get; set; }
     }
 }

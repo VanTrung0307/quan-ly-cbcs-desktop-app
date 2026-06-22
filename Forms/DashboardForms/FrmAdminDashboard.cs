@@ -70,6 +70,12 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             lblResetToday.Text =
                 $"RESET PASSWORD: {data.ResetToday}";
+
+            lblUnlockToday.Text =
+                $"UNLOCK ACCOUNT: {data.ResetToday}";
+
+            lblChangePasswordToday.Text =
+                $"CHANGE PASSWORD: {data.ResetToday}";
         }
 
         private async void FrmAdminDashboard_Load(

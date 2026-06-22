@@ -119,6 +119,16 @@ namespace QuanLyCBCS.Services
                         &&
                         x.CreatedAt.Date == today);
 
+            dto.UnlockToday =
+                await db.AuditLogs.CountAsync(x =>
+                    x.Action == "UNLOCK_ACCOUNT" &&
+                    x.CreatedAt.Date == DateTime.Today);
+
+            dto.ChangePasswordToday =
+                await db.AuditLogs.CountAsync(x =>
+                    x.Action == "CHANGE_PASSWORD" &&
+                    x.CreatedAt.Date == DateTime.Today);
+
             return dto;
         }
 
