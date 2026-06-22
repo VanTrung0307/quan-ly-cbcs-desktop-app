@@ -79,6 +79,7 @@
             btnMission = new Button();
             btnStatistics = new Button();
             btnNotification = new Button();
+            btnAdminDashboard = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvPersonnel).BeginInit();
             pnlTongCBCS.SuspendLayout();
             pnlChienSi.SuspendLayout();
@@ -604,11 +605,22 @@
             btnNotification.UseVisualStyleBackColor = true;
             btnNotification.Click += btnNotification_Click;
             // 
+            // btnAdminDashboard
+            // 
+            btnAdminDashboard.Location = new Point(352, 101);
+            btnAdminDashboard.Name = "btnAdminDashboard";
+            btnAdminDashboard.Size = new Size(164, 36);
+            btnAdminDashboard.TabIndex = 38;
+            btnAdminDashboard.Text = "📊 Dashboard Admin";
+            btnAdminDashboard.UseVisualStyleBackColor = true;
+            btnAdminDashboard.Click += btnAdminDashboard_Click;
+            // 
             // FrmPersonnelList
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1842, 564);
+            Controls.Add(btnAdminDashboard);
             Controls.Add(btnNotification);
             Controls.Add(btnStatistics);
             Controls.Add(btnMission);
@@ -711,5 +723,6 @@
         private Button btnMission;
         private Button btnStatistics;
         private Button btnNotification;
+        private Button btnAdminDashboard;
     }
 }

@@ -238,8 +238,8 @@ public class PersonnelService
                 x.DangVien);
     }
 
-    public async Task<DashboardDto>
-    GetDashboardAsync()
+    public async Task<PersonnelDashboard>
+        GetPersonnelDashboardAsync()
     {
         using ApplicationDbContext db =
             new ApplicationDbContext();
@@ -247,8 +247,8 @@ public class PersonnelService
         var data =
             await db.Personnel.ToListAsync();
 
-        DashboardDto dto =
-            new DashboardDto();
+        PersonnelDashboard dto =
+            new PersonnelDashboard();
 
         dto.TongCBCS = data.Count;
 

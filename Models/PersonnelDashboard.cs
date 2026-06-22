@@ -4,17 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QuanLyCBCS.DTOs
+namespace QuanLyCBCS.Models
 {
-    public class DashboardDto
+    public class PersonnelDashboard
     {
         public int TongCBCS { get; set; }
-
-        public int ChienSi { get; set; }
-
-        public int CanBo { get; set; }
-
-        public int DangVien { get; set; }
 
         public int Nam { get; set; }
 
@@ -22,10 +16,6 @@ namespace QuanLyCBCS.DTOs
 
         public double TuoiTrungBinh { get; set; }
 
-        public string DonViDongNhat
-        {
-            get;
-            set;
-        } = "";
+        public string DonViDongNhat { get; set; } = "";
     }
 }

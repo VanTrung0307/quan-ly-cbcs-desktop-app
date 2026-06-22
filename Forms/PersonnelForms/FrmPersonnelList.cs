@@ -92,6 +92,9 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 PermissionHelper.CanAssignMission;
 
             btnStatistics.Visible = true;
+
+            btnAdminDashboard.Visible =
+                CurrentUser.Role == "Admin";
         }
 
         protected override bool ProcessCmdKey(
@@ -157,7 +160,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 btnChangePassword,
                 btnMission,
                 btnStatistics,
-                btnNotification
+                btnNotification,
+                btnAdminDashboard
                 );
 
             RegisterHoverEffect(
@@ -169,7 +173,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 btnChangePassword,
                 btnMission,
                 btnStatistics,
-                btnNotification
+                btnNotification,
+                btnAdminDashboard
                 );
         }
 
@@ -454,6 +459,26 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             await LoadDashboardAsync();
             await LoadNotificationBadgeAsync();
+
+            if (CurrentUser.Role == "Admin")
+            {
+                btnAdminDashboard.Visible = true;
+            }
+            else
+            {
+                btnAdminDashboard.Visible = false;
+            }
+
+            if (CurrentUser.Role == "Admin")
+            {
+                BeginInvoke(new Action(() =>
+                {
+                    FrmAdminDashboard frm =
+                        new FrmAdminDashboard();
+
+                    frm.ShowDialog();
+                }));
+            }
         }
 
         private void dgvPersonnel_CellClick(
@@ -720,8 +745,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 .ToString();
 
             var dashboard =
-                await _service
-                    .GetDashboardAsync();
+                await _service.GetPersonnelDashboardAsync();
 
             lblNam.Text =
                 dashboard.Nam.ToString();
@@ -1325,6 +1349,16 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 count > 0
                 ? $"🔔 Thông báo ({count})"
                 : "🔔 Thông báo";
+        }
+
+        private void btnAdminDashboard_Click(
+            object sender,
+            EventArgs e)
+        {
+            using FrmAdminDashboard frm =
+                new FrmAdminDashboard();
+
+            frm.ShowDialog();
         }
     }
 }
