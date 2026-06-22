@@ -133,12 +133,30 @@ namespace QuanLyCBCS.Forms.UserForms
             if (userId == 0)
                 return;
 
+
             User? user =
                 await _userService
                     .GetByIdAsync(userId);
 
             if (user == null)
                 return;
+
+            if (user.Username.Equals(
+                "admin",
+                StringComparison.OrdinalIgnoreCase))
+            {
+                MessageBox.Show(
+                    "Không được phép xóa tài khoản Admin gốc!",
+                    "Bảo mật hệ thống",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                await _auditService.AddLogAsync(
+                    "PROTECTED_ACCOUNT",
+                    $"{CurrentUser.Username} cố thao tác với Admin gốc");
+
+                return;
+            }
 
             if (user.Username ==
                 CurrentUser.Username)
@@ -199,6 +217,23 @@ namespace QuanLyCBCS.Forms.UserForms
 
             if (user == null)
                 return;
+
+            if (user.Username.Equals(
+                "admin",
+                StringComparison.OrdinalIgnoreCase))
+            {
+                MessageBox.Show(
+                    "Không được reset mật khẩu Admin gốc!",
+                    "Bảo mật hệ thống",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                await _auditService.AddLogAsync(
+                    "PROTECTED_ACCOUNT",
+                    $"{CurrentUser.Username} cố thao tác với Admin gốc");
+
+                return;
+            }
 
             DialogResult result =
                 MessageBox.Show(
@@ -359,6 +394,26 @@ namespace QuanLyCBCS.Forms.UserForms
         {
             int userId = GetSelectedUserId();
 
+            User? user =
+            await _userService
+                .GetByIdAsync(userId);
+
+            if (user == null)
+                return;
+
+            if (user.Username.Equals(
+                    "admin",
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                MessageBox.Show(
+                    "Admin gốc không cần mở khóa.",
+                    "Thông báo",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+
+                return;
+            }
+
             if (userId == 0)
             {
                 MessageBox.Show(
@@ -396,7 +451,7 @@ namespace QuanLyCBCS.Forms.UserForms
             await LoadUsersAsync();
         }
 
-        private void dgvUsers_CellClick(
+        private async void dgvUsers_CellClick(
             object sender,
             DataGridViewCellEventArgs e)
         {
@@ -408,6 +463,22 @@ namespace QuanLyCBCS.Forms.UserForms
                     dgvUsers.Rows[e.RowIndex]
                         .Cells["UserId"]
                         .Value);
+
+            string username =
+                dgvUsers.Rows[e.RowIndex]
+                    .Cells["Username"]
+                    .Value?
+                    .ToString() ?? "";
+
+            btnDeleteUser.Enabled =
+                !username.Equals(
+                    "admin",
+                    StringComparison.OrdinalIgnoreCase);
+
+            btnResetPassword.Enabled =
+                !username.Equals(
+                    "admin",
+                    StringComparison.OrdinalIgnoreCase);
         }
     }
 }
