@@ -151,18 +151,20 @@ public class PersonnelService
     // DELETE
     // =========================
 
-    public async Task DeleteAsync(int id)
+    public async Task DeleteAsync(int personnelId)
     {
         using ApplicationDbContext db =
             new ApplicationDbContext();
 
-        var personnel =
+        Personnel? personnel =
             await db.Personnel
-                .FirstOrDefaultAsync(
-                    x => x.PersonnelID == id);
+                .FirstOrDefaultAsync(x =>
+                    x.PersonnelID == personnelId);
 
         if (personnel == null)
+        {
             return;
+        }
 
         db.Personnel.Remove(personnel);
 

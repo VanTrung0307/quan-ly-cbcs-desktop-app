@@ -525,33 +525,68 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             if (_selectedPersonnelId == 0)
             {
                 MessageBox.Show(
-                    "Vui lòng chọn CBCS cần xóa");
+                    "Vui lòng chọn CBCS cần xóa.");
 
                 return;
             }
 
-            var confirm =
+            Personnel? personnel =
+                await _service.GetByIdAsync(
+                    _selectedPersonnelId);
+
+            if (personnel == null)
+            {
                 MessageBox.Show(
-                    "Bạn có chắc chắn muốn xóa?",
+                    "CBCS không tồn tại.");
+
+                return;
+            }
+
+            DialogResult result =
+                MessageBox.Show(
+                    $"Bạn có chắc muốn xóa CBCS\n\n{personnel.HoTen} ?",
                     "Xác nhận",
                     MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
+                    MessageBoxIcon.Warning);
 
-            if (confirm != DialogResult.Yes)
+            if (result != DialogResult.Yes)
+            {
                 return;
+            }
+
+            string hoTen =
+                personnel.HoTen;
+
+            int personnelId =
+                personnel.PersonnelID;
 
             await _service.DeleteAsync(
-                _selectedPersonnelId);
+                personnelId);
 
             await _auditService.AddLogAsync(
                 "DELETE_PERSONNEL",
-                $"PersonnelId = {_selectedPersonnelId}");
+                $"Đã xóa CBCS '{hoTen}'");
+
+            PersonnelHistoryService historyService =
+                new PersonnelHistoryService();
+
+            await historyService.AddHistoryAsync(
+                personnelId,
+                hoTen,
+                "DELETE_PERSONNEL",
+                $"Đã xóa hồ sơ CBCS '{hoTen}'");
+
+            _selectedPersonnelId = 0;
 
             await LoadPersonnelAsync();
+
             await LoadDashboardAsync();
 
             MessageBox.Show(
-                "Xóa thành công");
+                "Xóa CBCS thành công.",
+                "Thông báo",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
         }
 
         private async void btnAdd_Click(

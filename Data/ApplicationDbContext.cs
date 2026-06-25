@@ -56,4 +56,11 @@ public class ApplicationDbContext : DbContext
     public DbSet<MissionPersonnel>
         MissionPersonnel
             => Set<MissionPersonnel>();
+
+    public DbSet<PersonnelHistory>
+        PersonnelHistories
+    {
+        get;
+        set;
+    }
 }

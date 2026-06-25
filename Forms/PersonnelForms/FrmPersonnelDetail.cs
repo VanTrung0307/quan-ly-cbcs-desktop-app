@@ -16,6 +16,9 @@ namespace QuanLyCBCS.Forms.PersonnelForms
         private readonly AuditLogService _auditService =
             new AuditLogService();
 
+        private readonly PersonnelHistoryService _historyService =
+            new PersonnelHistoryService();
+
         public FrmPersonnelDetail(
             FormMode mode,
             int personnelId = 0)
@@ -336,6 +339,13 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                     "ADD_PERSONNEL",
                     p.HoTen);
 
+            await _historyService
+                .AddHistoryAsync(
+                    p.PersonnelID,
+                    p.HoTen,
+                    "CREATE_PERSONNEL",
+                    $"Thêm mới CBCS '{p.HoTen}'");
+
             MessageBox.Show(
                 "Thêm CBCS thành công");
 
@@ -551,6 +561,13 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 .AddLogAsync(
                     "UPDATE_PERSONNEL",
                     p.HoTen);
+
+            await _historyService
+                .AddHistoryAsync(
+                    p.PersonnelID,
+                    p.HoTen,
+                    "UPDATE_PERSONNEL",
+                    $"Cập nhật hồ sơ CBCS '{p.HoTen}'");
 
             MessageBox.Show(
                 "Cập nhật thành công");
