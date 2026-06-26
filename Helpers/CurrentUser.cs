@@ -1,22 +1,33 @@
-﻿namespace QuanLyCBCS.Helpers;
+﻿using System;
+using System.Collections.Generic;
 
-public static class CurrentUser
+namespace QuanLyCBCS.Helpers
 {
-    public static int UserId
+    public static class CurrentUser
     {
-        get;
-        set;
+        public static int UserId { get; set; }
+
+        public static string Username { get; set; } = "";
+
+        public static string Role { get; set; } = "";
+
+        // Danh sách quyền của User hiện tại
+        public static HashSet<string> Permissions { get; set; }
+            = new();
+
+        public static bool HasPermission(string permissionKey)
+        {
+            return Permissions.Contains(permissionKey);
+        }
+
+        public static void Clear()
+        {
+            UserId = 0;
+            Username = "";
+
+            Role = "";
+
+            Permissions.Clear();
+        }
     }
-
-    public static string Username
-    {
-        get;
-        set;
-    } = string.Empty;
-
-    public static string Role
-    {
-        get;
-        set;
-    } = string.Empty;
 }

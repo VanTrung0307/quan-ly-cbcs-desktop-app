@@ -63,4 +63,8 @@ public class ApplicationDbContext : DbContext
         get;
         set;
     }
+
+    public DbSet<Permission> Permissions { get; set; }
+
+    public DbSet<RolePermission> RolePermissions { get; set; }
 }

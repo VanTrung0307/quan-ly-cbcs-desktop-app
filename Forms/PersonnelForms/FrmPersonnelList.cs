@@ -67,34 +67,38 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
         private void ApplyPermission()
         {
-            btnUsers.Visible =
-                PermissionHelper.CanManageUsers;
-
-            btnAuditLog.Visible =
-                PermissionHelper.IsAdmin;
-
             btnAdd.Visible =
-                PermissionHelper.CanManagePersonnel;
+                CurrentUser.HasPermission("Personnel.Create");
 
             btnEdit.Visible =
-                PermissionHelper.CanManagePersonnel;
+                CurrentUser.HasPermission("Personnel.Update");
 
             btnDelete.Visible =
-                PermissionHelper.CanManagePersonnel;
+                CurrentUser.HasPermission("Personnel.Delete");
 
-            btnBackup.Visible =
-                PermissionHelper.CanBackupRestore;
+            btnUsers.Visible =
+                CurrentUser.HasPermission("User.Manage");
 
-            btnRestore.Visible =
-                PermissionHelper.CanBackupRestore;
+            btnAuditLog.Visible =
+                CurrentUser.HasPermission("Audit.View");
 
             btnMission.Visible =
-                PermissionHelper.CanAssignMission;
+                CurrentUser.HasPermission("Mission.Manage");
+
+            btnBackup.Visible =
+                CurrentUser.HasPermission("Database.Backup");
+
+            btnRestore.Visible =
+                CurrentUser.HasPermission("Database.Restore");
 
             btnStatistics.Visible = true;
 
+            btnNotification.Visible = true;
+
+            btnChangePassword.Visible = true;
+
             btnAdminDashboard.Visible =
-                CurrentUser.Role == "Admin";
+                CurrentUser.HasPermission("Dashboard.View");
         }
 
         protected override bool ProcessCmdKey(
@@ -460,24 +464,15 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             await LoadDashboardAsync();
             await LoadNotificationBadgeAsync();
 
-            if (CurrentUser.Role == "Admin")
+            if (CurrentUser.HasPermission("Dashboard.View"))
             {
-                btnAdminDashboard.Visible = true;
-            }
-            else
-            {
-                btnAdminDashboard.Visible = false;
-            }
-
-            if (CurrentUser.Role == "Admin")
-            {
-                BeginInvoke(new Action(() =>
+                BeginInvoke(() =>
                 {
-                    FrmAdminDashboard frm =
+                    using FrmAdminDashboard frm =
                         new FrmAdminDashboard();
 
                     frm.ShowDialog();
-                }));
+                });
             }
         }
 
@@ -517,7 +512,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             EventArgs e)
         {
             if (!CheckPermission(
-                    PermissionHelper.CanManagePersonnel))
+                CurrentUser.HasPermission("Personnel.Delete")))
             {
                 return;
             }
@@ -594,7 +589,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             EventArgs e)
         {
             if (!CheckPermission(
-                    PermissionHelper.CanManagePersonnel))
+                CurrentUser.HasPermission("Personnel.Create")))
             {
                 return;
             }
@@ -615,7 +610,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
-            if (!CheckPermission(PermissionHelper.CanManagePersonnel))
+            if (!CheckPermission(
+                CurrentUser.HasPermission("Personnel.Update")))
             {
                 return;
             }
@@ -645,7 +641,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             DataGridViewCellEventArgs e)
         {
-            if (!PermissionHelper.CanManagePersonnel)
+            if (!CurrentUser.HasPermission("Personnel.Update"))
             {
                 MessageBox.Show(
                     "Bạn không có quyền chỉnh sửa dữ liệu.",
@@ -819,8 +815,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
-            if (!CheckPermission(
-                    PermissionHelper.CanManagePersonnel))
+            if (!CurrentUser.HasPermission("Database.Backup"))
             {
                 return;
             }
@@ -875,8 +870,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
-            if (!CheckPermission(
-                    PermissionHelper.CanManagePersonnel))
+            if (!CurrentUser.HasPermission("Database.Restore"))
             {
                 return;
             }
@@ -958,8 +952,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
-            if (!CheckPermission(
-                    PermissionHelper.CanManagePersonnel))
+            if (!CurrentUser.HasPermission("User.Manage"))
             {
                 return;
             }
@@ -974,8 +967,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
-            if (!CheckPermission(
-                    PermissionHelper.CanManagePersonnel))
+            if (!CurrentUser.HasPermission("Audit.View"))
             {
                 return;
             }
@@ -1315,8 +1307,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
-            if (!CheckPermission(
-                PermissionHelper.CanAssignMission))
+            if (!CurrentUser.HasPermission("Mission.Manage"))
             {
                 return;
             }
@@ -1357,7 +1348,10 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object? sender,
             EventArgs e)
         {
-            ShowMissionDashboard();
+            if (CurrentUser.HasPermission("Mission.View"))
+            {
+                ShowMissionDashboard();
+            }
         }
 
         private void btnNotification_Click(object sender, EventArgs e)

@@ -140,6 +140,16 @@ namespace QuanLyCBCS.Forms.Auth
                 CurrentUser.Role =
                     user.Role;
 
+                PermissionService permissionService = new();
+
+                CurrentUser.Permissions =
+                    (await permissionService
+                        .GetPermissionsAsync(user.Role))
+                    .ToHashSet();
+
+                List<string> permissions =
+                    await permissionService.GetPermissionsAsync(user.Role);
+
                 if (user.MustChangePassword)
                 {
                     MessageBox.Show(
