@@ -19,6 +19,10 @@ namespace QuanLyCBCS.Forms.SystemForms
 
         private bool _isDirty;
 
+        private readonly Stack<PermissionState> _undoStack = new();
+        private readonly Stack<PermissionState> _redoStack = new();
+        private bool _isUndoRedo = false;
+
         public FrmPermissionManagement()
         {
             InitializeComponent();
@@ -100,6 +104,11 @@ namespace QuanLyCBCS.Forms.SystemForms
                         .ToHashSet();
 
                 _isDirty = false;
+
+                _undoStack.Clear();
+                _redoStack.Clear();
+
+                _undoStack.Push(CaptureState());
 
                 UpdateSaveButton();
             }
@@ -204,8 +213,15 @@ namespace QuanLyCBCS.Forms.SystemForms
             object sender,
             ItemCheckEventArgs e)
         {
-            if (_loading)
+            if (_loading || _isUndoRedo)
                 return;
+
+            PermissionState current =
+                CaptureState();
+
+            _undoStack.Push(current.Clone());
+
+            _redoStack.Clear();
 
             BeginInvoke(() =>
             {
@@ -276,6 +292,64 @@ namespace QuanLyCBCS.Forms.SystemForms
 
                     break;
             }
+        }
+
+        private PermissionState CaptureState()
+        {
+            PermissionState state = new();
+
+            for (int i = 0; i < clbPermission.Items.Count; i++)
+            {
+                state.Permissions.Add(
+                    _permissions[i].PermissionKey,
+                    clbPermission.GetItemChecked(i));
+            }
+
+            return state;
+        }
+
+        private void RestoreState(PermissionState state)
+        {
+            _isUndoRedo = true;
+
+            try
+            {
+                for (int i = 0; i < _permissions.Count; i++)
+                {
+                    string key =
+                        _permissions[i].PermissionKey;
+
+                    if (state.Permissions.TryGetValue(
+                        key,
+                        out bool isChecked))
+                    {
+                        clbPermission.SetItemChecked(
+                            i,
+                            isChecked);
+                    }
+                }
+            }
+            finally
+            {
+                _isUndoRedo = false;
+            }
+
+            HashSet<int> currentPermissions =
+                new();
+
+            for (int i = 0; i < clbPermission.Items.Count; i++)
+            {
+                if (clbPermission.GetItemChecked(i))
+                {
+                    currentPermissions.Add(
+                        _permissions[i].PermissionId);
+                }
+            }
+
+            _isDirty =
+                !_originalPermissions.SetEquals(currentPermissions);
+
+            UpdateSaveButton();
         }
     }
 }
