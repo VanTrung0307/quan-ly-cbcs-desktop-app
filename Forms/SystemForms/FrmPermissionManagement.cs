@@ -12,6 +12,12 @@ namespace QuanLyCBCS.Forms.SystemForms
 
         private List<PermissionDto> _permissions =
             new();
+
+        private bool _loading;
+
+        private HashSet<int> _originalPermissions = new();
+
+        private bool _isDirty;
         public FrmPermissionManagement()
         {
             InitializeComponent();
@@ -37,6 +43,8 @@ namespace QuanLyCBCS.Forms.SystemForms
                 return;
             }
 
+            UpdateSaveButton();
+
             await LoadRolesAsync();
         }
 
@@ -61,24 +69,42 @@ namespace QuanLyCBCS.Forms.SystemForms
 
         private async Task LoadPermissionAsync()
         {
-            string role =
-                cboRole.SelectedItem!.ToString()!;
+            _loading = true;
 
-            _permissions =
-                await _service.GetRolePermissionsAsync(role);
-
-            clbPermission.Items.Clear();
-
-            foreach (PermissionDto permission
-                     in _permissions)
+            try
             {
-                int index =
-                    clbPermission.Items.Add(
+                string role =
+                    cboRole.SelectedItem!.ToString()!;
+
+                _permissions =
+                    await _service.GetRolePermissionsAsync(role);
+
+                clbPermission.Items.Clear();
+
+                foreach (PermissionDto permission in _permissions)
+                {
+                    int index = clbPermission.Items.Add(
                         $"{permission.PermissionName} ({permission.PermissionKey})");
 
-                clbPermission.SetItemChecked(
-                    index,
-                    permission.IsGranted);
+                    clbPermission.SetItemChecked(
+                        index,
+                        permission.IsGranted);
+                }
+
+                // Lưu trạng thái gốc
+                _originalPermissions =
+                    _permissions
+                        .Where(x => x.IsGranted)
+                        .Select(x => x.PermissionId)
+                        .ToHashSet();
+
+                _isDirty = false;
+
+                UpdateSaveButton();
+            }
+            finally
+            {
+                _loading = false;
             }
         }
 
@@ -124,6 +150,13 @@ namespace QuanLyCBCS.Forms.SystemForms
                 role,
                 selectedPermissions);
 
+            _originalPermissions =
+                selectedPermissions.ToHashSet();
+
+            _isDirty = false;
+
+            UpdateSaveButton();
+
             if (role == CurrentUser.Role)
             {
                 await _service
@@ -135,6 +168,39 @@ namespace QuanLyCBCS.Forms.SystemForms
                 "Thông báo",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
+        }
+
+        private void UpdateSaveButton()
+        {
+            btnSave.Enabled = _isDirty;
+        }
+
+        private void clbPermission_ItemCheck(
+            object sender,
+            ItemCheckEventArgs e)
+        {
+            if (_loading)
+                return;
+
+            BeginInvoke(() =>
+            {
+                HashSet<int> currentPermissions =
+                    new();
+
+                for (int i = 0; i < clbPermission.Items.Count; i++)
+                {
+                    if (clbPermission.GetItemChecked(i))
+                    {
+                        currentPermissions.Add(
+                            _permissions[i].PermissionId);
+                    }
+                }
+
+                _isDirty =
+                    !_originalPermissions.SetEquals(currentPermissions);
+
+                UpdateSaveButton();
+            });
         }
     }
 }

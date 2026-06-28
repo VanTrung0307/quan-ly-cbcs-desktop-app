@@ -64,6 +64,7 @@
             clbPermission.Name = "clbPermission";
             clbPermission.Size = new Size(760, 378);
             clbPermission.TabIndex = 2;
+            clbPermission.ItemCheck += clbPermission_ItemCheck;
             // 
             // btnSave
             // 
