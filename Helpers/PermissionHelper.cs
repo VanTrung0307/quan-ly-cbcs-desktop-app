@@ -44,6 +44,9 @@ namespace QuanLyCBCS.Helpers
         public static bool CanViewStatistics =>
             CurrentUser.HasPermission("Dashboard.View");
 
+        public static bool CanManagePermission =>
+            CurrentUser.HasPermission("Permission.Manage");
+
         //========================
         // RBAC mới
         //========================

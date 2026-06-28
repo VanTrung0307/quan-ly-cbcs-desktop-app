@@ -91,6 +91,9 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             btnRestore.Visible =
                 CurrentUser.HasPermission("Database.Restore");
 
+            btnPermission.Visible =
+                PermissionHelper.CanManagePermission;
+
             btnStatistics.Visible = true;
 
             btnNotification.Visible = true;
@@ -165,7 +168,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 btnMission,
                 btnStatistics,
                 btnNotification,
-                btnAdminDashboard
+                btnAdminDashboard,
+                btnPermission
                 );
 
             RegisterHoverEffect(
@@ -178,7 +182,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 btnMission,
                 btnStatistics,
                 btnNotification,
-                btnAdminDashboard
+                btnAdminDashboard,
+                btnPermission
                 );
         }
 
@@ -271,18 +276,35 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
         private async Task LoadPersonnelAsync()
         {
-            _allPersonnel =
-                await _service.GetAllAsync();
+            try
+            {
+                _allPersonnel =
+                    await _service.GetAllAsync();
 
-            dgvPersonnel.DataSource =
-                _allPersonnel;
+                dgvPersonnel.DataSource =
+                    _allPersonnel;
 
-            CustomizeDataGridView();
+                CustomizeDataGridView();
 
-            AddSttColumn();
+                AddSttColumn();
 
-            UpdateRecordCount(
-                _allPersonnel.Count);
+                UpdateRecordCount(
+                    _allPersonnel.Count);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                MessageBox.Show(
+                    ex.Message,
+                    "Thông báo",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                dgvPersonnel.DataSource = null;
+
+                _allPersonnel.Clear();
+
+                UpdateRecordCount(0);
+            }
         }
 
         private void UpdateRecordCount(
@@ -440,14 +462,35 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             SetupTooltips();
 
-            await LoadPersonnelAsync();
+            // Chỉ tải danh sách CBCS nếu có quyền
+            if (CurrentUser.HasPermission("Personnel.View"))
+            {
+                await LoadPersonnelAsync();
+            }
+            else
+            {
+                dgvPersonnel.DataSource = null;
+
+                UpdateRecordCount(0);
+
+                MessageBox.Show(
+                    "Bạn không có quyền xem danh sách CBCS.",
+                    "Thông báo",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
+
+            // Dashboard chỉ tải nếu có quyền
+            if (PermissionHelper.CanViewStatistics)
+            {
+                await LoadDashboardAsync();
+            }
 
             LoadFilterData();
 
-            await LoadDashboardAsync();
             await LoadNotificationBadgeAsync();
 
-            if (CurrentUser.HasPermission("Dashboard.View"))
+            if (PermissionHelper.CanViewStatistics)
             {
                 BeginInvoke(() =>
                 {
@@ -777,6 +820,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
         private async Task LoadDashboardAsync()
         {
+            PermissionHelper.Require("Dashboard.View");
+
             ApplyDashboardLabelColor();
 
             lblTongValue.Text =
@@ -973,7 +1018,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
         private void btnUsers_Click(
             object sender,
             EventArgs e)
-        {   
+        {
             try
             {
                 FrmUserList frm =
@@ -1129,7 +1174,23 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
         private void LoadFilterData()
         {
-            PermissionHelper.Require("Personnel.View");
+            if (!CurrentUser.HasPermission("Personnel.View"))
+            {
+                cboDonVi.Items.Clear();
+                cboCapBac.Items.Clear();
+                cboChucVu.Items.Clear();
+
+                cboDonVi.Enabled = false;
+                cboCapBac.Enabled = false;
+                cboChucVu.Enabled = false;
+
+                _filterLoaded = false;
+                return;
+            }
+
+            cboDonVi.Enabled = true;
+            cboCapBac.Enabled = true;
+            cboChucVu.Enabled = true;
 
             cboDonVi.Items.Clear();
             cboCapBac.Items.Clear();
@@ -1367,8 +1428,19 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
-            FrmPersonnelMissionStatistics frm =
-                new();
+            if (!PermissionHelper.HasPermission("Mission.View"))
+            {
+                MessageBox.Show(
+                    "Bạn không có quyền xem thống kê công tác.",
+                    "Thông báo",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+
+                return;
+            }
+
+            using FrmPersonnelMissionStatistics frm =
+                new FrmPersonnelMissionStatistics();
 
             frm.ShowDialog();
         }
@@ -1444,6 +1516,27 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
             }
+        }
+
+        private void btnPermission_Click(
+            object sender,
+            EventArgs e)
+        {
+            if (!PermissionHelper.CanManagePermission)
+            {
+                MessageBox.Show(
+                    "Bạn không có quyền quản lý phân quyền.",
+                    "Thông báo",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+
+                return;
+            }
+
+            using FrmPermissionManagement frm =
+                new FrmPermissionManagement();
+
+            frm.ShowDialog();
         }
     }
 }

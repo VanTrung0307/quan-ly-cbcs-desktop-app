@@ -1,5 +1,6 @@
 ﻿using QuanLyCBCS.DTOs;
 using QuanLyCBCS.Services;
+using QuanLyCBCS.Helpers;
 
 namespace QuanLyCBCS.Forms.MissionForms;
 
@@ -130,6 +131,22 @@ public partial class FrmPersonnelMissionStatistics : Form
         object sender,
         EventArgs e)
     {
+        try
+        {
+            PermissionHelper.Require("Mission.View");
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            MessageBox.Show(
+                ex.Message,
+                "Thông báo",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+
+            Close();
+            return;
+        }
+
         await LoadStatisticsAsync();
     }
 

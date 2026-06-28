@@ -145,3 +145,4 @@ E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.MissionForms.FrmPersonne
 E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.MissionForms.FrmMissionDashboard.resources
 E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.CommonForms.FrmNotificationCenter.resources
 E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.PersonnelForms.FrmAdminDashboard.resources
+E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.SystemForms.FrmPermissionManagement.resources

@@ -80,6 +80,7 @@
             btnStatistics = new Button();
             btnNotification = new Button();
             btnAdminDashboard = new Button();
+            btnPermission = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvPersonnel).BeginInit();
             pnlTongCBCS.SuspendLayout();
             pnlChienSi.SuspendLayout();
@@ -615,11 +616,22 @@
             btnAdminDashboard.UseVisualStyleBackColor = true;
             btnAdminDashboard.Click += btnAdminDashboard_Click;
             // 
+            // btnPermission
+            // 
+            btnPermission.Location = new Point(352, 146);
+            btnPermission.Name = "btnPermission";
+            btnPermission.Size = new Size(164, 36);
+            btnPermission.TabIndex = 39;
+            btnPermission.Text = "🔐 Phân quyền";
+            btnPermission.UseVisualStyleBackColor = true;
+            btnPermission.Click += btnPermission_Click;
+            // 
             // FrmPersonnelList
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1842, 564);
+            Controls.Add(btnPermission);
             Controls.Add(btnAdminDashboard);
             Controls.Add(btnNotification);
             Controls.Add(btnStatistics);
@@ -724,5 +736,6 @@
         private Button btnStatistics;
         private Button btnNotification;
         private Button btnAdminDashboard;
+        private Button btnPermission;
     }
 }
