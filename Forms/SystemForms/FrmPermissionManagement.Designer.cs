@@ -35,6 +35,8 @@
             btnSave = new Button();
             btnRefresh = new Button();
             btnClose = new Button();
+            btnRedo = new Button();
+            btnUndo = new Button();
             SuspendLayout();
             // 
             // lblRole
@@ -96,11 +98,33 @@
             btnClose.UseVisualStyleBackColor = true;
             btnClose.Click += btnClose_Click;
             // 
+            // btnRedo
+            // 
+            btnRedo.Location = new Point(715, 84);
+            btnRedo.Name = "btnRedo";
+            btnRedo.Size = new Size(94, 29);
+            btnRedo.TabIndex = 6;
+            btnRedo.Text = "↷ Redo";
+            btnRedo.UseVisualStyleBackColor = true;
+            btnRedo.Click += btnRedo_Click;
+            // 
+            // btnUndo
+            // 
+            btnUndo.Location = new Point(615, 84);
+            btnUndo.Name = "btnUndo";
+            btnUndo.Size = new Size(94, 29);
+            btnUndo.TabIndex = 7;
+            btnUndo.Text = "↶ Undo";
+            btnUndo.UseVisualStyleBackColor = true;
+            btnUndo.Click += btnUndo_Click;
+            // 
             // FrmPermissionManagement
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(882, 553);
+            Controls.Add(btnUndo);
+            Controls.Add(btnRedo);
             Controls.Add(btnClose);
             Controls.Add(btnRefresh);
             Controls.Add(btnSave);
@@ -127,5 +151,7 @@
         private Button btnSave;
         private Button btnRefresh;
         private Button btnClose;
+        private Button btnRedo;
+        private Button btnUndo;
     }
 }

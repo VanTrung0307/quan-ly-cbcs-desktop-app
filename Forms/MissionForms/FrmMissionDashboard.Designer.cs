@@ -236,6 +236,7 @@
             Controls.Add(lblDangHoatDong);
             Controls.Add(lblTongCongTac);
             Name = "FrmMissionDashboard";
+            StartPosition = FormStartPosition.CenterParent;
             Text = "FrmMissionDashboard";
             Load += FrmMissionDashboard_Load;
             ((System.ComponentModel.ISupportInitialize)dgvRecentMission).EndInit();
