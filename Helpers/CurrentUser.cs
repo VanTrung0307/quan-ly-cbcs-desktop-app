@@ -15,9 +15,12 @@ namespace QuanLyCBCS.Helpers
         public static HashSet<string> Permissions { get; set; }
             = new();
 
-        public static bool HasPermission(string permissionKey)
+        public static bool HasPermission(string permission)
         {
-            return Permissions.Contains(permissionKey);
+            if (Permissions == null)
+                return false;
+
+            return Permissions.Contains(permission);
         }
 
         public static void Clear()

@@ -14,6 +14,8 @@ public class PersonnelService
     // =========================
     public async Task<List<Personnel>> GetAllAsync()
     {
+        PermissionHelper.Require("Personnel.View");
+
         using ApplicationDbContext db =
             new ApplicationDbContext();
 
@@ -26,6 +28,8 @@ public class PersonnelService
     public async Task<List<Personnel>>
         SearchAsync(string keyword)
     {
+        PermissionHelper.Require("Personnel.View");
+
         using ApplicationDbContext db =
             new ApplicationDbContext();
 
@@ -92,6 +96,8 @@ public class PersonnelService
     public async Task<Personnel?>
         GetByIdAsync(int id)
     {
+        PermissionHelper.Require("Personnel.View");
+
         using ApplicationDbContext db =
             new ApplicationDbContext();
 
@@ -108,6 +114,8 @@ public class PersonnelService
     public async Task AddAsync(
         Personnel personnel)
     {
+        PermissionHelper.Require("Personnel.Create");
+
         personnel.HoTenKhongDau =
             VietnameseHelper
             .RemoveVietnameseSigns(
@@ -115,6 +123,7 @@ public class PersonnelService
 
         personnel.CreatedAt =
             DateTime.Now;
+
         using ApplicationDbContext db =
             new ApplicationDbContext();
 
@@ -131,6 +140,8 @@ public class PersonnelService
     public async Task UpdateAsync(
         Personnel personnel)
     {
+        PermissionHelper.Require("Personnel.Update");
+
         personnel.HoTenKhongDau =
             VietnameseHelper
             .RemoveVietnameseSigns(
@@ -153,6 +164,8 @@ public class PersonnelService
 
     public async Task DeleteAsync(int personnelId)
     {
+        PermissionHelper.Require("Personnel.Delete");
+
         using ApplicationDbContext db =
             new ApplicationDbContext();
 
@@ -205,6 +218,8 @@ public class PersonnelService
 
     public async Task<int> GetTotalCountAsync()
     {
+        PermissionHelper.Require("Dashboard.View");
+
         using ApplicationDbContext db =
             new ApplicationDbContext();
         return await db.Personnel.CountAsync();
@@ -212,6 +227,8 @@ public class PersonnelService
 
     public async Task<int> GetChienSiCountAsync()
     {
+        PermissionHelper.Require("Dashboard.View");
+
         using ApplicationDbContext db =
             new ApplicationDbContext();
 
@@ -222,6 +239,8 @@ public class PersonnelService
 
     public async Task<int> GetCanBoCountAsync()
     {
+        PermissionHelper.Require("Dashboard.View");
+
         using ApplicationDbContext db =
             new ApplicationDbContext();
 
@@ -232,6 +251,8 @@ public class PersonnelService
 
     public async Task<int> GetDangVienCountAsync()
     {
+        PermissionHelper.Require("Dashboard.View");
+
         using ApplicationDbContext db =
             new ApplicationDbContext();
 
@@ -243,6 +264,8 @@ public class PersonnelService
     public async Task<PersonnelDashboard>
         GetPersonnelDashboardAsync()
     {
+        PermissionHelper.Require("Dashboard.View");
+
         using ApplicationDbContext db =
             new ApplicationDbContext();
 

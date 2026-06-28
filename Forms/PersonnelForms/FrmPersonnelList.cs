@@ -239,23 +239,6 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             }
         }
 
-        private bool CheckPermission(
-            bool hasPermission)
-        {
-            if (hasPermission)
-            {
-                return true;
-            }
-
-            MessageBox.Show(
-                "Bạn không có quyền thực hiện chức năng này.",
-                "Thông báo",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Warning);
-
-            return false;
-        }
-
         private void AddSttColumn()
         {
             if (dgvPersonnel.Columns["STT"] == null)
@@ -511,98 +494,121 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
-            if (!CheckPermission(
-                CurrentUser.HasPermission("Personnel.Delete")))
+            try
             {
-                return;
-            }
+                if (_selectedPersonnelId == 0)
+                {
+                    MessageBox.Show(
+                        "Vui lòng chọn CBCS cần xóa.");
 
-            if (_selectedPersonnelId == 0)
+                    return;
+                }
+
+                Personnel? personnel =
+                    await _service.GetByIdAsync(
+                        _selectedPersonnelId);
+
+                if (personnel == null)
+                {
+                    MessageBox.Show(
+                        "CBCS không tồn tại.");
+
+                    return;
+                }
+
+                DialogResult result =
+                    MessageBox.Show(
+                        $"Bạn có chắc muốn xóa CBCS\n\n{personnel.HoTen} ?",
+                        "Xác nhận",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Warning);
+
+                if (result != DialogResult.Yes)
+                {
+                    return;
+                }
+
+                string hoTen =
+                    personnel.HoTen;
+
+                int personnelId =
+                    personnel.PersonnelID;
+
+                await _service.DeleteAsync(personnelId);
+
+                await _auditService.AddLogAsync(
+                    "DELETE_PERSONNEL",
+                    $"Đã xóa CBCS '{hoTen}'");
+
+                PersonnelHistoryService historyService =
+                    new PersonnelHistoryService();
+
+                await historyService.AddHistoryAsync(
+                    personnelId,
+                    hoTen,
+                    "DELETE_PERSONNEL",
+                    $"Đã xóa hồ sơ CBCS '{hoTen}'");
+
+                _selectedPersonnelId = 0;
+
+                await LoadPersonnelAsync();
+
+                await LoadDashboardAsync();
+
+                MessageBox.Show(
+                    "Xóa CBCS thành công.",
+                    "Thông báo",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
+            catch (UnauthorizedAccessException ex)
             {
                 MessageBox.Show(
-                    "Vui lòng chọn CBCS cần xóa.");
-
-                return;
-            }
-
-            Personnel? personnel =
-                await _service.GetByIdAsync(
-                    _selectedPersonnelId);
-
-            if (personnel == null)
-            {
-                MessageBox.Show(
-                    "CBCS không tồn tại.");
-
-                return;
-            }
-
-            DialogResult result =
-                MessageBox.Show(
-                    $"Bạn có chắc muốn xóa CBCS\n\n{personnel.HoTen} ?",
-                    "Xác nhận",
-                    MessageBoxButtons.YesNo,
+                    ex.Message,
+                    "Không có quyền",
+                    MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
-
-            if (result != DialogResult.Yes)
-            {
-                return;
             }
-
-            string hoTen =
-                personnel.HoTen;
-
-            int personnelId =
-                personnel.PersonnelID;
-
-            await _service.DeleteAsync(
-                personnelId);
-
-            await _auditService.AddLogAsync(
-                "DELETE_PERSONNEL",
-                $"Đã xóa CBCS '{hoTen}'");
-
-            PersonnelHistoryService historyService =
-                new PersonnelHistoryService();
-
-            await historyService.AddHistoryAsync(
-                personnelId,
-                hoTen,
-                "DELETE_PERSONNEL",
-                $"Đã xóa hồ sơ CBCS '{hoTen}'");
-
-            _selectedPersonnelId = 0;
-
-            await LoadPersonnelAsync();
-
-            await LoadDashboardAsync();
-
-            MessageBox.Show(
-                "Xóa CBCS thành công.",
-                "Thông báo",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information);
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    ex.Message,
+                    "Lỗi",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
         }
 
         private async void btnAdd_Click(
             object sender,
             EventArgs e)
         {
-            if (!CheckPermission(
-                CurrentUser.HasPermission("Personnel.Create")))
+            try
             {
-                return;
+                FrmPersonnelDetail frm =
+                    new FrmPersonnelDetail(FormMode.Add);
+
+                if (frm.ShowDialog() == DialogResult.OK)
+                {
+                    await LoadPersonnelAsync();
+                    await LoadDashboardAsync();
+                }
             }
-
-            FrmPersonnelDetail frm =
-                new FrmPersonnelDetail(
-                    FormMode.Add);
-
-            if (frm.ShowDialog() ==
-                DialogResult.OK)
+            catch (UnauthorizedAccessException ex)
             {
-                await LoadPersonnelAsync();
-                await LoadDashboardAsync();
+                MessageBox.Show(
+                    ex.Message,
+                    "Không có quyền",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    ex.Message,
+                    "Lỗi",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
         }
 
@@ -610,30 +616,47 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
-            if (!CheckPermission(
-                CurrentUser.HasPermission("Personnel.Update")))
+            try
             {
-                return;
-            }
+                if (_selectedPersonnelId == 0)
+                {
+                    MessageBox.Show(
+                        "Vui lòng chọn CBCS cần chỉnh sửa.",
+                        "Thông báo",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
 
-            if (_selectedPersonnelId == 0)
+                    return;
+                }
+
+                FrmPersonnelDetail frm =
+                    new FrmPersonnelDetail(
+                        FormMode.Edit,
+                        _selectedPersonnelId);
+
+                if (frm.ShowDialog() ==
+                    DialogResult.OK)
+                {
+                    await LoadPersonnelAsync();
+
+                    await LoadDashboardAsync();
+                }
+            }
+            catch (UnauthorizedAccessException ex)
             {
                 MessageBox.Show(
-                    "Vui lòng chọn CBCS");
-
-                return;
+                    ex.Message,
+                    "Không có quyền",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
             }
-
-            FrmPersonnelDetail frm =
-                new FrmPersonnelDetail(
-                    FormMode.Edit,
-                    _selectedPersonnelId);
-
-            if (frm.ShowDialog() ==
-                DialogResult.OK)
+            catch (Exception ex)
             {
-                await LoadPersonnelAsync();
-                await LoadDashboardAsync();
+                MessageBox.Show(
+                    ex.Message,
+                    "Lỗi",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
         }
 
@@ -641,29 +664,30 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             DataGridViewCellEventArgs e)
         {
-            if (!CurrentUser.HasPermission("Personnel.Update"))
+            try
+            {
+                if (_selectedPersonnelId == 0)
+                    return;
+
+                FrmPersonnelDetail frm =
+                    new FrmPersonnelDetail(
+                        FormMode.Edit,
+                        _selectedPersonnelId);
+
+                if (frm.ShowDialog() ==
+                    DialogResult.OK)
+                {
+                    await LoadPersonnelAsync();
+                    await LoadDashboardAsync();
+                }
+            }
+            catch (UnauthorizedAccessException ex)
             {
                 MessageBox.Show(
-                    "Bạn không có quyền chỉnh sửa dữ liệu.",
-                    "Thông báo",
+                    ex.Message,
+                    "Không có quyền",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
-
-                return;
-            }
-
-            if (_selectedPersonnelId == 0)
-                return;
-
-            FrmPersonnelDetail frm =
-                new FrmPersonnelDetail(
-                    FormMode.Edit,
-                    _selectedPersonnelId);
-
-            if (frm.ShowDialog() ==
-                DialogResult.OK)
-            {
-                await LoadPersonnelAsync();
             }
         }
 
@@ -815,11 +839,6 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
-            if (!CurrentUser.HasPermission("Database.Backup"))
-            {
-                return;
-            }
-
             try
             {
                 string backupFolder =
@@ -856,6 +875,14 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
             }
+            catch (UnauthorizedAccessException ex)
+            {
+                MessageBox.Show(
+                    ex.Message,
+                    "Không có quyền",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
             catch (Exception ex)
             {
                 MessageBox.Show(
@@ -870,11 +897,6 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
-            if (!CurrentUser.HasPermission("Database.Restore"))
-            {
-                return;
-            }
-
             try
             {
                 OpenFileDialog openDialog =
@@ -951,30 +973,43 @@ namespace QuanLyCBCS.Forms.PersonnelForms
         private void btnUsers_Click(
             object sender,
             EventArgs e)
-        {
-            if (!CurrentUser.HasPermission("User.Manage"))
+        {   
+            try
             {
-                return;
+                FrmUserList frm =
+                    new FrmUserList();
+
+                frm.ShowDialog();
             }
-
-            FrmUserList frm =
-                new FrmUserList();
-
-            frm.ShowDialog();
+            catch (UnauthorizedAccessException ex)
+            {
+                MessageBox.Show(
+                    ex.Message,
+                    "Không có quyền",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
         }
 
         private void btnAuditLog_Click(
             object sender,
             EventArgs e)
         {
-            if (!CurrentUser.HasPermission("Audit.View"))
+            try
             {
-                return;
-            }
-            FrmAuditLogList frm =
+                FrmAuditLogList frm =
                 new FrmAuditLogList();
 
-            frm.ShowDialog();
+                frm.ShowDialog();
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                MessageBox.Show(
+                    ex.Message,
+                    "Không có quyền",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
         }
 
         private void btnChangePassword_Click(
@@ -1051,6 +1086,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
         private void ApplyFilter()
         {
+            PermissionHelper.Require("Personnel.View");
+
             IEnumerable<Personnel> filtered =
                 _allPersonnel;
 
@@ -1092,6 +1129,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
         private void LoadFilterData()
         {
+            PermissionHelper.Require("Personnel.View");
+
             cboDonVi.Items.Clear();
             cboCapBac.Items.Clear();
             cboChucVu.Items.Clear();
@@ -1307,15 +1346,21 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
-            if (!CurrentUser.HasPermission("Mission.Manage"))
+            try
             {
-                return;
+                FrmMissionList frm =
+                    new FrmMissionList();
+
+                frm.ShowDialog();
             }
-
-            FrmMissionList frm =
-                new FrmMissionList();
-
-            frm.ShowDialog();
+            catch (UnauthorizedAccessException ex)
+            {
+                MessageBox.Show(
+                    ex.Message,
+                    "Không có quyền",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
         }
 
         private void btnStatistics_Click(
@@ -1384,10 +1429,21 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
-            using FrmAdminDashboard frm =
-                new FrmAdminDashboard();
+            try
+            {
+                using FrmAdminDashboard frm =
+                    new FrmAdminDashboard();
 
-            frm.ShowDialog();
+                frm.ShowDialog();
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                MessageBox.Show(
+                    ex.Message,
+                    "Không có quyền",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
         }
     }
 }
