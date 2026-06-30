@@ -54,12 +54,9 @@ namespace QuanLyCBCS.Forms.UserForms
                     txtOldPassword.Text.Trim(),
                     txtNewPassword.Text.Trim());
 
-                AuditLogService auditService =
-                    new AuditLogService();
-
-                await auditService.AddLogAsync(
-                    "CHANGE_PASSWORD",
-                    CurrentUser.Username);
+                await AuditHelper.LogAsync(
+                    AuditAction.ChangePassword,
+                    $"Người dùng '{CurrentUser.Username}' đã đổi mật khẩu.");
 
                 MessageBox.Show(
                     "Đổi mật khẩu thành công.");

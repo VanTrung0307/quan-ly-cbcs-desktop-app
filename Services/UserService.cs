@@ -56,6 +56,10 @@ public class UserService
         await db.Users.AddAsync(user);
 
         await db.SaveChangesAsync();
+
+        await AuditHelper.LogAsync(
+            AuditAction.AddUser,
+            $"Thêm tài khoản '{user.Username}' với vai trò '{user.Role}'.");
     }
 
     public async Task<bool>
@@ -112,6 +116,10 @@ public class UserService
         db.Users.Remove(user);
 
         await db.SaveChangesAsync();
+
+        await AuditHelper.LogAsync(
+            AuditAction.DeleteUser,
+            $"Xóa tài khoản '{user.Username}'.");
     }
 
     public async Task
@@ -139,12 +147,9 @@ public class UserService
 
         await db.SaveChangesAsync();
 
-        AuditLogService auditService =
-            new AuditLogService();
-
-        await auditService.AddLogAsync(
-            "FORCE_CHANGE_PASSWORD",
-            $"Tài khoản {user.Username} buộc đổi mật khẩu");
+        await AuditHelper.LogAsync(
+            AuditAction.ResetPassword,
+            $"Đặt lại mật khẩu tài khoản '{user.Username}'.");
     }
 
     public async Task ChangePasswordAsync(
@@ -180,6 +185,10 @@ public class UserService
         user.MustChangePassword = false;
 
         await db.SaveChangesAsync();
+
+        await AuditHelper.LogAsync(
+            AuditAction.ChangePassword,
+            $"Người dùng '{user.Username}' đã thay đổi mật khẩu.");
     }
 
     public async Task UnlockUserAsync(
@@ -201,5 +210,9 @@ public class UserService
         user.LockedUntil = null;
 
         await db.SaveChangesAsync();
+
+        await AuditHelper.LogAsync(
+            AuditAction.UnlockAccount,
+            $"Mở khóa tài khoản '{user.Username}'.");
     }
 }

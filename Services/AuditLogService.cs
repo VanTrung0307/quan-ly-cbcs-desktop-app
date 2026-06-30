@@ -7,7 +7,7 @@ namespace QuanLyCBCS.Services;
 
 public class AuditLogService
 {
-    public async Task AddLogAsync(
+    public async Task LogAsync(
         string action,
         string description)
     {
@@ -17,17 +17,13 @@ public class AuditLogService
         AuditLog log =
             new AuditLog
             {
-                Username =
-                    CurrentUser.Username,
+                Username = CurrentUser.Username,
 
-                Action =
-                    action,
+                Action = action,
 
-                Description =
-                    description,
+                Description = description,
 
-                CreatedAt =
-                    DateTime.Now
+                CreatedAt = DateTime.Now
             };
 
         db.AuditLogs.Add(log);

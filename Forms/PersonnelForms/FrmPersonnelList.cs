@@ -25,9 +25,6 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
         private int _selectedPersonnelId;
 
-        private readonly AuditLogService _auditService =
-            new AuditLogService();
-
         private bool _filterLoaded;
         private ToolTip _toolTip = new();
 
@@ -579,9 +576,9 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
                 await _service.DeleteAsync(personnelId);
 
-                await _auditService.AddLogAsync(
-                    "DELETE_PERSONNEL",
-                    $"Đã xóa CBCS '{hoTen}'");
+                await AuditHelper.LogAsync(
+                    AuditAction.DeletePersonnel,
+                    $"Đã xóa CBCS '{hoTen}' (ID: {personnelId})");
 
                 PersonnelHistoryService historyService =
                     new PersonnelHistoryService();
@@ -765,9 +762,9 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                     list,
                     saveDialog.FileName);
 
-                await _auditService.AddLogAsync(
-                    "EXPORT_EXCEL",
-                    saveDialog.FileName);
+                await AuditHelper.LogAsync(
+                    AuditAction.ExportExcel,
+                    $"Xuất danh sách CBCS ra file '{Path.GetFileName(saveDialog.FileName)}'");
 
                 MessageBox.Show(
                     "Xuất Excel thành công!",
@@ -1005,12 +1002,9 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object sender,
             EventArgs e)
         {
-            AuditLogService auditService =
-                new AuditLogService();
-
-            await auditService.AddLogAsync(
-                "LOGOUT",
-                $"{CurrentUser.Username} đăng xuất");
+            await AuditHelper.LogAsync(
+                AuditAction.Logout,
+                "Đăng xuất hệ thống");
 
             this.Close();
         }
@@ -1082,9 +1076,9 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             _idleTimer.Stop();
 
-            await _auditService.AddLogAsync(
-                "AUTO_LOGOUT",
-                "Tự động đăng xuất do không hoạt động");
+            await AuditHelper.LogAsync(
+                AuditAction.AutoLogout,
+                "Tự động đăng xuất do không hoạt động trong 15 phút.");
 
             MessageBox.Show(
                 "Phiên làm việc đã hết hạn.\nVui lòng đăng nhập lại.");

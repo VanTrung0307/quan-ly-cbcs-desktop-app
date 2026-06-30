@@ -32,8 +32,6 @@ namespace QuanLyCBCS.Forms.Auth
             object sender,
             EventArgs e)
         {
-            AuditLogService auditService =
-                    new AuditLogService();
             try
             {
                 string username =
@@ -69,8 +67,8 @@ namespace QuanLyCBCS.Forms.Auth
 
                 if (user == null)
                 {
-                    await auditService.AddLogAsync(
-                        "FAILED_LOGIN",
+                    await AuditHelper.LogAsync(
+                        AuditAction.FailedLogin,
                         $"Tài khoản không tồn tại: {username}");
 
                     MessageBox.Show(
@@ -97,8 +95,8 @@ namespace QuanLyCBCS.Forms.Auth
 
                 if (!isValid)
                 {
-                    await auditService.AddLogAsync(
-                        "FAILED_LOGIN",
+                    await AuditHelper.LogAsync(
+                        AuditAction.FailedLogin,
                         $"Sai mật khẩu: {user.Username}");
 
                     user.FailedLoginCount++;
@@ -112,8 +110,8 @@ namespace QuanLyCBCS.Forms.Auth
 
                         await db.SaveChangesAsync();
 
-                        await auditService.AddLogAsync(
-                            "LOCK_ACCOUNT",
+                        await AuditHelper.LogAsync(
+                            AuditAction.LockAccount,
                             $"Tài khoản {user.Username} bị khóa 15 phút");
 
                         MessageBox.Show(
@@ -182,10 +180,9 @@ namespace QuanLyCBCS.Forms.Auth
 
                 await db.SaveChangesAsync();
 
-                await auditService
-                    .AddLogAsync(
-                        "LOGIN",
-                        "Đăng nhập hệ thống");
+                await AuditHelper.LogAsync(
+                    AuditAction.Login,
+                    "Đăng nhập hệ thống");
 
                 FrmLoading loading =
                     new FrmLoading();

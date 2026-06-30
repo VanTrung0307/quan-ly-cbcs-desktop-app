@@ -1,6 +1,7 @@
-﻿using QuanLyCBCS.Models;
+﻿using QuanLyCBCS.DTOs;
+using QuanLyCBCS.Helpers;
+using QuanLyCBCS.Models;
 using QuanLyCBCS.Services;
-using QuanLyCBCS.DTOs;
 
 namespace QuanLyCBCS.Forms.MissionForms
 {
@@ -14,10 +15,6 @@ namespace QuanLyCBCS.Forms.MissionForms
 
         private readonly PersonnelService
             _personnelService =
-                new();
-
-        private readonly AuditLogService
-            _auditLogService =
                 new();
 
         private List<MissionPersonnelDto>
@@ -180,10 +177,9 @@ namespace QuanLyCBCS.Forms.MissionForms
                     _missionId,
                     selected.PersonnelId);
 
-            await _auditLogService
-                .AddLogAsync(
-                    "PHÂN CÔNG CBCS",
-                    $"{selected.HoTen} -> {lblMissionName.Text}");
+            await AuditHelper.LogAsync(
+                AuditAction.AssignMission,
+                $"Phân công CBCS '{selected.HoTen}' ({selected.SoHieu}) vào {lblMissionName.Text}.");
 
             await LoadPersonnelAsync();
         }
@@ -204,10 +200,9 @@ namespace QuanLyCBCS.Forms.MissionForms
                     _missionId,
                     selected.PersonnelId);
 
-            await _auditLogService
-                .AddLogAsync(
-                    "HỦY PHÂN CÔNG CBCS",
-                    $"{selected.HoTen} <- {lblMissionName.Text}");
+            await AuditHelper.LogAsync(
+                AuditAction.RemoveMissionAssignment,
+                $"Hủy phân công CBCS '{selected.HoTen}' ({selected.SoHieu}) khỏi {lblMissionName.Text}.");
 
             await LoadPersonnelAsync();
         }

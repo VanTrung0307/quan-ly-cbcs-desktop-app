@@ -7,8 +7,7 @@ namespace QuanLyCBCS.Forms.UserForms
     public partial class FrmUserList : Form
     {
         private readonly UserService _userService = new();
-        private readonly AuditLogService _auditService =
-            new();
+
         private int _selectedUserId;
 
         public FrmUserList()
@@ -151,9 +150,9 @@ namespace QuanLyCBCS.Forms.UserForms
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
 
-                await _auditService.AddLogAsync(
-                    "PROTECTED_ACCOUNT",
-                    $"{CurrentUser.Username} cố thao tác với Admin gốc");
+                await AuditHelper.LogAsync(
+                    AuditAction.ProtectedAccount,
+                    $"Người dùng '{CurrentUser.Username}' cố gắng xóa tài khoản Admin gốc.");
 
                 return;
             }
@@ -228,9 +227,9 @@ namespace QuanLyCBCS.Forms.UserForms
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
 
-                await _auditService.AddLogAsync(
-                    "PROTECTED_ACCOUNT",
-                    $"{CurrentUser.Username} cố thao tác với Admin gốc");
+                await AuditHelper.LogAsync(
+                    AuditAction.ProtectedAccount,
+                    $"Người dùng '{CurrentUser.Username}' cố gắng reset mật khẩu Admin gốc.");
 
                 return;
             }
@@ -248,10 +247,6 @@ namespace QuanLyCBCS.Forms.UserForms
             await _userService
                 .ResetPasswordAsync(
                     userId);
-
-            await _auditService.AddLogAsync(
-                "RESET_PASSWORD",
-                $"Reset mật khẩu tài khoản ID: {_selectedUserId}");
 
             MessageBox.Show(
                 "Reset mật khẩu thành công.\nMật khẩu mới: 123456",
@@ -437,10 +432,6 @@ namespace QuanLyCBCS.Forms.UserForms
 
             await _userService.UnlockUserAsync(
                 userId);
-
-            await _auditService.AddLogAsync(
-                "UNLOCK_ACCOUNT",
-                $"Mở khóa tài khoản ID: {userId}");
 
             MessageBox.Show(
                 "Mở khóa thành công!",
