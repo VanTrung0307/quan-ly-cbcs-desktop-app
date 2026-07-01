@@ -11,6 +11,10 @@ namespace QuanLyCBCS.Forms.SystemForms
             _auditService =
                 new AuditLogService();
 
+        private readonly AuditExportService
+            _exportService =
+                new AuditExportService();
+
         private ToolTip _toolTip = new();
 
         private readonly System.Windows.Forms.Timer _searchTimer = new();
@@ -240,6 +244,10 @@ namespace QuanLyCBCS.Forms.SystemForms
             _toolTip.SetToolTip(
                 btnRefresh,
                 "Tải lại dữ liệu");
+
+            _toolTip.SetToolTip(
+                btnExport,
+                "Xuất nhật ký ra Excel");
         }
 
         private void txtSearch_TextChanged(
@@ -274,5 +282,23 @@ namespace QuanLyCBCS.Forms.SystemForms
             await SearchAuditLogsAsync();
         }
 
+        private void btnExport_Click(
+            object sender,
+            EventArgs e)
+        {
+            if (dgvAuditLogs.Rows.Count == 0)
+            {
+                MessageBox.Show(
+                    "Không có dữ liệu để xuất.",
+                    "Thông báo",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+
+                return;
+            }
+
+            _exportService.Export(
+                dgvAuditLogs);
+        }
     }
 }

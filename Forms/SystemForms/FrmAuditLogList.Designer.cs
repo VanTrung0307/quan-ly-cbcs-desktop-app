@@ -40,6 +40,7 @@
             statusStrip1 = new StatusStrip();
             lblStatus = new ToolStripStatusLabel();
             toolTip1 = new ToolTip(components);
+            btnExport = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvAuditLogs).BeginInit();
             pnlHeader.SuspendLayout();
             statusStrip1.SuspendLayout();
@@ -154,11 +155,26 @@
             toolTip1.ReshowDelay = 100;
             toolTip1.ShowAlways = true;
             // 
+            // btnExport
+            // 
+            btnExport.BackColor = Color.Green;
+            btnExport.FlatAppearance.BorderSize = 0;
+            btnExport.FlatStyle = FlatStyle.Flat;
+            btnExport.ForeColor = Color.White;
+            btnExport.Location = new Point(555, 96);
+            btnExport.Name = "btnExport";
+            btnExport.Size = new Size(111, 35);
+            btnExport.TabIndex = 7;
+            btnExport.Text = "📊 Xuất Excel";
+            btnExport.UseVisualStyleBackColor = false;
+            btnExport.Click += btnExport_Click;
+            // 
             // FrmAuditLogList
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(788, 546);
+            Controls.Add(btnExport);
             Controls.Add(statusStrip1);
             Controls.Add(btnSearch);
             Controls.Add(txtSearch);
@@ -191,5 +207,6 @@
         private StatusStrip statusStrip1;
         private ToolStripStatusLabel lblStatus;
         private ToolTip toolTip1;
+        private Button btnExport;
     }
 }
