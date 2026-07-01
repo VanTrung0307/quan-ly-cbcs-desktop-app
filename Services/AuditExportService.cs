@@ -21,6 +21,8 @@ namespace QuanLyCBCS.Services
             if (saveDialog.ShowDialog() != DialogResult.OK)
                 return;
 
+            string fileName = saveDialog.FileName;
+
             using XLWorkbook workbook = new();
 
             IXLWorksheet worksheet =
@@ -130,14 +132,34 @@ namespace QuanLyCBCS.Services
             //====================================================
             // Save
             //====================================================
+            
+            int totalRows = dgv.Rows
+                .Cast<DataGridViewRow>()
+                .Count(r => !r.IsNewRow);
 
-            workbook.SaveAs(saveDialog.FileName);
+            workbook.SaveAs(fileName);
 
             MessageBox.Show(
-                "Xuất Audit Log thành công!",
+                $"Xuất Excel thành công!\n\n" +
+                $"Đã xuất: {totalRows} bản ghi.\n\n" +
+                $"Đường dẫn:\n{fileName}",
                 "Thông báo",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
+
+            try
+            {
+                System.Diagnostics.Process.Start(
+                    new System.Diagnostics.ProcessStartInfo
+                    {
+                        FileName = fileName,
+                        UseShellExecute = true
+                    });
+            }
+            catch
+            {
+                // Không làm gì nếu máy chưa cài Excel
+            }
         }
     }
 }
