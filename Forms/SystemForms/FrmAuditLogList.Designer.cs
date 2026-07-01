@@ -93,6 +93,7 @@
             txtSearch.PlaceholderText = " Tìm tài khoản...";
             txtSearch.Size = new Size(250, 35);
             txtSearch.TabIndex = 3;
+            txtSearch.TextChanged += txtSearch_TextChanged;
             // 
             // btnSearch
             // 

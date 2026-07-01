@@ -41,21 +41,38 @@ public class AuditLogService
             .ToListAsync();
     }
 
-    public async Task<List<AuditLog>>
-    SearchAsync(string keyword)
+    public async Task<List<AuditLog>> SearchAsync(string keyword)
     {
         using ApplicationDbContext db =
             new ApplicationDbContext();
 
-        keyword = keyword.Trim();
+        keyword = keyword?.Trim() ?? string.Empty;
 
-        return await db.AuditLogs
-            .Where(x =>
+        IQueryable<AuditLog> query =
+            db.AuditLogs.AsNoTracking();
+
+        if (DateTime.TryParse(keyword, out DateTime date))
+        {
+            DateTime start = date.Date;
+            DateTime end = start.AddDays(1);
+
+            query = query.Where(x =>
+                x.CreatedAt >= start &&
+                x.CreatedAt < end);
+        }
+        else if (!string.IsNullOrWhiteSpace(keyword))
+        {
+            query = query.Where(x =>
+
                 x.Username.Contains(keyword)
+
                 || x.Action.Contains(keyword)
-                || x.Description.Contains(keyword))
-            .OrderByDescending(
-                x => x.AuditLogId)
+
+                || x.Description.Contains(keyword));
+        }
+
+        return await query
+            .OrderByDescending(x => x.AuditLogId)
             .ToListAsync();
     }
 }

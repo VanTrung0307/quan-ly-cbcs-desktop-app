@@ -12,6 +12,9 @@ namespace QuanLyCBCS.Forms.SystemForms
                 new AuditLogService();
 
         private ToolTip _toolTip = new();
+
+        private readonly System.Windows.Forms.Timer _searchTimer = new();
+
         public FrmAuditLogList()
         {
             InitializeComponent();
@@ -30,6 +33,10 @@ namespace QuanLyCBCS.Forms.SystemForms
             }
 
             SetupTooltips();
+
+            _searchTimer.Interval = 300;
+
+            _searchTimer.Tick += SearchTimer_Tick;
         }
 
         private async Task LoadAuditLogsAsync()
@@ -54,6 +61,31 @@ namespace QuanLyCBCS.Forms.SystemForms
 
         }
 
+        private async Task SearchAuditLogsAsync()
+        {
+            string keyword = txtSearch.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(keyword))
+            {
+                await LoadAuditLogsAsync();
+                return;
+            }
+
+            var data =
+                await _auditService.SearchAsync(keyword);
+
+            dgvAuditLogs.DataSource = null;
+
+            dgvAuditLogs.DataSource = data;
+
+            AddSttColumn();
+
+            CustomizeAuditGrid();
+
+            lblStatus.Text =
+                $"Đang hiển thị: {data.Count} bản ghi";
+        }
+
         private async void FrmAuditLogList_Load(
             object sender,
             EventArgs e)
@@ -76,6 +108,8 @@ namespace QuanLyCBCS.Forms.SystemForms
             object sender,
             EventArgs e)
         {
+            txtSearch.Clear();
+
             await LoadAuditLogsAsync();
         }
 
@@ -151,20 +185,7 @@ namespace QuanLyCBCS.Forms.SystemForms
             object sender,
             EventArgs e)
         {
-            string keyword =
-                txtSearch.Text.Trim();
-
-            if (string.IsNullOrWhiteSpace(keyword))
-            {
-                await LoadAuditLogsAsync();
-                return;
-            }
-
-            var data =
-                await _auditService
-                    .SearchAsync(keyword);
-
-            dgvAuditLogs.DataSource = data;
+            await SearchAuditLogsAsync();
         }
 
         private void SetupDataGridView()
@@ -190,107 +211,24 @@ namespace QuanLyCBCS.Forms.SystemForms
         }
 
         private void dgvAuditLogs_CellFormatting(
-            object? sender,
+            object sender,
             DataGridViewCellFormattingEventArgs e)
         {
-            var style = e.CellStyle;
-
             if (e.RowIndex < 0)
                 return;
 
-            if (style == null)
+            if (dgvAuditLogs.Columns[e.ColumnIndex].Name != "Action")
                 return;
 
-            string columnName =
-                dgvAuditLogs.Columns[e.ColumnIndex]
-                .Name;
-
-            if (columnName != "Action")
+            if (e.Value is not string action)
                 return;
 
-            string action =
-                e.Value?.ToString() ?? "";
+            if (string.IsNullOrWhiteSpace(action))
+                return;
 
-            if (action == "LOGIN")
-            {
-                style.BackColor =
-                    Color.FromArgb(
-                        39,
-                        174,
-                        96);
-
-                style.ForeColor =
-                    Color.White;
-
-                style.SelectionBackColor =
-                    Color.FromArgb(
-                        39,
-                        174,
-                        96);
-
-                style.SelectionForeColor =
-                    Color.White;
-            }
-            else if (action == "FAILED_LOGIN")
-            {
-                style.BackColor =
-                    Color.FromArgb(
-                        231,
-                        76,
-                        60);
-
-                style.ForeColor =
-                    Color.White;
-
-                style.SelectionBackColor =
-                    Color.FromArgb(
-                        231,
-                        76,
-                        60);
-
-                style.SelectionForeColor =
-                    Color.White;
-            }
-            else if (action == "LOGOUT")
-            {
-                style.BackColor =
-                    Color.FromArgb(
-                        243,
-                        156,
-                        18);
-
-                style.ForeColor =
-                    Color.White;
-
-                style.SelectionBackColor =
-                    Color.FromArgb(
-                        243,
-                        156,
-                        18);
-
-                style.SelectionForeColor =
-                    Color.White;
-            }
-            else if (action == "RESET_PASSWORD")
-            {
-                style.BackColor =
-                    Color.FromArgb(
-                        52,
-                        152,
-                        219);
-
-                style.ForeColor =
-                    Color.White;
-
-                style.SelectionBackColor =
-                    Color.FromArgb(
-                        52,
-                        152,
-                        219);
-
-                style.SelectionForeColor =
-                    Color.White;
-            }
+            AuditStyleHelper.Apply(
+                action,
+                e.CellStyle);
         }
 
         private void SetupTooltips()
@@ -303,5 +241,38 @@ namespace QuanLyCBCS.Forms.SystemForms
                 btnRefresh,
                 "Tải lại dữ liệu");
         }
+
+        private void txtSearch_TextChanged(
+            object sender,
+            EventArgs e)
+        {
+            _searchTimer.Stop();
+
+            _searchTimer.Start();
+        }
+
+        private async void txtSearch_KeyDown(
+            object sender,
+            KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+
+                _searchTimer.Stop();
+
+                await SearchAuditLogsAsync();
+            }
+        }
+
+        private async void SearchTimer_Tick(
+            object? sender,
+            EventArgs e)
+        {
+            _searchTimer.Stop();
+
+            await SearchAuditLogsAsync();
+        }
+
     }
 }
