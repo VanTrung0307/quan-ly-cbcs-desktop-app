@@ -41,26 +41,25 @@ public class AuditLogService
             .ToListAsync();
     }
 
-    public async Task<List<AuditLog>> SearchAsync(string keyword)
+    public async Task<List<AuditLog>> SearchAsync(
+        string? keyword,
+        DateTime? fromDate,
+        DateTime? toDate)
     {
         using ApplicationDbContext db =
             new ApplicationDbContext();
 
-        keyword = keyword?.Trim() ?? string.Empty;
-
         IQueryable<AuditLog> query =
-            db.AuditLogs.AsNoTracking();
+            db.AuditLogs
+                .AsNoTracking();
 
-        if (DateTime.TryParse(keyword, out DateTime date))
-        {
-            DateTime start = date.Date;
-            DateTime end = start.AddDays(1);
+        // ==========================
+        // Lọc theo từ khóa
+        // ==========================
 
-            query = query.Where(x =>
-                x.CreatedAt >= start &&
-                x.CreatedAt < end);
-        }
-        else if (!string.IsNullOrWhiteSpace(keyword))
+        keyword = keyword?.Trim();
+
+        if (!string.IsNullOrWhiteSpace(keyword))
         {
             query = query.Where(x =>
 
@@ -71,8 +70,35 @@ public class AuditLogService
                 || x.Description.Contains(keyword));
         }
 
+        // ==========================
+        // Lọc từ ngày
+        // ==========================
+
+        if (fromDate.HasValue)
+        {
+            query = query.Where(x =>
+
+                x.CreatedAt >= fromDate.Value.Date);
+        }
+
+        // ==========================
+        // Lọc đến ngày
+        // ==========================
+
+        if (toDate.HasValue)
+        {
+            DateTime endDate =
+                toDate.Value.Date.AddDays(1);
+
+            query = query.Where(x =>
+
+                x.CreatedAt < endDate);
+        }
+
         return await query
+
             .OrderByDescending(x => x.AuditLogId)
+
             .ToListAsync();
     }
 }

@@ -77,6 +77,8 @@ namespace QuanLyCBCS.Services
             header.Style.Alignment.Horizontal =
                 XLAlignmentHorizontalValues.Center;
 
+            int totalColumns = column - 1;
+
             //====================================================
             // Data
             //====================================================
@@ -104,6 +106,16 @@ namespace QuanLyCBCS.Services
                 }
 
                 row++;
+            }
+
+            if (row > 6)
+            {
+                worksheet.Range(
+                    5,
+                    1,
+                    row - 1,
+                    totalColumns)
+                    .SetAutoFilter();
             }
 
             //====================================================

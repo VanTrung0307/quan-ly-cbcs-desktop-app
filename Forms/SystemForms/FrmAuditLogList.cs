@@ -69,14 +69,22 @@ namespace QuanLyCBCS.Forms.SystemForms
         {
             string keyword = txtSearch.Text.Trim();
 
-            if (string.IsNullOrWhiteSpace(keyword))
+            DateTime? fromDate = null;
+
+            DateTime? toDate = null;
+
+            if (chkUseDateFilter.Checked)
             {
-                await LoadAuditLogsAsync();
-                return;
+                fromDate = dtpFromDate.Value.Date;
+
+                toDate = dtpToDate.Value.Date;
             }
 
             var data =
-                await _auditService.SearchAsync(keyword);
+                await _auditService.SearchAsync(
+                    keyword,
+                    fromDate,
+                    toDate);
 
             dgvAuditLogs.DataSource = null;
 
@@ -88,6 +96,125 @@ namespace QuanLyCBCS.Forms.SystemForms
 
             lblStatus.Text =
                 $"Đang hiển thị: {data.Count} bản ghi";
+        }
+
+        private void ApplyQuickFilter()
+        {
+            if (cboQuickFilter.SelectedItem == null)
+                return;
+
+            string filter =
+                cboQuickFilter.SelectedItem.ToString()!;
+
+            switch (filter)
+            {
+                case "Tất cả":
+
+                    chkUseDateFilter.Checked = false;
+
+                    return;
+
+                case "Hôm nay":
+
+                    chkUseDateFilter.Checked = true;
+
+                    dtpFromDate.Value = DateTime.Today;
+
+                    dtpToDate.Value = DateTime.Today;
+
+                    break;
+
+                case "Hôm qua":
+
+                    chkUseDateFilter.Checked = true;
+
+                    DateTime yesterday =
+                        DateTime.Today.AddDays(-1);
+
+                    dtpFromDate.Value = yesterday;
+
+                    dtpToDate.Value = yesterday;
+
+                    break;
+
+                case "7 ngày gần nhất":
+
+                    chkUseDateFilter.Checked = true;
+
+                    dtpFromDate.Value =
+                        DateTime.Today.AddDays(-6);
+
+                    dtpToDate.Value =
+                        DateTime.Today;
+
+                    break;
+
+                case "30 ngày gần nhất":
+
+                    chkUseDateFilter.Checked = true;
+
+                    dtpFromDate.Value =
+                        DateTime.Today.AddDays(-29);
+
+                    dtpToDate.Value =
+                        DateTime.Today;
+
+                    break;
+
+                case "Tháng này":
+
+                    chkUseDateFilter.Checked = true;
+
+                    dtpFromDate.Value =
+                        new DateTime(
+                            DateTime.Today.Year,
+                            DateTime.Today.Month,
+                            1);
+
+                    dtpToDate.Value =
+                        DateTime.Today;
+
+                    break;
+
+                case "Tháng trước":
+
+                    chkUseDateFilter.Checked = true;
+
+                    DateTime firstDayLastMonth =
+                        new DateTime(
+                            DateTime.Today.Year,
+                            DateTime.Today.Month,
+                            1).AddMonths(-1);
+
+                    DateTime lastDayLastMonth =
+                        new DateTime(
+                            DateTime.Today.Year,
+                            DateTime.Today.Month,
+                            1).AddDays(-1);
+
+                    dtpFromDate.Value =
+                        firstDayLastMonth;
+
+                    dtpToDate.Value =
+                        lastDayLastMonth;
+
+                    break;
+
+                case "Năm nay":
+
+                    chkUseDateFilter.Checked = true;
+
+                    dtpFromDate.Value =
+                        new DateTime(
+                            DateTime.Today.Year,
+                            1,
+                            1);
+
+                    dtpToDate.Value =
+                        DateTime.Today;
+
+                    break;
+            }
         }
 
         private async void FrmAuditLogList_Load(
@@ -104,6 +231,32 @@ namespace QuanLyCBCS.Forms.SystemForms
             }
 
             SetupDataGridView();
+
+            chkUseDateFilter.Checked = false;
+
+            dtpFromDate.Value = DateTime.Today;
+
+            dtpToDate.Value = DateTime.Today;
+
+            dtpFromDate.Enabled = false;
+
+            dtpToDate.Enabled = false;
+
+            cboQuickFilter.Items.Clear();
+
+            cboQuickFilter.Items.AddRange(new object[]
+            {
+                "Tất cả",
+                "Hôm nay",
+                "Hôm qua",
+                "7 ngày gần nhất",
+                "30 ngày gần nhất",
+                "Tháng này",
+                "Tháng trước",
+                "Năm nay"
+            });
+
+            cboQuickFilter.SelectedIndex = 0;
 
             await LoadAuditLogsAsync();
         }
@@ -299,6 +452,42 @@ namespace QuanLyCBCS.Forms.SystemForms
 
             _exportService.Export(
                 dgvAuditLogs);
+        }
+
+        private async void dtpFromDate_ValueChanged(
+            object sender,
+            EventArgs e)
+        {
+            await SearchAuditLogsAsync();
+        }
+
+        private async void dtpToDate_ValueChanged(
+            object sender,
+            EventArgs e)
+        {
+            await SearchAuditLogsAsync();
+        }
+
+        private async void chkUseDateFilter_CheckedChanged(
+            object sender,
+            EventArgs e)
+        {
+            dtpFromDate.Enabled =
+                chkUseDateFilter.Checked;
+
+            dtpToDate.Enabled =
+                chkUseDateFilter.Checked;
+
+            await SearchAuditLogsAsync();
+        }
+
+        private async void cboQuickFilter_SelectedIndexChanged(
+            object sender,
+            EventArgs e)
+        {
+            ApplyQuickFilter();
+
+            await SearchAuditLogsAsync();
         }
     }
 }
