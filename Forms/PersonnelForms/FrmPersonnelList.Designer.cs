@@ -81,6 +81,7 @@
             btnNotification = new Button();
             btnAdminDashboard = new Button();
             btnPermission = new Button();
+            btnReport = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvPersonnel).BeginInit();
             pnlTongCBCS.SuspendLayout();
             pnlChienSi.SuspendLayout();
@@ -382,9 +383,9 @@
             // btnAuditLog
             // 
             btnAuditLog.Font = new Font("Segoe UI", 10F);
-            btnAuditLog.Location = new Point(182, 101);
+            btnAuditLog.Location = new Point(182, 104);
             btnAuditLog.Name = "btnAuditLog";
-            btnAuditLog.Size = new Size(164, 36);
+            btnAuditLog.Size = new Size(164, 33);
             btnAuditLog.TabIndex = 18;
             btnAuditLog.Text = "📓 Nhật ký";
             btnAuditLog.UseVisualStyleBackColor = true;
@@ -598,7 +599,7 @@
             // 
             // btnNotification
             // 
-            btnNotification.Location = new Point(352, 60);
+            btnNotification.Location = new Point(352, 59);
             btnNotification.Name = "btnNotification";
             btnNotification.Size = new Size(164, 36);
             btnNotification.TabIndex = 37;
@@ -608,9 +609,9 @@
             // 
             // btnAdminDashboard
             // 
-            btnAdminDashboard.Location = new Point(352, 101);
+            btnAdminDashboard.Location = new Point(352, 104);
             btnAdminDashboard.Name = "btnAdminDashboard";
-            btnAdminDashboard.Size = new Size(164, 36);
+            btnAdminDashboard.Size = new Size(164, 33);
             btnAdminDashboard.TabIndex = 38;
             btnAdminDashboard.Text = "📊 Dashboard Admin";
             btnAdminDashboard.UseVisualStyleBackColor = true;
@@ -626,11 +627,22 @@
             btnPermission.UseVisualStyleBackColor = true;
             btnPermission.Click += btnPermission_Click;
             // 
+            // btnReport
+            // 
+            btnReport.Location = new Point(352, 188);
+            btnReport.Name = "btnReport";
+            btnReport.Size = new Size(164, 36);
+            btnReport.TabIndex = 40;
+            btnReport.Text = "\U0001f9d1‍\U0001f91d‍\U0001f9d1Báo cáo quân số";
+            btnReport.UseVisualStyleBackColor = true;
+            btnReport.Click += btnReport_Click;
+            // 
             // FrmPersonnelList
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1842, 564);
+            Controls.Add(btnReport);
             Controls.Add(btnPermission);
             Controls.Add(btnAdminDashboard);
             Controls.Add(btnNotification);
@@ -737,5 +749,6 @@
         private Button btnNotification;
         private Button btnAdminDashboard;
         private Button btnPermission;
+        private Button btnReport;
     }
 }

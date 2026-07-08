@@ -7,31 +7,30 @@ namespace QuanLyCBCS.Services;
 
 public class MissionService
 {
-    private readonly ApplicationDbContext
-        _context = new();
-
-    public async Task<List<Mission>>
-        GetAllAsync()
+    public async Task<List<Mission>> GetAllAsync()
     {
-        return await _context.Missions
+        using ApplicationDbContext db = new();
+
+        return await db.Missions
             .OrderByDescending(x => x.StartTime)
             .ToListAsync();
     }
 
-    public async Task<Mission?>
-        GetByIdAsync(int missionId)
+    public async Task<Mission?> GetByIdAsync(int missionId)
     {
-        return await _context.Missions
-            .FirstOrDefaultAsync(
-                x => x.MissionId == missionId);
+        using ApplicationDbContext db = new();
+
+        return await db.Missions
+            .FirstOrDefaultAsync(x => x.MissionId == missionId);
     }
 
-    public async Task AddAsync(
-        Mission mission)
+    public async Task AddAsync(Mission mission)
     {
-        _context.Missions.Add(mission);
+        using ApplicationDbContext db = new();
 
-        await _context.SaveChangesAsync();
+        db.Missions.Add(mission);
+
+        await db.SaveChangesAsync();
     }
 
     public async Task UpdateAsync(

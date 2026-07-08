@@ -166,7 +166,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 btnStatistics,
                 btnNotification,
                 btnAdminDashboard,
-                btnPermission
+                btnPermission,
+                btnReport
                 );
 
             RegisterHoverEffect(
@@ -180,7 +181,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 btnStatistics,
                 btnNotification,
                 btnAdminDashboard,
-                btnPermission
+                btnPermission,
+                btnReport
                 );
         }
 
@@ -1531,6 +1533,32 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 new FrmPermissionManagement();
 
             frm.ShowDialog();
+        }
+
+        private void btnReport_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using FrmPersonnelReport frm = new FrmPersonnelReport();
+
+                frm.ShowDialog();
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                MessageBox.Show(
+                    ex.Message,
+                    "Không có quyền",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    ex.Message,
+                    "Lỗi",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
         }
     }
 }
