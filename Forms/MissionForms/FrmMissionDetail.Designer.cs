@@ -47,6 +47,8 @@
             btnCancel = new Button();
             btnSave = new Button();
             toolTipMain = new ToolTip(components);
+            label1 = new Label();
+            cboPriority = new ComboBox();
             pnlHeader.SuspendLayout();
             SuspendLayout();
             // 
@@ -91,18 +93,18 @@
             // 
             dtpStartTime.CustomFormat = "dd/MM/yyy HH:mm";
             dtpStartTime.Format = DateTimePickerFormat.Custom;
-            dtpStartTime.Location = new Point(544, 139);
+            dtpStartTime.Location = new Point(594, 142);
             dtpStartTime.Name = "dtpStartTime";
-            dtpStartTime.Size = new Size(250, 27);
+            dtpStartTime.Size = new Size(180, 27);
             dtpStartTime.TabIndex = 3;
             // 
             // dtpEndTime
             // 
             dtpEndTime.CustomFormat = "dd/MM/yyy HH:mm";
             dtpEndTime.Format = DateTimePickerFormat.Custom;
-            dtpEndTime.Location = new Point(544, 197);
+            dtpEndTime.Location = new Point(594, 200);
             dtpEndTime.Name = "dtpEndTime";
-            dtpEndTime.Size = new Size(250, 27);
+            dtpEndTime.Size = new Size(180, 27);
             dtpEndTime.TabIndex = 4;
             // 
             // txtLocation
@@ -114,7 +116,7 @@
             // 
             // rtbDescription
             // 
-            rtbDescription.Location = new Point(153, 334);
+            rtbDescription.Location = new Point(153, 360);
             rtbDescription.Name = "rtbDescription";
             rtbDescription.Size = new Size(566, 140);
             rtbDescription.TabIndex = 6;
@@ -123,7 +125,7 @@
             // chkIsActive
             // 
             chkIsActive.AutoSize = true;
-            chkIsActive.Location = new Point(544, 265);
+            chkIsActive.Location = new Point(579, 330);
             chkIsActive.Name = "chkIsActive";
             chkIsActive.Size = new Size(140, 24);
             chkIsActive.TabIndex = 7;
@@ -151,7 +153,7 @@
             // lblStart
             // 
             lblStart.AutoSize = true;
-            lblStart.Location = new Point(478, 139);
+            lblStart.Location = new Point(528, 147);
             lblStart.Name = "lblStart";
             lblStart.Size = new Size(60, 20);
             lblStart.TabIndex = 10;
@@ -160,7 +162,7 @@
             // lblEnd
             // 
             lblEnd.AutoSize = true;
-            lblEnd.Location = new Point(478, 199);
+            lblEnd.Location = new Point(525, 202);
             lblEnd.Name = "lblEnd";
             lblEnd.Size = new Size(63, 20);
             lblEnd.TabIndex = 11;
@@ -178,7 +180,7 @@
             // lblDescription
             // 
             lblDescription.AutoSize = true;
-            lblDescription.Location = new Point(99, 337);
+            lblDescription.Location = new Point(99, 363);
             lblDescription.Name = "lblDescription";
             lblDescription.Size = new Size(48, 20);
             lblDescription.TabIndex = 13;
@@ -191,7 +193,7 @@
             btnCancel.FlatStyle = FlatStyle.Flat;
             btnCancel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             btnCancel.ForeColor = Color.White;
-            btnCancel.Location = new Point(440, 506);
+            btnCancel.Location = new Point(440, 532);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(130, 40);
             btnCancel.TabIndex = 17;
@@ -206,7 +208,7 @@
             btnSave.FlatStyle = FlatStyle.Flat;
             btnSave.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             btnSave.ForeColor = Color.White;
-            btnSave.Location = new Point(275, 506);
+            btnSave.Location = new Point(275, 532);
             btnSave.Name = "btnSave";
             btnSave.Size = new Size(130, 40);
             btnSave.TabIndex = 16;
@@ -221,11 +223,31 @@
             toolTipMain.ReshowDelay = 100;
             toolTipMain.ShowAlways = true;
             // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(478, 265);
+            label1.Name = "label1";
+            label1.Size = new Size(110, 20);
+            label1.TabIndex = 18;
+            label1.Text = "Mức độ ưu tiên";
+            // 
+            // cboPriority
+            // 
+            cboPriority.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboPriority.FormattingEnabled = true;
+            cboPriority.Location = new Point(594, 261);
+            cboPriority.Name = "cboPriority";
+            cboPriority.Size = new Size(180, 28);
+            cboPriority.TabIndex = 19;
+            // 
             // FrmMissionDetail
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(882, 603);
+            Controls.Add(cboPriority);
+            Controls.Add(label1);
             Controls.Add(btnCancel);
             Controls.Add(btnSave);
             Controls.Add(lblDescription);
@@ -270,5 +292,7 @@
         public Button btnCancel;
         public Button btnSave;
         public ToolTip toolTipMain;
+        private Label label1;
+        private ComboBox cboPriority;
     }
 }

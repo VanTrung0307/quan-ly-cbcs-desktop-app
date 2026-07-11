@@ -21,15 +21,11 @@
         /// True = Có mặt
         /// False = Vắng mặt
         /// </summary>
-        public bool IsPresent
-        {
-            get
-            {
-                return Status.Equals(
-                    "Có mặt",
-                    StringComparison.OrdinalIgnoreCase);
-            }
-        }
+        public bool IsPresent =>
+            string.Equals(
+                Status,
+                "Có mặt",
+                StringComparison.OrdinalIgnoreCase);
 
         /// <summary>
         /// Lý do vắng mặt

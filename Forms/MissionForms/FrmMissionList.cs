@@ -13,12 +13,25 @@ namespace QuanLyCBCS.Forms.MissionForms
         private List<Mission>
             _allMissions =
                 new();
+
+        private readonly Font _priorityBoldFont;
+
         public FrmMissionList()
         {
             InitializeComponent();
 
             dgvMission.KeyDown += dgvMission_KeyDown;
-            dgvMission.CellDoubleClick += dgvMission_CellDoubleClick;
+
+            dgvMission.CellDoubleClick += 
+                dgvMission_CellDoubleClick;
+
+            dgvMission.CellFormatting +=
+                dgvMission_CellFormatting;
+
+            _priorityBoldFont =
+                new Font(
+                    dgvMission.Font,
+                    FontStyle.Bold);
         }
 
         private async Task
@@ -111,6 +124,19 @@ namespace QuanLyCBCS.Forms.MissionForms
                 "Description"]
                 .HeaderText =
                     "Mô tả";
+
+            dgvMission.Columns["Priority"]
+                .DefaultCellStyle.Alignment =
+                    DataGridViewContentAlignment.MiddleCenter;
+
+            dgvMission.Columns["Priority"]
+                .HeaderCell.Style.Alignment =
+                    DataGridViewContentAlignment.MiddleCenter;
+
+            dgvMission.Columns["MissionType"].Width = 130;
+            dgvMission.Columns["StartTime"].Width = 150;
+            dgvMission.Columns["EndTime"].Width = 150;
+            dgvMission.Columns["Location"].Width = 180;
         }
 
         private void AddSttColumn()
@@ -272,6 +298,91 @@ namespace QuanLyCBCS.Forms.MissionForms
                     mission.MissionName);
 
             frm.ShowDialog();
+        }
+
+        private void dgvMission_CellFormatting(        
+            object? sender,
+            DataGridViewCellFormattingEventArgs e)
+    
+        {
+            if (dgvMission.Columns[e.ColumnIndex].Name != "Priority")
+                return;
+
+            if (e.Value == null)
+                return;
+
+            if (e.CellStyle is null)
+                return;
+
+            var style = e.CellStyle;
+
+            int priority =
+                Convert.ToInt32(e.Value);
+
+            switch (priority)
+            {
+                case 4:
+
+                    e.Value = "Khẩn";
+
+                    style.BackColor =
+                        Color.FromArgb(255, 199, 206);
+
+                    style.ForeColor =
+                        Color.DarkRed;
+
+                    style.SelectionBackColor =
+                        Color.Red;
+
+                    style.SelectionForeColor =
+                        Color.White;
+
+                    style.Font =
+                        _priorityBoldFont;
+
+                    break;
+
+                case 3:
+
+                    e.Value = "Cao";
+
+                    style.BackColor =
+                        Color.FromArgb(255, 235, 156);
+
+                    style.ForeColor =
+                        Color.DarkOrange;
+
+                    style.Font =
+                        _priorityBoldFont;
+
+                    break;
+
+                case 2:
+
+                    e.Value = "Bình thường";
+
+                    style.BackColor =
+                        Color.FromArgb(221, 235, 247);
+
+                    style.ForeColor =
+                        Color.DarkBlue;
+
+                    break;
+
+                case 1:
+
+                    e.Value = "Thấp";
+
+                    style.BackColor =
+                        Color.Gainsboro;
+
+                    style.ForeColor =
+                        Color.DimGray;
+
+                    break;
+            }
+
+            e.FormattingApplied = true;
         }
     }
 }

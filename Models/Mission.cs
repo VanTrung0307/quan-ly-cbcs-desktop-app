@@ -20,6 +20,15 @@ public class Mission
 
     public DateTime CreatedAt { get; set; }
 
+    /// <summary>
+    /// Mức độ ưu tiên.
+    /// 1 = Thấp
+    /// 2 = Bình thường
+    /// 3 = Cao
+    /// 4 = Khẩn
+    /// </summary>
+    public int Priority { get; set; } = 2;
+
     public virtual ICollection<MissionPersonnel>
         MissionPersonnels
     {

@@ -1,7 +1,8 @@
-﻿using System;
-using System.Windows.Forms;
+﻿using QuanLyCBCS.DTOs;
+using QuanLyCBCS.Forms.CommonForms;
 using QuanLyCBCS.Services;
-using QuanLyCBCS.DTOs;
+using System;
+using System.Windows.Forms;
 
 namespace QuanLyCBCS.Forms.PersonnelForms
 {
@@ -118,6 +119,36 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             {
                 dgvPersonnelReport.Rows[i].Cells["STT"].Value = i + 1;
             }
+        }
+
+        private async void btnCopyReport_Click(
+            object sender,
+            EventArgs e)
+        {
+            string text =
+                await _reportService
+                    .BuildReportTextAsync(
+                        dtpReportDate.Value);
+
+            Clipboard.SetText(text);
+
+            MessageBox.Show(
+                "Đã copy báo cáo vào Clipboard.",
+                "Thông báo",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+        }
+
+        private async void btnPreview_Click(object sender, EventArgs e)
+        {
+            string report =
+                await _reportService.BuildReportTextAsync(
+                    dtpReportDate.Value);
+
+            FrmReportPreview frm =
+                new FrmReportPreview(report);
+
+            frm.ShowDialog();
         }
     }
 }

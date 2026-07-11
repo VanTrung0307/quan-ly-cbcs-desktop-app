@@ -30,7 +30,7 @@
         {
             lblTitle = new Label();
             pnlFilter = new Panel();
-            btnExport = new Button();
+            btnPreview = new Button();
             btnRefresh = new Button();
             dtpReportDate = new DateTimePicker();
             lblReportDate = new Label();
@@ -69,7 +69,7 @@
             // 
             // pnlFilter
             // 
-            pnlFilter.Controls.Add(btnExport);
+            pnlFilter.Controls.Add(btnPreview);
             pnlFilter.Controls.Add(btnRefresh);
             pnlFilter.Controls.Add(dtpReportDate);
             pnlFilter.Controls.Add(lblReportDate);
@@ -79,18 +79,19 @@
             pnlFilter.Size = new Size(936, 70);
             pnlFilter.TabIndex = 1;
             // 
-            // btnExport
+            // btnPreview
             // 
-            btnExport.Location = new Point(830, 17);
-            btnExport.Name = "btnExport";
-            btnExport.Size = new Size(94, 29);
-            btnExport.TabIndex = 3;
-            btnExport.Text = "Xuất Excel";
-            btnExport.UseVisualStyleBackColor = true;
+            btnPreview.Location = new Point(767, 21);
+            btnPreview.Name = "btnPreview";
+            btnPreview.Size = new Size(137, 29);
+            btnPreview.TabIndex = 4;
+            btnPreview.Text = "👁 Xem báo cáo";
+            btnPreview.UseVisualStyleBackColor = true;
+            btnPreview.Click += btnPreview_Click;
             // 
             // btnRefresh
             // 
-            btnRefresh.Location = new Point(730, 17);
+            btnRefresh.Location = new Point(667, 21);
             btnRefresh.Name = "btnRefresh";
             btnRefresh.Size = new Size(94, 29);
             btnRefresh.TabIndex = 2;
@@ -278,7 +279,6 @@
 
         private Label lblTitle;
         private Panel pnlFilter;
-        private Button btnExport;
         private Button btnRefresh;
         private DateTimePicker dtpReportDate;
         private Label lblReportDate;
@@ -295,5 +295,6 @@
         private DataGridView dgvPersonnelReport;
         private StatusStrip statusStrip;
         private ToolStripStatusLabel lblStatus;
+        private Button btnPreview;
     }
 }

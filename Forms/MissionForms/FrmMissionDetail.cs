@@ -1,6 +1,7 @@
 ﻿using QuanLyCBCS.Helpers;
 using QuanLyCBCS.Models;
 using QuanLyCBCS.Services;
+using QuanLyCBCS.Common;
 
 namespace QuanLyCBCS.Forms.MissionForms
 {
@@ -18,6 +19,8 @@ namespace QuanLyCBCS.Forms.MissionForms
 
             SetupMissionType();
 
+            LoadPriority();
+
             chkIsActive.Checked = true;
         }
 
@@ -27,6 +30,8 @@ namespace QuanLyCBCS.Forms.MissionForms
             InitializeComponent();
 
             SetupMissionType();
+
+            LoadPriority();
 
             _mission = mission;
 
@@ -39,16 +44,28 @@ namespace QuanLyCBCS.Forms.MissionForms
 
             cboMissionType.Items.AddRange(
             [
-                "Bảo vệ mục tiêu",
-                "Bảo vệ ngân hàng",
-                "Trưng dụng",
-                "Tăng cường",
-                "Ứng trực",
-                "Huấn luyện",
-                "Học tập",
-                "Thi đấu",
-                "Diễn tập",
-                "Khác"
+                MissionTypes.DutyCommander,
+                MissionTypes.DutyOfficer,
+
+                MissionTypes.TargetProtection,
+
+                MissionTypes.Patrol,
+
+                MissionTypes.SSCD,
+
+                MissionTypes.Training,
+
+                MissionTypes.Meeting,
+
+                MissionTypes.Other,
+
+                MissionTypes.Guard,
+
+                MissionTypes.Escort,
+
+                MissionTypes.FireSupport,
+
+                MissionTypes.TrafficSupport
             ]);
 
             cboMissionType.SelectedIndex = 0;
@@ -79,6 +96,9 @@ namespace QuanLyCBCS.Forms.MissionForms
 
             chkIsActive.Checked =
                 _mission.IsActive;
+
+            cboPriority.SelectedValue =
+                _mission.Priority;
         }
 
         private bool ValidateInput()
@@ -139,6 +159,9 @@ namespace QuanLyCBCS.Forms.MissionForms
                 mission.IsActive =
                     chkIsActive.Checked;
 
+                mission.Priority =
+                    GetSelectedPriority();
+
                 await _missionService
                     .AddAsync(mission);
 
@@ -169,6 +192,9 @@ namespace QuanLyCBCS.Forms.MissionForms
                 _mission.IsActive =
                     chkIsActive.Checked;
 
+                _mission.Priority =
+                    GetSelectedPriority();
+
                 await _missionService
                     .UpdateAsync(_mission);
 
@@ -193,6 +219,61 @@ namespace QuanLyCBCS.Forms.MissionForms
             EventArgs e)
         {
             Close();
+        }
+
+        public class PriorityItem
+        {
+            public int Value { get; set; }
+
+            public string Text { get; set; } = "";
+
+            public override string ToString()
+            {
+                return Text;
+            }
+        }
+
+        private void LoadPriority()
+        {
+            cboPriority.DataSource = new List<PriorityItem>
+            {
+                new PriorityItem
+                {
+                    Value = 1,
+                    Text = "1 - Thấp"
+                },
+
+                new PriorityItem
+                {
+                    Value = 2,
+                    Text = "2 - Bình thường"
+                },
+
+                new PriorityItem
+                {
+                    Value = 3,
+                    Text = "3 - Cao"
+                },
+
+                new PriorityItem
+                {
+                    Value = 4,
+                    Text = "4 - Khẩn"
+                }
+            };
+
+            cboPriority.DisplayMember = nameof(PriorityItem.Text);
+            cboPriority.ValueMember = nameof(PriorityItem.Value);
+
+            cboPriority.SelectedValue = 2;
+        }
+
+        private int GetSelectedPriority()
+        {
+            if (cboPriority.SelectedValue is int priority)
+                return priority;
+
+            return 2;
         }
 
     }
