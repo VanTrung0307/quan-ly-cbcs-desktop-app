@@ -139,6 +139,7 @@
             btnRefresh.TabIndex = 3;
             btnRefresh.Text = "⟳ Làm mới";
             btnRefresh.UseVisualStyleBackColor = true;
+            btnRefresh.Click += FrmMissionPersonnel_Load;
             // 
             // grpAvailable
             // 
@@ -325,6 +326,7 @@
             // 
             // colNgayPhanCongAssigned
             // 
+            colNgayPhanCongAssigned.DataPropertyName = "NgayPhanCong";
             colNgayPhanCongAssigned.HeaderText = "Ngày phân công";
             colNgayPhanCongAssigned.MinimumWidth = 6;
             colNgayPhanCongAssigned.Name = "colNgayPhanCongAssigned";

@@ -13,10 +13,6 @@ namespace QuanLyCBCS.Forms.MissionForms
             _missionPersonnelService =
                 new();
 
-        private readonly PersonnelService
-            _personnelService =
-                new();
-
         private List<MissionPersonnelDto>
             _availablePersonnel =
                 new();
@@ -31,18 +27,16 @@ namespace QuanLyCBCS.Forms.MissionForms
         {
             InitializeComponent();
 
+            CustomizeGrid();
+
             _missionId = missionId;
 
             lblMissionName.Text =
                 $"Công tác: {missionName}";
-
-            this.Load += FrmMissionPersonnel_Load;
         }
 
         private async Task LoadPersonnelAsync()
         {
-            CustomizeGrid();
-
             _availablePersonnel =
                 await _missionPersonnelService
                     .GetAvailablePersonnelDtoAsync(
@@ -53,11 +47,13 @@ namespace QuanLyCBCS.Forms.MissionForms
                     .GetAssignedPersonnelDtoAsync(
                         _missionId);
 
-            dgvAvailable.DataSource = null;
             dgvAvailable.DataSource = _availablePersonnel;
-
-            dgvAssigned.DataSource = null;
             dgvAssigned.DataSource = _assignedPersonnel;
+
+            dgvAssigned.Columns[
+                "colNgayPhanCongAssigned"]
+                .DefaultCellStyle.Format =
+                    "dd/MM/yyyy HH:mm";
 
             for (int i = 0; i < dgvAvailable.Rows.Count; i++)
             {
@@ -136,21 +132,40 @@ namespace QuanLyCBCS.Forms.MissionForms
             EventArgs e)
         {
             string keyword =
-                txtSearch.Text
-                .Trim()
-                .ToLower();
+                VietnameseHelper
+                    .RemoveVietnameseSigns(
+                        txtSearch.Text.Trim())
+                    .ToLower();
 
             dgvAvailable.DataSource =
                 _availablePersonnel
                 .Where(x =>
-                    x.HoTen.ToLower()
+
+                    VietnameseHelper.RemoveVietnameseSigns(x.HoTen)
+                        .ToLower()
                         .Contains(keyword)
 
                     ||
 
-                    x.SoHieu.ToLower()
-                        .Contains(keyword))
+                    VietnameseHelper.RemoveVietnameseSigns(x.SoHieu)
+                        .ToLower()
+                        .Contains(keyword)
+
+                    ||
+
+                    VietnameseHelper.RemoveVietnameseSigns(x.DonVi)
+                        .ToLower()
+                        .Contains(keyword)
+
+                )
                 .ToList();
+
+            for (int i = 0; i < dgvAvailable.Rows.Count; i++)
+            {
+                dgvAvailable.Rows[i]
+                    .Cells["colSttAvailable"]
+                    .Value = i + 1;
+            }
         }
 
         private async void
@@ -164,36 +179,44 @@ namespace QuanLyCBCS.Forms.MissionForms
         private async Task
         AssignSelectedPersonnelAsync()
         {
-            if (dgvAvailable.CurrentRow == null)
-                return;
+            if (dgvAvailable.CurrentRow?.DataBoundItem
+                is not MissionPersonnelDto selected)
+                        {
+                            return;
+                        }
 
-            var selected =
-                (MissionPersonnelDto)
-                dgvAvailable.CurrentRow
-                    .DataBoundItem;
+            try
+            {
+                await _missionPersonnelService
+                    .AddAsync(
+                        _missionId,
+                        selected.PersonnelId);
 
-            await _missionPersonnelService
-                .AddAsync(
-                    _missionId,
-                    selected.PersonnelId);
+                await AuditHelper.LogAsync(
+                    AuditAction.AssignMission,
+                    $"Phân công CBCS '{selected.HoTen}' ({selected.SoHieu}) vào {lblMissionName.Text}.");
 
-            await AuditHelper.LogAsync(
-                AuditAction.AssignMission,
-                $"Phân công CBCS '{selected.HoTen}' ({selected.SoHieu}) vào {lblMissionName.Text}.");
-
-            await LoadPersonnelAsync();
+                await LoadPersonnelAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    ex.Message,
+                    "Thông báo",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
         }
 
         private async Task
         RemoveSelectedPersonnelAsync()
         {
-            if (dgvAssigned.CurrentRow == null)
+            if (dgvAssigned.CurrentRow?
+                    .DataBoundItem
+                is not MissionPersonnelDto selected)
+            {
                 return;
-
-            var selected =
-                (MissionPersonnelDto)
-                dgvAssigned.CurrentRow
-                    .DataBoundItem;
+            }
 
             await _missionPersonnelService
                 .RemoveAsync(

@@ -27,16 +27,77 @@ namespace QuanLyCBCS.Services
         {
             using ApplicationDbContext db = new();
 
-            bool exists =
-                await db
-                    .MissionPersonnel
+            //==================================================
+            // 1. Kiểm tra công tác có tồn tại hay không
+            //==================================================
+
+            Mission? mission =
+                await db.Missions
+                    .FirstOrDefaultAsync(x =>
+                        x.MissionId == missionId);
+
+            if (mission == null)
+            {
+                throw new Exception(
+                    "Không tìm thấy công tác.");
+            }
+
+            //==================================================
+            // 2. Không cho phân công công tác đã kết thúc
+            //==================================================
+
+            if (mission.EndTime < DateTime.Now)
+            {
+                throw new Exception(
+                    "Công tác đã kết thúc, không thể phân công.");
+            }
+
+            //==================================================
+            // 3. CBCS đã có trong công tác này chưa
+            //==================================================
+
+            bool existed =
+                await db.MissionPersonnel
                     .AnyAsync(x =>
-                        x.MissionId == missionId
-                        &&
+                        x.MissionId == missionId &&
                         x.PersonnelId == personnelId);
 
-            if (exists)
-                return;
+            if (existed)
+            {
+                throw new Exception(
+                    "CBCS đã được phân công vào công tác này.");
+            }
+
+            //==================================================
+            // 4. Kiểm tra CBCS đang làm công tác khác
+            //==================================================
+
+            bool busy =
+                await db.MissionPersonnel
+
+                    .Include(x => x.Mission)
+
+                    .AnyAsync(x =>
+
+                        x.PersonnelId == personnelId
+
+                        &&
+
+                        mission.StartTime < x.Mission!.EndTime
+
+                        &&
+
+                        mission.EndTime > x.Mission.StartTime);
+
+            if (busy)
+            {
+                throw new Exception(
+                    "CBCS đang tham gia công tác khác trong cùng thời gian.");
+            }
+
+            //==================================================
+            // 5. Thêm phân công
+            //==================================================
 
             MissionPersonnel item =
                 new()

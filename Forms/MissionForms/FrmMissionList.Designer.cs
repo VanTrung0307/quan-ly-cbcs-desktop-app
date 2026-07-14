@@ -239,7 +239,7 @@
             btnRefresh.TabIndex = 4;
             btnRefresh.Text = "🔄 Làm mới";
             btnRefresh.UseVisualStyleBackColor = true;
-            btnRefresh.Click += FrmMissionList_Load;
+            btnRefresh.Click += btnRefresh_Click;
             // 
             // btnMembers
             // 
@@ -344,7 +344,7 @@
 
         #endregion
 
-        private Panel pnlHeader;
+        private Panel pnlHeader;    
         private Label lblTitle;
         private Label lblSubTitle;
         private Panel pnlToolbar;

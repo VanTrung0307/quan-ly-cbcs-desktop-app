@@ -384,5 +384,12 @@ namespace QuanLyCBCS.Forms.MissionForms
 
             e.FormattingApplied = true;
         }
+
+        private async void btnRefresh_Click(
+            object? sender,
+            EventArgs e)
+        {
+            await LoadMissionAsync();
+        }
     }
 }
