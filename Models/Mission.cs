@@ -8,6 +8,8 @@ public class Mission
 
     public string? MissionType { get; set; }
 
+    public bool AllowOverlap { get; set; }
+
     public DateTime StartTime { get; set; }
 
     public DateTime EndTime { get; set; }

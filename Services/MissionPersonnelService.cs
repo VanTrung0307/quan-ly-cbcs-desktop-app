@@ -69,30 +69,34 @@ namespace QuanLyCBCS.Services
             }
 
             //==================================================
-            // 4. Kiểm tra CBCS đang làm công tác khác
+            // 4. Kiểm tra trùng thời gian
             //==================================================
 
-            bool busy =
-                await db.MissionPersonnel
+            // Nếu công tác này cho phép chồng lịch
+            // thì bỏ qua bước kiểm tra.
 
-                    .Include(x => x.Mission)
-
-                    .AnyAsync(x =>
-
-                        x.PersonnelId == personnelId
-
-                        &&
-
-                        mission.StartTime < x.Mission!.EndTime
-
-                        &&
-
-                        mission.EndTime > x.Mission.StartTime);
-
-            if (busy)
+            if (!mission.AllowOverlap)
             {
-                throw new Exception(
-                    "CBCS đang tham gia công tác khác trong cùng thời gian.");
+                bool busy =
+                    await db.MissionPersonnel
+                        .Include(x => x.Mission)
+                        .AnyAsync(x =>
+
+                            x.PersonnelId == personnelId
+
+                            &&
+
+                            mission.StartTime < x.Mission!.EndTime
+
+                            &&
+
+                            mission.EndTime > x.Mission.StartTime);
+
+                if (busy)
+                {
+                    throw new Exception(
+                        "CBCS đang tham gia công tác khác trong cùng thời gian.");
+                }
             }
 
             //==================================================
