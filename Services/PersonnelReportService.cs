@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using QuanLyCBCS.Common;
 using QuanLyCBCS.Data;
 using QuanLyCBCS.DTOs;
 using QuanLyCBCS.Models;
@@ -25,29 +26,33 @@ namespace QuanLyCBCS.Services
             var result =
                 await db.MissionPersonnel
 
-                .Where(mp =>
-                    mp.Mission != null
-                    && mp.Mission.IsActive
+                    .Where(mp =>
 
-                    // chỉ lấy nhiệm vụ trong ngày báo cáo
-                    && mp.Mission.StartTime.Date <= day
-                    && mp.Mission.EndTime.Date >= day)
+                        mp.Mission != null
 
-                .Select(mp =>
-                    new MissionAssignmentDto
-                    {
-                        PersonnelId = mp.PersonnelId,
+                        && mp.Mission.IsActive
 
-                        MissionName = mp.Mission!.MissionName ?? "",
+                        // Chỉ lấy nhiệm vụ trong ngày báo cáo
+                        && mp.Mission.StartTime.Date <= day
+                        && mp.Mission.EndTime.Date >= day
 
-                        Location =
-                            mp.Mission.Location ?? "",
+                        // Không tính trực tại đơn vị là vắng mặt
+                        && mp.Mission.MissionType != MissionTypes.DutyCommander
+                        && mp.Mission.MissionType != MissionTypes.DutyOfficer)
 
-                        Reason =
-                            mp.Mission.MissionType ?? "Khác",
-                    })
+                    .Select(mp =>
+                        new MissionAssignmentDto
+                        {
+                            PersonnelId = mp.PersonnelId,
 
-                .ToListAsync();
+                            MissionName = mp.Mission!.MissionName ?? "",
+
+                            Location = mp.Mission.Location ?? "",
+
+                            Reason = mp.Mission.MissionType ?? "Khác"
+                        })
+
+                    .ToListAsync();
 
             return result;
         }
@@ -213,10 +218,24 @@ namespace QuanLyCBCS.Services
                         personnel.PersonnelID,
                         out Mission? mission))
                 {
-                    result.Add(
-                        CreateAbsentDto(
-                            personnel,
-                            mission));
+                    bool isDutyAtUnit =
+                        mission.MissionType == MissionTypes.DutyCommander
+                        ||
+                        mission.MissionType == MissionTypes.DutyOfficer;
+
+                    if (isDutyAtUnit)
+                    {
+                        result.Add(
+                            CreatePresentDto(
+                                personnel));
+                    }
+                    else
+                    {
+                        result.Add(
+                            CreateAbsentDto(
+                                personnel,
+                                mission));
+                    }
                 }
                 else
                 {
