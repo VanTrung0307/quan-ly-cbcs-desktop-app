@@ -283,14 +283,14 @@ public class PersonnelService
         dto.Nu =
             data.Count(x => x.GioiTinh == "Nữ");
 
-        dto.TuoiTrungBinh =
-            Math.Round(
-                data
-                    .Where(x => x.NgaySinh.HasValue)
-                    .Average(x =>
-                        DateTime.Now.Year -
-                        x.NgaySinh!.Value.Year),
-        1);
+        var ages = data
+            .Where(x => x.NgaySinh.HasValue)
+            .Select(x => DateTime.Now.Year - x.NgaySinh!.Value.Year)
+            .ToList();
+
+        dto.TuoiTrungBinh = ages.Count > 0
+            ? Math.Round(ages.Average(), 1)
+            : 0;
 
         dto.DonViDongNhat =
             data.GroupBy(x => x.DonVi)

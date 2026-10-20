@@ -27,10 +27,17 @@ namespace QuanLyCBCS.Helpers
         {
             UserId = 0;
             Username = "";
-
             Role = "";
 
-            Permissions.Clear();
+            if (Permissions != null)
+            {
+                Permissions.Clear();
+            }
+            else
+            {
+                Permissions = new HashSet<string>(
+                    StringComparer.OrdinalIgnoreCase);
+            }
         }
     }
 }

@@ -17,7 +17,7 @@ namespace QuanLyCBCS.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.27")
+                .HasAnnotation("ProductVersion", "8.0.32")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -58,6 +58,9 @@ namespace QuanLyCBCS.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MissionId"));
 
+                    b.Property<bool>("AllowOverlap")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -80,6 +83,9 @@ namespace QuanLyCBCS.Migrations
                     b.Property<string>("MissionType")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Priority")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
 
@@ -96,6 +102,9 @@ namespace QuanLyCBCS.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MissionPersonnelId"));
 
+                    b.Property<DateTime>("AssignedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("MissionId")
                         .HasColumnType("int");
 
@@ -109,6 +118,33 @@ namespace QuanLyCBCS.Migrations
                     b.HasIndex("PersonnelId");
 
                     b.ToTable("MissionPersonnel");
+                });
+
+            modelBuilder.Entity("QuanLyCBCS.Models.Permission", b =>
+                {
+                    b.Property<int>("PermissionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PermissionId"));
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("PermissionKey")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("PermissionName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("PermissionId");
+
+                    b.ToTable("Permissions");
                 });
 
             modelBuilder.Entity("QuanLyCBCS.Models.Personnel", b =>
@@ -241,6 +277,64 @@ namespace QuanLyCBCS.Migrations
                     b.ToTable("Personnel");
                 });
 
+            modelBuilder.Entity("QuanLyCBCS.Models.PersonnelHistory", b =>
+                {
+                    b.Property<int>("PersonnelHistoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PersonnelHistoryId"));
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AffectedPersonnelName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PerformedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PersonnelId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PersonnelHistoryId");
+
+                    b.ToTable("PersonnelHistories");
+                });
+
+            modelBuilder.Entity("QuanLyCBCS.Models.RolePermission", b =>
+                {
+                    b.Property<int>("RolePermissionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RolePermissionId"));
+
+                    b.Property<int>("PermissionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("RolePermissionId");
+
+                    b.HasIndex("PermissionId");
+
+                    b.ToTable("RolePermissions");
+                });
+
             modelBuilder.Entity("QuanLyCBCS.Models.User", b =>
                 {
                     b.Property<int>("UserId")
@@ -254,6 +348,9 @@ namespace QuanLyCBCS.Migrations
 
                     b.Property<DateTime?>("LockedUntil")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("MustChangePassword")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Password")
                         .IsRequired()
@@ -275,13 +372,13 @@ namespace QuanLyCBCS.Migrations
             modelBuilder.Entity("QuanLyCBCS.Models.MissionPersonnel", b =>
                 {
                     b.HasOne("QuanLyCBCS.Models.Mission", "Mission")
-                        .WithMany("MissionPersonnel")
+                        .WithMany("MissionPersonnels")
                         .HasForeignKey("MissionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("QuanLyCBCS.Models.Personnel", "Personnel")
-                        .WithMany("MissionPersonnel")
+                        .WithMany("MissionPersonnels")
                         .HasForeignKey("PersonnelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -291,14 +388,25 @@ namespace QuanLyCBCS.Migrations
                     b.Navigation("Personnel");
                 });
 
+            modelBuilder.Entity("QuanLyCBCS.Models.RolePermission", b =>
+                {
+                    b.HasOne("QuanLyCBCS.Models.Permission", "Permission")
+                        .WithMany()
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Permission");
+                });
+
             modelBuilder.Entity("QuanLyCBCS.Models.Mission", b =>
                 {
-                    b.Navigation("MissionPersonnel");
+                    b.Navigation("MissionPersonnels");
                 });
 
             modelBuilder.Entity("QuanLyCBCS.Models.Personnel", b =>
                 {
-                    b.Navigation("MissionPersonnel");
+                    b.Navigation("MissionPersonnels");
                 });
 #pragma warning restore 612, 618
         }

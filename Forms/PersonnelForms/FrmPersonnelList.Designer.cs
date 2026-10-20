@@ -163,7 +163,7 @@
             dgvPersonnel.RowHeadersVisible = false;
             dgvPersonnel.RowHeadersWidth = 51;
             dgvPersonnel.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvPersonnel.Size = new Size(1840, 318);
+            dgvPersonnel.Size = new Size(1840, 572);
             dgvPersonnel.TabIndex = 5;
             dgvPersonnel.CellClick += dgvPersonnel_CellClick;
             dgvPersonnel.CellDoubleClick += dgvPersonnel_CellDoubleClick;
@@ -516,7 +516,7 @@
             // 
             statusStrip1.ImageScalingSize = new Size(20, 20);
             statusStrip1.Items.AddRange(new ToolStripItem[] { lblUser, lblRole, lblTime, lblRecordCount });
-            statusStrip1.Location = new Point(0, 538);
+            statusStrip1.Location = new Point(0, 792);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(1842, 26);
             statusStrip1.TabIndex = 31;
@@ -641,7 +641,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1842, 564);
+            ClientSize = new Size(1842, 818);
             Controls.Add(btnReport);
             Controls.Add(btnPermission);
             Controls.Add(btnAdminDashboard);

@@ -24,7 +24,7 @@ public class ApplicationDbContext : DbContext
     {
         optionsBuilder.UseSqlServer(
             @"Server=.\VANTRUNG;
-              Database=QuanLyCBCS;
+              Database=QuanLyCBCS_New   ;
               Trusted_Connection=True;
               TrustServerCertificate=True;
               MultipleActiveResultSets=True");
