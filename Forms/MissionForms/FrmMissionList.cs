@@ -57,6 +57,7 @@ namespace QuanLyCBCS.Forms.MissionForms
             object sender,
             EventArgs e)
         {
+            await _missionService.RefreshMissionStatusAsync();
             await LoadMissionAsync();
 
             btnAddMission.Visible =
@@ -389,6 +390,7 @@ namespace QuanLyCBCS.Forms.MissionForms
             object? sender,
             EventArgs e)
         {
+            await _missionService.RefreshMissionStatusAsync();
             await LoadMissionAsync();
         }
     }

@@ -25,7 +25,7 @@ namespace QuanLyCBCS.Services
 
             var result =
                 await db.MissionPersonnel
-
+                    .Include(mp => mp.Personnel)
                     .Where(mp =>
 
                         mp.Mission != null
@@ -44,6 +44,10 @@ namespace QuanLyCBCS.Services
                         new MissionAssignmentDto
                         {
                             PersonnelId = mp.PersonnelId,
+
+                            PersonnelName = mp.Personnel != null
+                                ? mp.Personnel.HoTen
+                                : "",
 
                             MissionName = mp.Mission!.MissionName ?? "",
 

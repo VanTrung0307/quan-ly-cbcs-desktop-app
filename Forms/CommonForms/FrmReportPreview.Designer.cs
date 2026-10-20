@@ -40,22 +40,29 @@
             // label1
             // 
             label1.Dock = DockStyle.Top;
-            label1.Font = new Font("Segoe UI", 24F, FontStyle.Bold);
+            label1.Font = new Font("Segoe UI Semibold", 22F, FontStyle.Bold);
+            label1.ForeColor = Color.Black;
             label1.Location = new Point(0, 0);
             label1.Name = "label1";
-            label1.Size = new Size(800, 54);
+            label1.Size = new Size(962, 70);
             label1.TabIndex = 0;
             label1.Text = "XEM BÁO CÁO";
-            label1.TextAlign = ContentAlignment.TopCenter;
+            label1.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // rtbReport
             // 
+            rtbReport.BackColor = Color.White;
+            rtbReport.BorderStyle = BorderStyle.None;
+            rtbReport.DetectUrls = false;
             rtbReport.Dock = DockStyle.Fill;
             rtbReport.Font = new Font("Consolas", 11F);
-            rtbReport.Location = new Point(0, 54);
+            rtbReport.HideSelection = false;
+            rtbReport.Location = new Point(0, 70);
+            rtbReport.Margin = new Padding(10);
             rtbReport.Name = "rtbReport";
             rtbReport.ReadOnly = true;
-            rtbReport.Size = new Size(800, 396);
+            rtbReport.ScrollBars = RichTextBoxScrollBars.Vertical;
+            rtbReport.Size = new Size(962, 583);
             rtbReport.TabIndex = 1;
             rtbReport.Text = "";
             rtbReport.WordWrap = false;
@@ -65,42 +72,60 @@
             panel1.Controls.Add(btnClose);
             panel1.Controls.Add(btnCopy);
             panel1.Dock = DockStyle.Bottom;
-            panel1.Location = new Point(0, 395);
+            panel1.Location = new Point(0, 593);
             panel1.Name = "panel1";
-            panel1.Size = new Size(800, 55);
+            panel1.Size = new Size(962, 60);
             panel1.TabIndex = 2;
             // 
             // btnClose
             // 
-            btnClose.Location = new Point(462, 14);
+            btnClose.BackColor = Color.FromArgb(231, 76, 60);
+            btnClose.FlatAppearance.BorderSize = 0;
+            btnClose.FlatStyle = FlatStyle.Flat;
+            btnClose.Font = new Font("Segoe UI Semibold", 9F);
+            btnClose.ForeColor = Color.White;
+            btnClose.Location = new Point(600, 12);
             btnClose.Name = "btnClose";
-            btnClose.Size = new Size(94, 29);
+            btnClose.Size = new Size(120, 36);
             btnClose.TabIndex = 2;
             btnClose.Text = "Đóng";
-            btnClose.UseVisualStyleBackColor = true;
+            btnClose.UseVisualStyleBackColor = false;
             btnClose.Click += btnClose_Click;
             // 
             // btnCopy
             // 
-            btnCopy.Location = new Point(177, 14);
+            btnCopy.BackColor = Color.FromArgb(52, 152, 219);
+            btnCopy.FlatAppearance.BorderSize = 0;
+            btnCopy.FlatStyle = FlatStyle.Flat;
+            btnCopy.Font = new Font("Segoe UI Semibold", 9F);
+            btnCopy.ForeColor = Color.White;
+            btnCopy.Location = new Point(250, 12);
             btnCopy.Name = "btnCopy";
-            btnCopy.Size = new Size(146, 29);
+            btnCopy.Size = new Size(120, 36);
             btnCopy.TabIndex = 0;
-            btnCopy.Text = "📋 Copy báo cáo";
-            btnCopy.UseVisualStyleBackColor = true;
+            btnCopy.Text = "📋 Sao chép";
+            btnCopy.UseVisualStyleBackColor = false;
             btnCopy.Click += btnCopy_Click;
             // 
             // FrmReportPreview
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            BackColor = Color.White;
+            ClientSize = new Size(962, 653);
             Controls.Add(panel1);
             Controls.Add(rtbReport);
             Controls.Add(label1);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
             Icon = (Icon)resources.GetObject("$this.Icon");
+            MaximizeBox = false;
+            MinimizeBox = false;
+            MinimumSize = new Size(900, 650);
             Name = "FrmReportPreview";
-            Text = "FrmReportPreview";
+            ShowIcon = false;
+            ShowInTaskbar = false;
+            StartPosition = FormStartPosition.CenterParent;
+            Text = "Xem báo cáo";
             panel1.ResumeLayout(false);
             ResumeLayout(false);
         }

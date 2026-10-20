@@ -162,4 +162,31 @@ public class MissionService
             .Take(5)
             .ToListAsync();
     }
+
+    public async Task RefreshMissionStatusAsync()
+    {
+        using ApplicationDbContext db = new();
+
+        var now = DateTime.Now;
+
+        var missions =
+            await db.Missions.ToListAsync();
+
+        bool changed = false;
+
+        foreach (var mission in missions)
+        {
+            bool shouldActive =
+                mission.EndTime >= now;
+
+            if (mission.IsActive != shouldActive)
+            {
+                mission.IsActive = shouldActive;
+                changed = true;
+            }
+        }
+
+        if (changed)
+            await db.SaveChangesAsync();
+    }
 }
