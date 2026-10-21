@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmAdminDashboard));
             grpPersonnel = new GroupBox();
             lblOfficerCount = new Label();
             lblSoldierCount = new Label();
@@ -43,14 +44,14 @@
             lblEndingMission = new Label();
             lblTotalMission = new Label();
             grpSecurity = new GroupBox();
+            lblChangePasswordToday = new Label();
+            lblUnlockToday = new Label();
             lblResetToday = new Label();
             lblFailedLoginToday = new Label();
             lblLoginToday = new Label();
             lblLockToday = new Label();
             btnRefresh = new Button();
             dgvRecentLogs = new DataGridView();
-            lblUnlockToday = new Label();
-            lblChangePasswordToday = new Label();
             grpPersonnel.SuspendLayout();
             grpUsers.SuspendLayout();
             grpMission.SuspendLayout();
@@ -108,7 +109,7 @@
             grpUsers.Size = new Size(250, 204);
             grpUsers.TabIndex = 1;
             grpUsers.TabStop = false;
-            grpUsers.Text = "User";
+            grpUsers.Text = "Người dùng";
             // 
             // lblLockedUsers
             // 
@@ -157,7 +158,7 @@
             grpMission.Size = new Size(250, 204);
             grpMission.TabIndex = 1;
             grpMission.TabStop = false;
-            grpMission.Text = "Mission";
+            grpMission.Text = "Công tác";
             // 
             // lblFinishedMission
             // 
@@ -208,7 +209,25 @@
             grpSecurity.Size = new Size(250, 283);
             grpSecurity.TabIndex = 1;
             grpSecurity.TabStop = false;
-            grpSecurity.Text = "Security";
+            grpSecurity.Text = "Bảo mật";
+            // 
+            // lblChangePasswordToday
+            // 
+            lblChangePasswordToday.AutoSize = true;
+            lblChangePasswordToday.Location = new Point(37, 242);
+            lblChangePasswordToday.Name = "lblChangePasswordToday";
+            lblChangePasswordToday.Size = new Size(177, 20);
+            lblChangePasswordToday.TabIndex = 14;
+            lblChangePasswordToday.Text = "lblChangePasswordToday";
+            // 
+            // lblUnlockToday
+            // 
+            lblUnlockToday.AutoSize = true;
+            lblUnlockToday.Location = new Point(37, 200);
+            lblUnlockToday.Name = "lblUnlockToday";
+            lblUnlockToday.Size = new Size(111, 20);
+            lblUnlockToday.TabIndex = 13;
+            lblUnlockToday.Text = "lblUnlockToday";
             // 
             // lblResetToday
             // 
@@ -265,24 +284,6 @@
             dgvRecentLogs.Size = new Size(935, 365);
             dgvRecentLogs.TabIndex = 3;
             // 
-            // lblUnlockToday
-            // 
-            lblUnlockToday.AutoSize = true;
-            lblUnlockToday.Location = new Point(37, 200);
-            lblUnlockToday.Name = "lblUnlockToday";
-            lblUnlockToday.Size = new Size(111, 20);
-            lblUnlockToday.TabIndex = 13;
-            lblUnlockToday.Text = "lblUnlockToday";
-            // 
-            // lblChangePasswordToday
-            // 
-            lblChangePasswordToday.AutoSize = true;
-            lblChangePasswordToday.Location = new Point(37, 242);
-            lblChangePasswordToday.Name = "lblChangePasswordToday";
-            lblChangePasswordToday.Size = new Size(177, 20);
-            lblChangePasswordToday.TabIndex = 14;
-            lblChangePasswordToday.Text = "lblChangePasswordToday";
-            // 
             // FrmAdminDashboard
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -294,8 +295,9 @@
             Controls.Add(grpMission);
             Controls.Add(grpUsers);
             Controls.Add(grpPersonnel);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FrmAdminDashboard";
-            Text = "FrmAdminDashboard";
+            Text = "Bảng điều khiển quản trị";
             Load += FrmAdminDashboard_Load;
             grpPersonnel.ResumeLayout(false);
             grpPersonnel.PerformLayout();

@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMissionDetail));
             pnlHeader = new Panel();
             lblTitle = new Label();
             txtMissionName = new TextBox();
@@ -264,6 +265,7 @@
             Controls.Add(cboMissionType);
             Controls.Add(txtMissionName);
             Controls.Add(pnlHeader);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FrmMissionDetail";
             Text = "THÔNG TIN CÔNG TÁC";
             pnlHeader.ResumeLayout(false);

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMissionDashboard));
             lblTongCongTac = new Label();
             lblDangHoatDong = new Label();
             lblDaKetThuc = new Label();
@@ -235,9 +236,10 @@
             Controls.Add(lblDaKetThuc);
             Controls.Add(lblDangHoatDong);
             Controls.Add(lblTongCongTac);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FrmMissionDashboard";
             StartPosition = FormStartPosition.CenterParent;
-            Text = "FrmMissionDashboard";
+            Text = "Bảng điều khiển công tác";
             Load += FrmMissionDashboard_Load;
             ((System.ComponentModel.ISupportInitialize)dgvRecentMission).EndInit();
             pnlHeader.ResumeLayout(false);

@@ -200,7 +200,7 @@
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FrmPersonnelMissionHistory";
             StartPosition = FormStartPosition.CenterParent;
-            Text = "FrmPersonnelMissionHistory";
+            Text = "Lịch sử Công tác của CBCS";
             pnlHeader.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvHistory).EndInit();
             panel1.ResumeLayout(false);

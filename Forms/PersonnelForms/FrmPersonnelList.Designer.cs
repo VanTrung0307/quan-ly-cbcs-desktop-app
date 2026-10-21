@@ -674,7 +674,7 @@
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FrmPersonnelList";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "FrmPersonnelList";
+            Text = "Danh sách CBCS";
             WindowState = FormWindowState.Maximized;
             Load += FrmPersonnelList_Load;
             ((System.ComponentModel.ISupportInitialize)dgvPersonnel).EndInit();

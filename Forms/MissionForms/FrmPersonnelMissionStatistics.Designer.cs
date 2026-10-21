@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmPersonnelMissionStatistics));
             lblTitle = new Label();
             dgvStatistics = new DataGridView();
             colSTT = new DataGridViewTextBoxColumn();
@@ -240,8 +241,9 @@
             Controls.Add(btnClose);
             Controls.Add(dgvStatistics);
             Controls.Add(pnlHeader);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FrmPersonnelMissionStatistics";
-            Text = "FrmPersonnelMissionStatistics";
+            Text = "Thông kê công tác của CBCS";
             Load += FrmPersonnelMissionStatistics_Load;
             ((System.ComponentModel.ISupportInitialize)dgvStatistics).EndInit();
             pnlHeader.ResumeLayout(false);
