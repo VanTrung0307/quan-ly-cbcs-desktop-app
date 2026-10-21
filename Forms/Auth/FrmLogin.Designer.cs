@@ -157,7 +157,7 @@
             lblVersion.Name = "lblVersion";
             lblVersion.Size = new Size(124, 19);
             lblVersion.TabIndex = 9;
-            lblVersion.Text = "Quản lý CBCS v1.0";
+            lblVersion.Text = "Quản lý CBCS v2.0";
             // 
             // FrmLogin
             // 
