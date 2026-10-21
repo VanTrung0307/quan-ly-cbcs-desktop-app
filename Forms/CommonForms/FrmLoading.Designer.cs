@@ -77,7 +77,7 @@
             label2.Name = "label2";
             label2.Size = new Size(124, 19);
             label2.TabIndex = 3;
-            label2.Text = "Quản lý CBCS v1.0";
+            label2.Text = "Quản lý CBCS v2.0";
             label2.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // FrmLoading
