@@ -1,262 +1,146 @@
-# Quản lý CBCS --- Ứng dụng quản lý cán bộ, chiến sĩ Cảnh sát cơ động
+<div align="center">
 
-Ứng dụng desktop xây dựng bằng **C# Windows Forms (WinForms)** nhằm hỗ
-trợ quản lý hồ sơ cán bộ, chiến sĩ (CBCS), quản lý công tác và phân công
-nhân sự, theo dõi tài khoản người dùng, phân quyền và lập báo cáo.
+# QUẢN LÝ CÁN BỘ, CHIẾN SĨ (CBCS)
 
-> **Trạng thái dự án:** Các ảnh bên dưới ghi lại giao diện đã thiết kế
-> trong Visual Studio. Chúng không tự chứng minh rằng mọi nghiệp vụ đã
-> được kiểm thử hoàn chỉnh. Hãy cập nhật trạng thái và thông tin kỹ
-> thuật sau khi kiểm thử bản phát hành.
+**Ứng dụng desktop quản lý hồ sơ nhân sự và công tác**
 
-## Mục lục
+Ứng dụng Windows Forms xây dựng bằng C# nhằm hỗ trợ lưu trữ, tra cứu và quản lý thông tin cán bộ, chiến sĩ; theo dõi công tác, phân công nhân sự và hỗ trợ thống kê, báo cáo.
 
--   [Tổng quan](#tổng-quan)
--   [Các chức năng chính](#các-chức-năng-chính)
--   [Ảnh giao diện](#ảnh-giao-diện)
--   [Công nghệ](#công-nghệ)
--   [Yêu cầu môi trường](#yêu-cầu-môi-trường)
--   [Cấu hình và chạy dự án](#cấu-hình-và-chạy-dự-án)
--   [Cơ sở dữ liệu và an toàn dữ
-    liệu](#cơ-sở-dữ-liệu-và-an-toàn-dữ-liệu)
--   [Định hướng phát triển](#định-hướng-phát-triển)
--   [Lưu ý khi công khai repository](#lưu-ý-khi-công-khai-repository)
+</div>
 
-## Tổng quan
+---
 
-**Quản lý CBCS** là ứng dụng quản lý nội bộ với giao diện Windows Forms.
-Các màn hình hiện có tập trung vào những nhóm nghiệp vụ:
+## 📌 Giới thiệu
 
--   Quản lý hồ sơ CBCS.
--   Quản lý công tác và phân công CBCS.
--   Thống kê, báo cáo quân số và lịch sử công tác.
--   Quản lý tài khoản, vai trò và quyền truy cập.
--   Nhật ký hoạt động và trung tâm thông báo.
--   Sao lưu, phục hồi cơ sở dữ liệu và xuất dữ liệu Excel từ các màn
-    hình có hỗ trợ.
+**Quản lý CBCS** là phần mềm desktop hướng đến việc tập trung hóa thông tin nhân sự và hoạt động công tác trong một giao diện thống nhất. Giao diện được tổ chức theo các nhóm chức năng: hồ sơ CBCS, công tác và phân công, lịch sử/thống kê, tài khoản và phân quyền, quản trị hệ thống, thông báo và báo cáo.
 
-## Các chức năng chính
+> Các ảnh dưới đây minh họa giao diện thiết kế của ứng dụng. Tính năng thực tế có thể phụ thuộc vào cấu hình cơ sở dữ liệu, tài khoản đăng nhập và phiên bản đang triển khai.
 
-### 1. Đăng nhập và khởi tạo
+## ✨ Chức năng chính
 
--   Màn hình đăng nhập bằng tên tài khoản và mật khẩu.
--   Màn hình khởi tạo ứng dụng.
--   Giao diện nhận diện phần mềm.
+- **Quản lý hồ sơ CBCS:** xem danh sách, tìm kiếm và thao tác quản lý hồ sơ.
+- **Quản lý công tác:** tạo/cập nhật thông tin công tác, loại công tác, địa điểm, thời gian, mức độ ưu tiên và mô tả.
+- **Phân công CBCS:** phân công nhân sự vào công tác và theo dõi danh sách đã/chưa phân công.
+- **Lịch sử và thống kê công tác:** xem lịch sử tham gia, tổng hợp số lượt công tác và xuất dữ liệu khi chức năng được cấu hình.
+- **Quản lý tài khoản:** tạo/cập nhật tài khoản, đổi mật khẩu và quản lý quyền truy cập theo vai trò.
+- **Khu vực quản trị:** tổng quan số liệu, nhật ký hệ thống, trung tâm thông báo và màn hình báo cáo.
 
-### 2. Quản lý hồ sơ CBCS
+## 🖥️ Ảnh giao diện
 
--   Danh sách CBCS và khu vực tìm kiếm/lọc.
--   Các thao tác thêm, sửa và xóa hồ sơ.
--   Khu vực thống kê quân số.
--   Các nút hỗ trợ xuất Excel, sao lưu và phục hồi dữ liệu.
+Ảnh được lưu trong thư mục [`assets/`](assets/). Các ảnh sử dụng bố cục **hai cột** và đặt chiều rộng cố định để GitHub hiển thị cân đối hơn. Trên màn hình nhỏ, bảng có thể tự co theo vùng hiển thị.
 
-### 3. Quản lý công tác và phân công
+### Khởi động và đăng nhập
 
--   Danh sách công tác.
--   Thêm hoặc chỉnh sửa thông tin công tác.
--   Dashboard tổng hợp tình hình công tác.
--   Màn hình phân công CBCS vào từng công tác.
--   Màn hình thống kê và lịch sử công tác CBCS.
+<table>
+  <tr>
+    <td align="center" width="50%"><strong>Khởi tạo hệ thống</strong><br><img src="assets/loading.png" width="400" alt="Màn hình khởi tạo hệ thống"></td>
+    <td align="center" width="50%"><strong>Đăng nhập</strong><br><img src="assets/login.png" width="400" alt="Màn hình đăng nhập"></td>
+  </tr>
+</table>
 
-### 4. Tài khoản và phân quyền
+### Hồ sơ CBCS và quản lý công tác
 
--   Danh sách tài khoản người dùng.
--   Tạo hoặc chỉnh sửa tài khoản.
--   Đổi mật khẩu.
--   Thiết lập quyền theo vai trò.
--   Các thao tác quản trị tài khoản như đặt lại mật khẩu hoặc mở khóa,
-    tùy theo quyền được cấp.
+<table>
+  <tr>
+    <td align="center" width="50%"><strong>Danh sách hồ sơ CBCS</strong><br><img src="assets/personnel-list.png" width="400" alt="Danh sách hồ sơ CBCS"></td>
+    <td align="center" width="50%"><strong>Thông tin công tác</strong><br><img src="assets/mission-detail.png" width="400" alt="Màn hình thông tin công tác"></td>
+  </tr>
+  <tr>
+    <td align="center" width="50%"><strong>Phân công CBCS</strong><br><img src="assets/mission-assignment.png" width="400" alt="Màn hình phân công CBCS"></td>
+    <td align="center" width="50%"><strong>Lịch sử công tác</strong><br><img src="assets/personnel-mission-history.png" width="400" alt="Màn hình lịch sử công tác"></td>
+  </tr>
+  <tr>
+    <td align="center" width="50%"><strong>Thống kê công tác</strong><br><img src="assets/personnel-mission-statistics.png" width="400" alt="Màn hình thống kê công tác"></td>
+    <td align="center" width="50%"><strong>Dashboard công tác</strong><br><img src="assets/mission-dashboard.png" width="400" alt="Dashboard công tác"></td>
+  </tr>
+  <tr>
+    <td align="center" width="50%"><strong>Thống kê hồ sơ / báo cáo</strong><br><img src="assets/personnel-report.png" width="400" alt="Thống kê hồ sơ và báo cáo"></td>
+    <td align="center" width="50%"><strong>Màn hình xem báo cáo</strong><br><img src="assets/report-viewer.png" width="400" alt="Màn hình xem báo cáo"></td>
+  </tr>
+</table>
 
-### 5. Nhật ký, thông báo và báo cáo
+### Tài khoản, phân quyền và quản trị
 
--   Nhật ký hoạt động người dùng.
--   Trung tâm thông báo.
--   Dashboard quản trị.
--   Báo cáo quân số.
--   Màn hình xem báo cáo và thống kê công tác.
+<table>
+  <tr>
+    <td align="center" width="50%"><strong>Danh sách tài khoản</strong><br><img src="assets/user-list.png" width="400" alt="Danh sách tài khoản"></td>
+    <td align="center" width="50%"><strong>Thông tin tài khoản</strong><br><img src="assets/user-detail.png" width="400" alt="Thông tin tài khoản"></td>
+  </tr>
+  <tr>
+    <td align="center" width="50%"><strong>Đổi mật khẩu</strong><br><img src="assets/change-password.png" width="400" alt="Màn hình đổi mật khẩu"></td>
+    <td align="center" width="50%"><strong>Quản lý phân quyền</strong><br><img src="assets/permissions.png" width="400" alt="Màn hình quản lý phân quyền"></td>
+  </tr>
+  <tr>
+    <td align="center" width="50%"><strong>Bảng điều khiển quản trị</strong><br><img src="assets/admin-dashboard.png" width="400" alt="Bảng điều khiển quản trị"></td>
+    <td align="center" width="50%"><strong>Nhật ký hệ thống</strong><br><img src="assets/audit-log.png" width="400" alt="Màn hình nhật ký hệ thống"></td>
+  </tr>
+  <tr>
+    <td align="center" width="50%"><strong>Trung tâm thông báo</strong><br><img src="assets/notifications.png" width="400" alt="Trung tâm thông báo"></td>
+    <td align="center" width="50%"><strong>Màn hình quản lý tài khoản</strong><br><img src="assets/user-list.png" width="400" alt="Màn hình quản lý tài khoản"></td>
+  </tr>
+</table>
 
-## Ảnh giao diện
+## 🧰 Công nghệ
 
-Ảnh được lưu trong thư mục [`assets/`](assets/). Các liên kết ảnh dùng
-đường dẫn tương đối để hiển thị trực tiếp trên GitHub.
+Dựa trên cấu hình và mã nguồn của dự án, các công nghệ sử dụng gồm:
 
-### Đăng nhập và khởi tạo
+- **Ngôn ngữ:** C#
+- **Giao diện desktop:** Windows Forms (WinForms)
+- **Nền tảng mục tiêu:** .NET Framework 4.8 *(hãy xác nhận lại trong Project Properties nếu đã đổi target framework)*
+- **Cơ sở dữ liệu:** Microsoft SQL Server
+- **Môi trường phát triển:** Visual Studio
 
-  -----------------------------------------------------------------------
-  Đăng nhập hệ thống                  Khởi tạo hệ thống
-  ----------------------------------- -----------------------------------
-  ![Đăng nhập hệ                      ![Khởi tạo hệ
-  thống](assets/login.png)            thống](assets/loading.png)
+## ⚙️ Yêu cầu triển khai
 
-  -----------------------------------------------------------------------
+- Máy tính Windows tương thích với phiên bản .NET mục tiêu của ứng dụng.
+- SQL Server Database Engine đã được cài đặt và đang hoạt động.
+- Cơ sở dữ liệu của ứng dụng đã được khôi phục/tạo và chuỗi kết nối trong cấu hình được cập nhật chính xác.
+- Tài khoản đăng nhập hợp lệ đã được thiết lập trong cơ sở dữ liệu.
 
-### Quản lý hồ sơ CBCS
+> **Lưu ý bảo mật:** Không đưa mật khẩu SQL Server, mật khẩu tài khoản, chuỗi kết nối chứa thông tin nhạy cảm hoặc bản sao dữ liệu CBCS thật lên GitHub. Nếu dự án dùng `App.config`, hãy kiểm tra và loại bỏ thông tin bí mật trước khi public repository.
 
-![Danh sách CBCS](assets/personnel-list.png)
+## 🚀 Build và chạy
 
-*Màn hình danh sách CBCS với khu vực tìm kiếm, lọc, thống kê và các thao
-tác quản lý.*
+1. Mở solution bằng Visual Studio.
+2. Kiểm tra `Target Framework`, các package và chuỗi kết nối trong cấu hình.
+3. Chọn cấu hình `Release`, sau đó chạy **Build → Rebuild Solution**.
+4. Đảm bảo SQL Server và cơ sở dữ liệu đã sẵn sàng.
+5. Chạy ứng dụng từ Visual Studio hoặc sử dụng bản publish đã được tạo.
 
-### Quản lý công tác
+Các bước trên là hướng dẫn tổng quát; đường dẫn publish và cấu hình kết nối phụ thuộc vào thiết lập hiện tại của solution.
 
-  -----------------------------------------------------------------------
-  Danh sách công tác                  Thông tin công tác
-  ----------------------------------- -----------------------------------
-  ![Quản lý công                      ![Thông tin công
-  tác](assets/mission-list.png)       tác](assets/mission-detail.png)
+## 🗂️ Thư mục ảnh
 
-  -----------------------------------------------------------------------
-
-![Phân công CBCS](assets/mission-assignment.png)
-
-*Màn hình phân công chia CBCS thành hai nhóm: chưa phân công và đã phân
-công.*
-
-  ----------------------------------------------------------------------------------
-  Dashboard công tác                   Lịch sử công tác CBCS
-  ------------------------------------ ---------------------------------------------
-  ![Dashboard công                     ![Lịch sử công tác
-  tác](assets/mission-dashboard.png)   CBCS](assets/personnel-mission-history.png)
-
-  ----------------------------------------------------------------------------------
-
-![Thống kê công tác CBCS](assets/personnel-mission-statistics.png)
-
-### Tài khoản và phân quyền
-
-  -----------------------------------------------------------------------
-  Quản lý tài khoản                   Thông tin tài khoản
-  ----------------------------------- -----------------------------------
-  ![Quản lý tài                       ![Thông tin tài
-  khoản](assets/user-list.png)        khoản](assets/user-detail.png)
-
-  -----------------------------------------------------------------------
-
-  -----------------------------------------------------------------------
-  Quản lý phân quyền                  Đổi mật khẩu
-  ----------------------------------- -----------------------------------
-  ![Quản lý phân                      ![Đổi mật
-  quyền](assets/permissions.png)      khẩu](assets/change-password.png)
-
-  -----------------------------------------------------------------------
-
-### Quản trị, nhật ký và báo cáo
-
-![Bảng điều khiển quản trị](assets/admin-dashboard.png)
-
-  -----------------------------------------------------------------------
-  Nhật ký hệ thống                    Trung tâm thông báo
-  ----------------------------------- -----------------------------------
-  ![Nhật ký hệ                        ![Trung tâm thông
-  thống](assets/audit-log.png)        báo](assets/notifications.png)
-
-  -----------------------------------------------------------------------
-
-  -----------------------------------------------------------------------
-  Báo cáo quân số                     Xem báo cáo
-  ----------------------------------- -----------------------------------
-  ![Báo cáo quân                      ![Xem báo
-  số](assets/personnel-report.png)    cáo](assets/report-viewer.png)
-
-  -----------------------------------------------------------------------
-
-## Công nghệ
-
-Thông tin dưới đây dựa trên bối cảnh phát triển đã trao đổi; hãy đối
-chiếu lại với cấu hình hiện tại của solution trước khi phát hành.
-
--   **Ngôn ngữ:** C#
--   **Giao diện desktop:** Windows Forms (WinForms)
--   **IDE:** Microsoft Visual Studio
--   **Cơ sở dữ liệu:** Microsoft SQL Server
--   **Dữ liệu và báo cáo:** có các màn hình hỗ trợ xuất Excel, sao lưu
-    và phục hồi cơ sở dữ liệu.
-
-> Nếu repository có dùng Entity Framework, Guna UI hoặc thư viện Excel
-> cụ thể, hãy ghi đúng phiên bản/package đang có trong solution và file
-> cấu hình NuGet.
-
-## Yêu cầu môi trường
-
-Môi trường dự kiến để mở và chạy dự án:
-
--   Windows.
--   Visual Studio với workload **.NET desktop development**.
--   Phiên bản .NET Framework đúng với cấu hình của project (kiểm tra tại
-    **Project Properties → Application**).
--   Microsoft SQL Server Database Engine nếu ứng dụng cần kết nối cơ sở
-    dữ liệu SQL Server.
--   SQL Server Management Studio (SSMS) là công cụ quản trị cơ sở dữ
-    liệu, không thay thế SQL Server Database Engine.
-
-## Cấu hình và chạy dự án
-
-1.  Clone repository về máy.
-2.  Mở file solution (`.sln`) bằng Visual Studio.
-3.  Kiểm tra Target Framework trong **Project → Properties →
-    Application**.
-4.  Kiểm tra chuỗi kết nối trong cấu hình ứng dụng, chẳng hạn
-    `App.config`; không mặc định dùng tên server của máy phát triển.
-5.  Tạo hoặc phục hồi database theo cấu trúc mà phiên bản mã nguồn hiện
-    tại yêu cầu.
-6.  Đặt project WinForms làm **Startup Project**.
-7.  Build solution, xử lý hết lỗi build rồi chạy thử bằng `F5`.
-
-Ví dụ chuỗi kết nối chỉ để minh họa --- hãy thay tên server và database
-theo môi trường thực tế:
-
-``` xml
-<connectionStrings>
-  <add name="AppDbContext"
-       connectionString="Data Source=YOUR_SQL_SERVER;Initial Catalog=YOUR_DATABASE;Integrated Security=True;TrustServerCertificate=True"
-       providerName="System.Data.SqlClient" />
-</connectionStrings>
+```text
+assets/
+├── admin-dashboard.png
+├── audit-log.png
+├── change-password.png
+├── loading.png
+├── login.png
+├── mission-assignment.png
+├── mission-dashboard.png
+├── mission-detail.png
+├── mission-list.png
+├── notifications.png
+├── permissions.png
+├── personnel-list.png
+├── personnel-mission-history.png
+├── personnel-mission-statistics.png
+├── personnel-report.png
+├── report-viewer.png
+├── user-detail.png
+└── user-list.png
 ```
 
-Tên `AppDbContext`, provider và thuộc tính kết nối trong ví dụ phải được
-điều chỉnh cho khớp với cấu hình thực tế của dự án. Không đăng tải mật
-khẩu cơ sở dữ liệu hoặc thông tin xác thực thật lên GitHub.
+## 📍 Trạng thái dự án
 
-## Cơ sở dữ liệu và an toàn dữ liệu
+README này mô tả các nhóm chức năng thể hiện trên giao diện đã cung cấp. Trước khi phát hành chính thức, nên kiểm thử từng chức năng với cơ sở dữ liệu thực tế, xác minh phân quyền theo vai trò, kiểm tra sao lưu/khôi phục và xác nhận các màn hình báo cáo xuất ra dữ liệu đúng.
 
--   Sao lưu database trước khi cập nhật cấu trúc hoặc chạy thử chức năng
-    phục hồi.
--   Kiểm tra bản backup có thể phục hồi thành công trên một database thử
-    nghiệm.
--   Không đưa dữ liệu CBCS thật, tài khoản, mật khẩu, khóa bí mật hoặc
-    file backup chứa dữ liệu nội bộ lên repository công khai.
--   Với triển khai nhiều máy, cần cấu hình SQL Server và quyền truy cập
-    mạng một cách phù hợp; không nên để lộ cổng cơ sở dữ liệu ra
-    Internet công cộng.
--   Kiểm tra quyền truy cập ở cả giao diện và tầng xử lý nghiệp vụ,
-    không chỉ ẩn nút trên màn hình.
+---
 
-## Định hướng phát triển
+<div align="center">
 
--   Hoàn thiện kiểm thử các luồng thêm/sửa/xóa và phân công CBCS.
--   Kiểm tra tính nhất quán giữa dashboard, danh sách và báo cáo.
--   Hoàn thiện thông báo lỗi và xử lý trường hợp database chưa có dữ
-    liệu.
--   Kiểm thử phân quyền theo từng vai trò.
--   Hoàn thiện quy trình publish/cài đặt và cập nhật ứng dụng.
--   Bổ sung tài liệu cấu hình database, hướng dẫn người dùng và hướng
-    dẫn sao lưu/phục hồi.
+**Quản lý CBCS — Desktop Application**
 
-## Lưu ý khi công khai repository
-
-Trước khi đặt repository ở chế độ Public:
-
-1.  Kiểm tra ảnh chụp màn hình để loại bỏ tên người dùng, dữ liệu cá
-    nhân hoặc thông tin nội bộ không muốn công khai.
-2.  Kiểm tra `App.config`, file `.json`, script SQL và lịch sử Git để
-    bảo đảm không chứa mật khẩu hoặc thông tin kết nối nhạy cảm.
-3.  Không đưa database sản xuất, file `.bak`, dữ liệu CBCS thật hoặc
-    thông tin tài khoản lên GitHub.
-4.  Chỉ ghi "đã kiểm thử" hoặc "đã phát hành" đối với chức năng đã được
-    kiểm tra thực tế.
-
-------------------------------------------------------------------------
-
-**Tên dự án:** Quản lý CBCS\
-**Mô tả ngắn:** Ứng dụng desktop quản lý hồ sơ CBCS, công tác, phân
-công, tài khoản, phân quyền và báo cáo bằng C# WinForms.
+</div>
