@@ -18,7 +18,7 @@ public class DatabaseBackupService
     {
         string sql =
             $"""
-            BACKUP DATABASE QuanLyCBCS
+            BACKUP DATABASE QuanLyCBCS_New
             TO DISK = N'{backupFilePath}'
             WITH INIT
             """;

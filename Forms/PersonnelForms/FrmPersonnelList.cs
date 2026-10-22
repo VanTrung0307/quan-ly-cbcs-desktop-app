@@ -176,8 +176,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 btnNotification,
                 btnAdminDashboard,
                 btnPermission,
-                btnReport,
-                btnImportExcel
+                btnReport
             );
 
             RegisterHoverEffect(
@@ -192,8 +191,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 btnNotification,
                 btnAdminDashboard,
                 btnPermission,
-                btnReport,
-                btnImportExcel
+                btnReport
             );
         }
 
@@ -288,18 +286,13 @@ namespace QuanLyCBCS.Forms.PersonnelForms
         {
             try
             {
-                _allPersonnel =
-                    await _service.GetAllAsync();
+                _allPersonnel = await _service.GetAllAsync();
 
-                dgvPersonnel.DataSource =
-                    _allPersonnel;
+                // Nạp lại danh sách lựa chọn sau mỗi lần tải dữ liệu.
+                LoadFilterData();
 
-                CustomizeDataGridView();
-
-                AddSttColumn();
-
-                UpdateRecordCount(
-                    _allPersonnel.Count);
+                // Hiển thị theo các điều kiện tìm kiếm và lọc hiện tại.
+                ApplyFilter();
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -326,40 +319,10 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
         private void SearchPersonnel()
         {
-            string keyword =
-                txtSearch.Text.Trim();
-
-            if (string.IsNullOrWhiteSpace(keyword))
-            {
-                dgvPersonnel.DataSource =
-                    _allPersonnel;
-
-                AddSttColumn();
-
-                UpdateRecordCount(
-                    _allPersonnel.Count);
-
+            if (!_filterLoaded)
                 return;
-            }
 
-            var result =
-                _allPersonnel
-                .Where(x =>
-                    PersonnelSearchHelper
-                        .IsMatch(
-                            x,
-                            keyword))
-                .ToList();
-
-            dgvPersonnel.DataSource =
-                result;
-
-            CustomizeDataGridView();
-
-            AddSttColumn();
-
-            UpdateRecordCount(
-                result.Count);
+            ApplyFilter();
         }
 
         private void CustomizeDataGridView()
@@ -495,8 +458,6 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             {
                 await LoadDashboardAsync();
             }
-
-            LoadFilterData();
 
             await LoadNotificationBadgeAsync();
 
@@ -1136,109 +1097,163 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 $" 🛡 {CurrentUser.Role} |";
         }
 
+
+
         private void ApplyFilter()
         {
             PermissionHelper.Require("Personnel.View");
 
-            IEnumerable<Personnel> filtered =
-                _allPersonnel;
+            IEnumerable<Personnel> filtered = _allPersonnel;
 
-            if (cboDonVi.Text != "Tất cả")
+            // 1. Lọc theo từ khóa tìm kiếm.
+            string keyword = txtSearch.Text.Trim();
+
+            if (!string.IsNullOrWhiteSpace(keyword))
             {
-                filtered =
-                    filtered.Where(
-                        x => x.DonVi ==
-                             cboDonVi.Text);
+                filtered = filtered.Where(x =>
+                    PersonnelSearchHelper.IsMatch(x, keyword));
             }
 
-            if (cboCapBac.Text != "Tất cả")
+            // 2. Lọc theo đơn vị.
+            string donVi = cboDonVi.Text.Trim();
+
+            if (!string.IsNullOrWhiteSpace(donVi) &&
+                !string.Equals(
+                    donVi, "Tất cả",
+                    StringComparison.CurrentCultureIgnoreCase))
             {
-                filtered =
-                    filtered.Where(
-                        x => x.CapBacHam ==
-                             cboCapBac.Text);
+                filtered = filtered.Where(x =>
+                    string.Equals(
+                        x.DonVi?.Trim(),
+                        donVi,
+                        StringComparison.CurrentCultureIgnoreCase));
             }
 
-            if (cboChucVu.Text != "Tất cả")
+            // 3. Lọc theo cấp bậc hàm.
+            string capBac = cboCapBac.Text.Trim();
+
+            if (!string.IsNullOrWhiteSpace(capBac) &&
+                !string.Equals(
+                    capBac, "Tất cả",
+                    StringComparison.CurrentCultureIgnoreCase))
             {
-                filtered =
-                    filtered.Where(
-                        x => x.ChucVu ==
-                             cboChucVu.Text);
+                filtered = filtered.Where(x =>
+                    string.Equals(
+                        x.CapBacHam?.Trim(),
+                        capBac,
+                        StringComparison.CurrentCultureIgnoreCase));
             }
 
-            var result =
-                filtered.ToList();
+            // 4. Lọc theo chức vụ.
+            string chucVu = cboChucVu.Text.Trim();
 
-            dgvPersonnel.DataSource =
-                result;
+            if (!string.IsNullOrWhiteSpace(chucVu) &&
+                !string.Equals(
+                    chucVu, "Tất cả",
+                    StringComparison.CurrentCultureIgnoreCase))
+            {
+                filtered = filtered.Where(x =>
+                    string.Equals(
+                        x.ChucVu?.Trim(),
+                        chucVu,
+                        StringComparison.CurrentCultureIgnoreCase));
+            }
 
+            var result = filtered.ToList();
+
+            dgvPersonnel.DataSource = null;
+            dgvPersonnel.DataSource = result;
+
+            CustomizeDataGridView();
             AddSttColumn();
 
-            UpdateRecordCount(
-                result.Count);
+            UpdateRecordCount(result.Count);
+        }
+
+
+
+        private void LoadFilterOptions()
+        {
+            LoadComboBoxOptions(
+                cboDonVi,
+                _allPersonnel.Select(x => x.DonVi));
+
+            LoadComboBoxOptions(
+                cboCapBac,
+                _allPersonnel.Select(x => x.CapBacHam));
+
+            LoadComboBoxOptions(
+                cboChucVu,
+                _allPersonnel.Select(x => x.ChucVu));
+        }
+
+        private static void LoadComboBoxOptions(
+            ComboBox comboBox,
+            IEnumerable<string?> values)
+        {
+            comboBox.BeginUpdate();
+
+            try
+            {
+                comboBox.Items.Clear();
+                comboBox.Items.Add("Tất cả");
+
+                foreach (string value in values
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .Select(x => x!.Trim())
+                    .Distinct(StringComparer.CurrentCultureIgnoreCase)
+                    .OrderBy(x => x))
+                {
+                    comboBox.Items.Add(value);
+                }
+
+                comboBox.SelectedIndex = 0;
+            }
+            finally
+            {
+                comboBox.EndUpdate();
+            }
         }
 
         private void LoadFilterData()
         {
-            if (!CurrentUser.HasPermission("Personnel.View"))
+            // Tạm ngừng xử lý sự kiện trong lúc nạp các lựa chọn.
+            _filterLoaded = false;
+
+            try
             {
-                cboDonVi.Items.Clear();
-                cboCapBac.Items.Clear();
-                cboChucVu.Items.Clear();
+                bool canView =
+                    CurrentUser.HasPermission("Personnel.View");
 
-                cboDonVi.Enabled = false;
-                cboCapBac.Enabled = false;
-                cboChucVu.Enabled = false;
+                cboDonVi.Enabled = canView;
+                cboCapBac.Enabled = canView;
+                cboChucVu.Enabled = canView;
 
-                _filterLoaded = false;
-                return;
+                if (!canView)
+                {
+                    cboDonVi.Items.Clear();
+                    cboCapBac.Items.Clear();
+                    cboChucVu.Items.Clear();
+                    return;
+                }
+
+                LoadComboBoxOptions(
+                    cboDonVi,
+                    _allPersonnel.Select(x => x.DonVi));
+
+                LoadComboBoxOptions(
+                    cboCapBac,
+                    _allPersonnel.Select(x => x.CapBacHam));
+
+                LoadComboBoxOptions(
+                    cboChucVu,
+                    _allPersonnel.Select(x => x.ChucVu));
             }
-
-            cboDonVi.Enabled = true;
-            cboCapBac.Enabled = true;
-            cboChucVu.Enabled = true;
-
-            cboDonVi.Items.Clear();
-            cboCapBac.Items.Clear();
-            cboChucVu.Items.Clear();
-
-            cboDonVi.Items.Add("Tất cả");
-            cboCapBac.Items.Add("Tất cả");
-            cboChucVu.Items.Add("Tất cả");
-
-            cboDonVi.Items.AddRange(
-                _allPersonnel
-                    .Select(x => x.DonVi)
-                    .Where(x => !string.IsNullOrWhiteSpace(x))
-                    .Distinct()
-                    .OrderBy(x => x)
-                    .Cast<object>()
-                    .ToArray());
-
-            cboCapBac.Items.AddRange(
-                _allPersonnel
-                    .Select(x => x.CapBacHam)
-                    .Where(x => !string.IsNullOrWhiteSpace(x))
-                    .Distinct()
-                    .OrderBy(x => x)
-                    .Cast<object>()
-                    .ToArray());
-
-            cboChucVu.Items.AddRange(
-                _allPersonnel
-                    .Select(x => x.ChucVu)
-                    .Where(x => !string.IsNullOrWhiteSpace(x))
-                    .Distinct()
-                    .OrderBy(x => x)
-                    .Cast<object>()
-                    .ToArray());
-
-            cboDonVi.SelectedIndex = 0;
-            cboCapBac.SelectedIndex = 0;
-            cboChucVu.SelectedIndex = 0;
-
-            _filterLoaded = true;
+            finally
+            {
+                _filterLoaded =
+                    CurrentUser.HasPermission("Personnel.View");
+            }
         }
 
         private void FilterChanged(

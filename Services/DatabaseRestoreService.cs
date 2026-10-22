@@ -20,15 +20,15 @@ public class DatabaseRestoreService
             $@"
                 USE master;
 
-                ALTER DATABASE QuanLyCBCS
+                ALTER DATABASE QuanLyCBCS_New
                 SET SINGLE_USER
                 WITH ROLLBACK IMMEDIATE;
 
-                RESTORE DATABASE QuanLyCBCS
+                RESTORE DATABASE QuanLyCBCS_New
                 FROM DISK = N'{backupFilePath}'
                 WITH REPLACE;
 
-                ALTER DATABASE QuanLyCBCS
+                ALTER DATABASE QuanLyCBCS_New
                 SET MULTI_USER;
                 ";
 

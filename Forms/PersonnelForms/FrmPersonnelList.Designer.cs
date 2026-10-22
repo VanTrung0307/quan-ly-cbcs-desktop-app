@@ -151,6 +151,7 @@
             btnRefresh.TabIndex = 4;
             btnRefresh.Text = "⟳ Làm mới";
             btnRefresh.UseVisualStyleBackColor = false;
+            btnRefresh.Click += btnRefresh_Click;
             // 
             // dgvPersonnel
             // 
