@@ -31,4 +31,5 @@ public class User
     public DateTime? LockedUntil { get; set; }
 
     public bool MustChangePassword { get; set; } = true;
+    public bool PermissionsCustomized { get; set; }
 }

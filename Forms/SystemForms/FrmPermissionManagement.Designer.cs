@@ -56,7 +56,6 @@
             cboRole.Name = "cboRole";
             cboRole.Size = new Size(250, 28);
             cboRole.TabIndex = 1;
-            cboRole.SelectedIndexChanged += cboRole_SelectedIndexChanged;
             // 
             // clbPermission
             // 

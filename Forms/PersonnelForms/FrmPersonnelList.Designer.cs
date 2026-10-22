@@ -124,6 +124,7 @@
             btnEdit.TabIndex = 2;
             btnEdit.Text = "✏️ Sửa";
             btnEdit.UseVisualStyleBackColor = true;
+            btnEdit.Click += btnEdit_Click;
             // 
             // btnDelete
             // 

@@ -267,12 +267,15 @@
             // 
             // btnRefresh
             // 
-            btnRefresh.Location = new Point(884, 284);
+            btnRefresh.BackColor = Color.FromArgb(52, 73, 94);
+            btnRefresh.FlatStyle = FlatStyle.Flat;
+            btnRefresh.ForeColor = Color.White;
+            btnRefresh.Location = new Point(858, 272);
             btnRefresh.Name = "btnRefresh";
-            btnRefresh.Size = new Size(94, 29);
+            btnRefresh.Size = new Size(120, 36);
             btnRefresh.TabIndex = 2;
-            btnRefresh.Text = "Làm mới";
-            btnRefresh.UseVisualStyleBackColor = true;
+            btnRefresh.Text = "⟳ Làm mới";
+            btnRefresh.UseVisualStyleBackColor = false;
             btnRefresh.Click += btnRefresh_Click;
             // 
             // dgvRecentLogs

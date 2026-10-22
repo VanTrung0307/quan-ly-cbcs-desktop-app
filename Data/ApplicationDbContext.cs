@@ -48,6 +48,22 @@ public class ApplicationDbContext : DbContext
             .WithMany(x => x.MissionPersonnels)
             .HasForeignKey(x => x.PersonnelId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<UserPermission>()
+            .HasOne(x => x.User)
+            .WithMany()
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<UserPermission>()
+            .HasOne(x => x.Permission)
+            .WithMany()
+            .HasForeignKey(x => x.PermissionId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<UserPermission>()
+            .HasIndex(x => new { x.UserId, x.PermissionId })
+            .IsUnique();
     }
 
     public DbSet<Mission> Missions
@@ -65,6 +81,6 @@ public class ApplicationDbContext : DbContext
     }
 
     public DbSet<Permission> Permissions { get; set; }
-
     public DbSet<RolePermission> RolePermissions { get; set; }
+    public DbSet<UserPermission> UserPermissions { get; set; }
 }

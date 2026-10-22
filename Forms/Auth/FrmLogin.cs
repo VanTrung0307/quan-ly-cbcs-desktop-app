@@ -129,24 +129,16 @@ namespace QuanLyCBCS.Forms.Auth
                     return;
                 }
 
-                CurrentUser.UserId =
-                    user.UserId;
-
-                CurrentUser.Username =
-                    user.Username;
-
-                CurrentUser.Role =
-                    user.Role;
+                CurrentUser.UserId = user.UserId;
+                CurrentUser.Username = user.Username;
+                CurrentUser.Role = user.Role;
 
                 PermissionService permissionService = new();
 
-                CurrentUser.Permissions =
-                    (await permissionService
-                        .GetPermissionsAsync(user.Role))
-                    .ToHashSet();
-
-                List<string> permissions =
-                    await permissionService.GetPermissionsAsync(user.Role);
+                // Nạp quyền hiệu lực của tài khoản:
+                // - Chưa có quyền riêng: lấy quyền theo Role.
+                // - Đã có quyền riêng: lấy quyền từ UserPermissions.
+                await permissionService.RefreshCurrentUserPermissionsAsync();
 
                 if (user.MustChangePassword)
                 {

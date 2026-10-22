@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmPersonnelReport));
             lblTitle = new Label();
             pnlFilter = new Panel();
             btnPreview = new Button();
@@ -256,8 +257,9 @@
             Controls.Add(pnlStatistics);
             Controls.Add(pnlFilter);
             Controls.Add(lblTitle);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FrmPersonnelReport";
-            Text = "FrmPersonnelReport";
+            Text = "Báo cáo quân số";
             Load += FrmPersonnelReport_Load;
             pnlFilter.ResumeLayout(false);
             pnlFilter.PerformLayout();
