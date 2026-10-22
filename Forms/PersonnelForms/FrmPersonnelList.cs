@@ -9,6 +9,8 @@ using QuanLyCBCS.Models;
 using QuanLyCBCS.Services;
 using System.Diagnostics;
 using QuanLyCBCS.Forms.CommonForms;
+using System.IO;
+using System.Linq;
 
 namespace QuanLyCBCS.Forms.PersonnelForms
 {
@@ -37,6 +39,11 @@ namespace QuanLyCBCS.Forms.PersonnelForms
         public FrmPersonnelList()
         {
             InitializeComponent();
+
+            dgvPersonnel.AllowDrop = true;
+
+            dgvPersonnel.DragEnter += dgvPersonnel_DragEnter;
+            dgvPersonnel.DragDrop += dgvPersonnel_DragDrop;
 
             _service = new PersonnelService();
 
@@ -99,6 +106,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             btnAdminDashboard.Visible =
                 CurrentUser.HasPermission("Dashboard.View");
+            btnImportExcel.Visible =
+                CurrentUser.HasPermission("Personnel.Create");
         }
 
         protected override bool ProcessCmdKey(
@@ -167,8 +176,9 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 btnNotification,
                 btnAdminDashboard,
                 btnPermission,
-                btnReport
-                );
+                btnReport,
+                btnImportExcel
+            );
 
             RegisterHoverEffect(
                 btnAdd,
@@ -182,8 +192,9 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 btnNotification,
                 btnAdminDashboard,
                 btnPermission,
-                btnReport
-                );
+                btnReport,
+                btnImportExcel
+            );
         }
 
         private void ConfigureTimers()
@@ -1560,5 +1571,197 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                     MessageBoxIcon.Error);
             }
         }
+
+
+        private async void btnImportExcel_Click(
+            object? sender,
+            EventArgs e)
+        {
+            if (!CurrentUser.HasPermission("Personnel.Create"))
+            {
+                MessageBox.Show(
+                    "Bạn không có quyền thêm CBCS.",
+                    "Không có quyền",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                return;
+            }
+
+            using OpenFileDialog dialog = new();
+
+            dialog.Title = "Chọn file Excel danh sách CBCS";
+            dialog.Filter = "Excel Workbook (*.xlsx)|*.xlsx";
+            dialog.Multiselect = false;
+
+            if (dialog.ShowDialog() != DialogResult.OK)
+                return;
+
+            await ImportExcelFileAsync(dialog.FileName);
+        }
+
+        private void dgvPersonnel_DragEnter(
+            object? sender,
+            DragEventArgs e)
+        {
+            if (e.Data == null ||
+                !e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.None;
+                return;
+            }
+
+            string[] files =
+                (string[])e.Data.GetData(DataFormats.FileDrop)!;
+
+            e.Effect =
+                files.Length == 1 &&
+                string.Equals(
+                    Path.GetExtension(files[0]),
+                    ".xlsx",
+                    StringComparison.OrdinalIgnoreCase)
+                ? DragDropEffects.Copy
+                : DragDropEffects.None;
+        }
+
+        private async void dgvPersonnel_DragDrop(
+            object? sender,
+            DragEventArgs e)
+        {
+            if (!CurrentUser.HasPermission("Personnel.Create"))
+            {
+                MessageBox.Show(
+                    "Bạn không có quyền thêm CBCS.",
+                    "Không có quyền",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                return;
+            }
+
+            if (e.Data == null ||
+                !e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                return;
+            }
+
+            string[] files =
+                (string[])e.Data.GetData(DataFormats.FileDrop)!;
+
+            if (files.Length != 1)
+                return;
+
+            string filePath = files[0];
+
+            if (!string.Equals(
+                Path.GetExtension(filePath),
+                ".xlsx",
+                StringComparison.OrdinalIgnoreCase))
+            {
+                MessageBox.Show(
+                    "Vui lòng kéo thả một file Excel .xlsx.",
+                    "File không hợp lệ",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                return;
+            }
+
+            await ImportExcelFileAsync(filePath);
+        }
+
+        private async Task ImportExcelFileAsync(string filePath)
+        {
+            try
+            {
+                PermissionHelper.Require("Personnel.Create");
+
+                ExcelImportService importService = new();
+
+                List<Personnel> personnelList =
+                    importService.ReadPersonnel(filePath);
+
+                DialogResult confirm = MessageBox.Show(
+                    $"File: {Path.GetFileName(filePath)}\n\n" +
+                    $"Số hồ sơ đọc được: {personnelList.Count}\n\n" +
+                    "Hệ thống sẽ bỏ qua hồ sơ có Số hiệu hoặc CCCD " +
+                    "đã tồn tại. Hồ sơ hiện có sẽ không bị sửa.\n\n" +
+                    "Bạn có muốn tiếp tục nhập không?",
+                    "Xác nhận nhập Excel",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (confirm != DialogResult.Yes)
+                    return;
+
+                Cursor previousCursor = Cursor;
+                Cursor = Cursors.WaitCursor;
+
+                try
+                {
+                    var importResult =
+                        await _service.ImportManyAsync(personnelList);
+
+                    await LoadPersonnelAsync();
+
+                    if (PermissionHelper.CanViewStatistics)
+                        await LoadDashboardAsync();
+
+                    _selectedPersonnelId = 0;
+
+                    string message =
+                        "Nhập Excel hoàn tất!\n\n" +
+                        $"Đã thêm: {importResult.ImportedCount} hồ sơ\n" +
+                        $"Bỏ qua do trùng: {importResult.Skipped.Count} hồ sơ";
+
+                    if (importResult.Skipped.Count > 0)
+                    {
+                        message += "\n\nDanh sách bị bỏ qua:";
+
+                        int displayCount =
+                            Math.Min(importResult.Skipped.Count, 15);
+
+                        for (int i = 0; i < displayCount; i++)
+                        {
+                            message += "\n• " + importResult.Skipped[i];
+                        }
+
+                        if (importResult.Skipped.Count > displayCount)
+                        {
+                            message +=
+                                $"\n... và " +
+                                $"{importResult.Skipped.Count - displayCount} hồ sơ khác.";
+                        }
+                    }
+
+                    MessageBox.Show(
+                        message,
+                        "Kết quả nhập Excel",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                }
+                finally
+                {
+                    Cursor = previousCursor;
+                }
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                MessageBox.Show(
+                    ex.Message,
+                    "Không có quyền",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Không thể nhập file Excel.\n\n" + ex.Message,
+                    "Lỗi nhập Excel",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
     }
 }

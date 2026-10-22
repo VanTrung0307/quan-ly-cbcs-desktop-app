@@ -332,4 +332,116 @@ public class PersonnelService
              ||
              x.PersonnelID != ignorePersonnelId.Value));
     }
+
+    public async Task<(int ImportedCount, List<string> Skipped)>
+    ImportManyAsync(List<Personnel> personnelList)
+    {
+        PermissionHelper.Require("Personnel.Create");
+
+        using ApplicationDbContext db = new();
+
+        using var transaction =
+            await db.Database.BeginTransactionAsync();
+
+        try
+        {
+            var existing = await db.Personnel
+                .AsNoTracking()
+                .Select(x => new
+                {
+                    x.SoHieu,
+                    x.CCCD
+                })
+                .ToListAsync();
+
+            HashSet<string> existingSoHieu =
+                existing
+                    .Where(x => !string.IsNullOrWhiteSpace(x.SoHieu))
+                    .Select(x => x.SoHieu.Trim())
+                    .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            HashSet<string> existingCCCD =
+                existing
+                    .Where(x => !string.IsNullOrWhiteSpace(x.CCCD))
+                    .Select(x => x.CCCD!.Trim())
+                    .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            List<Personnel> toInsert = new();
+            List<string> skipped = new();
+
+            foreach (Personnel p in personnelList)
+            {
+                p.SoHieu = p.SoHieu.Trim();
+                p.HoTen = p.HoTen.Trim();
+
+                if (p.PersonnelType != 1 && p.PersonnelType != 2)
+                {
+                    throw new InvalidDataException(
+                        $"Hồ sơ '{p.HoTen}' có loại CBCS không hợp lệ.");
+                }
+
+                if (string.IsNullOrWhiteSpace(p.SoHieu)
+                    || string.IsNullOrWhiteSpace(p.HoTen))
+                {
+                    throw new InvalidDataException(
+                        "Hồ sơ có Số hiệu hoặc Họ tên bị trống.");
+                }
+
+                string? cccd = string.IsNullOrWhiteSpace(p.CCCD)
+                    ? null
+                    : p.CCCD.Trim();
+
+                bool duplicateSoHieu =
+                    existingSoHieu.Contains(p.SoHieu);
+
+                bool duplicateCCCD =
+                    cccd != null && existingCCCD.Contains(cccd);
+
+                if (duplicateSoHieu || duplicateCCCD)
+                {
+                    string reason = duplicateSoHieu && duplicateCCCD
+                        ? "trùng Số hiệu và CCCD"
+                        : duplicateSoHieu
+                            ? "trùng Số hiệu"
+                            : "trùng CCCD";
+
+                    skipped.Add(
+                        $"{p.HoTen} - Số hiệu {p.SoHieu}: {reason}");
+
+                    continue;
+                }
+
+                // Đánh dấu ngay để phát hiện bản ghi trùng trong chính file.
+                existingSoHieu.Add(p.SoHieu);
+
+                if (cccd != null)
+                    existingCCCD.Add(cccd);
+
+                p.CCCD = cccd;
+                p.HoTenKhongDau =
+                    VietnameseHelper.RemoveVietnameseSigns(p.HoTen);
+
+                p.CreatedAt = DateTime.Now;
+                p.UpdatedAt = null;
+                p.PersonnelID = 0;
+
+                toInsert.Add(p);
+            }
+
+            if (toInsert.Count > 0)
+            {
+                await db.Personnel.AddRangeAsync(toInsert);
+                await db.SaveChangesAsync();
+            }
+
+            await transaction.CommitAsync();
+
+            return (toInsert.Count, skipped);
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+    }
 }

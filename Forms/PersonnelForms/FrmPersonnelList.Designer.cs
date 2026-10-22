@@ -82,6 +82,7 @@
             btnAdminDashboard = new Button();
             btnPermission = new Button();
             btnReport = new Button();
+            btnImportExcel = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvPersonnel).BeginInit();
             pnlTongCBCS.SuspendLayout();
             pnlChienSi.SuspendLayout();
@@ -319,7 +320,7 @@
             btnBackup.FlatAppearance.BorderSize = 0;
             btnBackup.FlatStyle = FlatStyle.Flat;
             btnBackup.ForeColor = Color.White;
-            btnBackup.Location = new Point(1584, 162);
+            btnBackup.Location = new Point(1710, 117);
             btnBackup.Name = "btnBackup";
             btnBackup.Size = new Size(120, 36);
             btnBackup.TabIndex = 13;
@@ -638,11 +639,26 @@
             btnReport.UseVisualStyleBackColor = true;
             btnReport.Click += btnReport_Click;
             // 
+            // btnImportExcel
+            // 
+            btnImportExcel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnImportExcel.BackColor = Color.Green;
+            btnImportExcel.FlatStyle = FlatStyle.Flat;
+            btnImportExcel.ForeColor = Color.White;
+            btnImportExcel.Location = new Point(1584, 162);
+            btnImportExcel.Name = "btnImportExcel";
+            btnImportExcel.Size = new Size(120, 38);
+            btnImportExcel.TabIndex = 41;
+            btnImportExcel.Text = "📥 Upload Excel";
+            btnImportExcel.UseVisualStyleBackColor = false;
+            btnImportExcel.Click += btnImportExcel_Click;
+            // 
             // FrmPersonnelList
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1842, 818);
+            Controls.Add(btnImportExcel);
             Controls.Add(btnReport);
             Controls.Add(btnPermission);
             Controls.Add(btnAdminDashboard);
@@ -751,5 +767,6 @@
         private Button btnAdminDashboard;
         private Button btnPermission;
         private Button btnReport;
+        private Button btnImportExcel;
     }
 }
