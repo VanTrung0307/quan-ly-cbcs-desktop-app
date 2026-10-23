@@ -44,16 +44,20 @@ namespace QuanLyCBCS.Forms.Auth
 
                 if (string.IsNullOrWhiteSpace(username))
                 {
-                    MessageBox.Show(
-                        "Nhập tên đăng nhập");
+                    ShowLoginMessage(
+                        LoginMessageType.UsernameRequired,
+                        "Tên đăng nhập không được để trống",
+                        "Vui lòng nhập tên đăng nhập.");
 
                     return;
                 }
 
                 if (string.IsNullOrWhiteSpace(password))
                 {
-                    MessageBox.Show(
-                        "Nhập mật khẩu");
+                    ShowLoginMessage(
+                        LoginMessageType.PasswordRequired,
+                        "Mật khẩu không được để trống",
+                        "Vui lòng nhập mật khẩu.");
 
                     return;
                 }
@@ -73,19 +77,20 @@ namespace QuanLyCBCS.Forms.Auth
                         AuditAction.FailedLogin,
                         $"Tài khoản không tồn tại: {username}");
 
-                    MessageBox.Show(
-                        "Sai tài khoản hoặc mật khẩu.");
-
+                    ShowLoginMessage(
+                        LoginMessageType.InvalidCredentials,
+                        "Sai tài khoản hoặc mật khẩu",
+                        "Vui lòng kiểm tra lại tên đăng nhập và mật khẩu.");
                     return;
                 }
 
                 if (user.LockedUntil != null &&
                         user.LockedUntil > DateTime.Now)
                 {
-                    MessageBox.Show(
-                        $"Tài khoản đang bị khóa đến: " +
-                        user.LockedUntil.Value.ToString(
-                            "dd/MM/yyyy HH:mm:ss"));
+                    ShowLoginMessage(
+                        LoginMessageType.AccountLocked,
+                        "Tài khoản đang bị khóa",
+                        $"Tài khoản đang bị khóa đến: {user.LockedUntil.Value.ToString("dd/MM/yyyy HH:mm:ss")}");
 
                     return;
                 }
@@ -116,7 +121,9 @@ namespace QuanLyCBCS.Forms.Auth
                             AuditAction.LockAccount,
                             $"Tài khoản {user.Username} bị khóa 15 phút");
 
-                        MessageBox.Show(
+                        ShowLoginMessage(
+                            LoginMessageType.AccountLocked,
+                            "Tài khoản đang bị khóa",
                             "Tài khoản đã bị khóa 15 phút do đăng nhập sai quá nhiều lần.");
 
                         return;
@@ -124,7 +131,9 @@ namespace QuanLyCBCS.Forms.Auth
 
                     await db.SaveChangesAsync();
 
-                    MessageBox.Show(
+                    ShowLoginMessage(
+                        LoginMessageType.InvalidCredentials,
+                        "Sai tài khoản hoặc mật khẩu",
                         $"Sai tài khoản hoặc mật khẩu.\n" +
                         $"Lần sai: {user.FailedLoginCount}/5");
 
@@ -144,11 +153,10 @@ namespace QuanLyCBCS.Forms.Auth
 
                 if (user.MustChangePassword)
                 {
-                    MessageBox.Show(
-                        "Bạn phải đổi mật khẩu trước khi sử dụng hệ thống.",
+                    ShowLoginMessage(
+                        LoginMessageType.Information,
                         "Thông báo",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
+                        "Bạn phải đổi mật khẩu trước khi sử dụng hệ thống.");
 
                     using FrmChangePassword frmChange =
                         new FrmChangePassword();
@@ -206,9 +214,10 @@ namespace QuanLyCBCS.Forms.Auth
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    ex.Message,
-                    "Lỗi");
+                ShowLoginMessage(
+                    LoginMessageType.Information,
+                    "Lỗi",
+                    ex.Message);
             }
         }
 
@@ -464,11 +473,10 @@ namespace QuanLyCBCS.Forms.Auth
 
             forgotPassword.LinkClicked += (sender, e) =>
             {
-                MessageBox.Show(
-                    "Vui lòng liên hệ quản trị viên để được hỗ trợ đặt lại mật khẩu.",
+                ShowLoginMessage(
+                    LoginMessageType.ForgotPassword,
                     "Quên mật khẩu",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+                    "Vui lòng liên hệ quản trị viên để được hỗ trợ đặt lại mật khẩu.");
             };
 
             optionsPanel.Controls.Add(chkRemember, 0, 0);
@@ -1087,6 +1095,20 @@ namespace QuanLyCBCS.Forms.Auth
             control.Region = new Region(path);
 
             oldRegion?.Dispose();
+        }
+
+        private void ShowLoginMessage(
+            LoginMessageType messageType,
+            string title,
+            string description)
+        {
+            using (var message = new FrmLoginMessage(
+                messageType,
+                title,
+                description))
+            {
+                message.ShowDialog(this);
+            }
         }
     }
 }
