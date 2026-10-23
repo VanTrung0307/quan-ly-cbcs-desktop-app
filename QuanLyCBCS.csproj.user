@@ -19,6 +19,9 @@
     <Compile Update="Forms\CommonForms\FrmReportPreview.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Forms\Home\FrmHome.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Forms\MissionForms\FrmMissionDashboard.cs">
       <SubType>Form</SubType>
     </Compile>

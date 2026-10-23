@@ -149,3 +149,4 @@ E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.SystemForms.FrmPermissio
 E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.PersonnelForms.FrmPersonnelReport.resources
 E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.CommonForms.FrmReportPreview.resources
 E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.Auth.FrmLoginMessage.resources
+E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.Home.FrmHome.resources

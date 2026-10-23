@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuanLyCBCS.Data;
 using QuanLyCBCS.Forms.CommonForms;
-using QuanLyCBCS.Forms.MissionForms;
 using QuanLyCBCS.Forms.PersonnelForms;
 using QuanLyCBCS.Forms.UserForms;
 using QuanLyCBCS.Helpers;
@@ -9,6 +8,7 @@ using QuanLyCBCS.Models;
 using QuanLyCBCS.Services;
 using System.Drawing.Drawing2D;
 using System.IO;
+using QuanLyCBCS.Forms.Home;
 
 namespace QuanLyCBCS.Forms.Auth
 {
@@ -186,30 +186,29 @@ namespace QuanLyCBCS.Forms.Auth
                     AuditAction.Login,
                     "Đăng nhập hệ thống");
 
-                FrmLoading loading =
-                    new FrmLoading();
+
+                FrmLoading loading = new FrmLoading();
 
                 loading.Show();
-
-                Application.DoEvents();
+                loading.Refresh();
 
                 await Task.Delay(300);
 
-                FrmPersonnelList frm =
-                    new FrmPersonnelList();
-
                 loading.Hide();
+                loading.Dispose();
 
                 this.Hide();
 
-                frm.ShowDialog();
+                using (FrmHome frm = new FrmHome())
+                {
+                    frm.ShowDialog();
+                }
 
+                // Chỉ quay lại màn hình đăng nhập khi FrmHome đóng
                 this.Show();
 
                 txtUsername.Clear();
-
                 txtPassword.Clear();
-
                 txtUsername.Focus();
             }
             catch (Exception ex)
@@ -572,7 +571,7 @@ namespace QuanLyCBCS.Forms.Auth
 
             var footerText = new Label
             {
-                Text = "Quản lý CBCS v2.0",
+                Text = "Quản lý CBCS v3.0",
                 Dock = DockStyle.Fill,
                 TextAlign = ContentAlignment.MiddleCenter,
                 ForeColor = Color.FromArgb(105, 122, 148),
