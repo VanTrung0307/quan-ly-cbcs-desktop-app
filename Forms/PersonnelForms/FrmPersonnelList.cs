@@ -972,16 +972,55 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             }
         }
 
+
         private async void btnLogout_Click(
             object sender,
             EventArgs e)
         {
-            await AuditHelper.LogAsync(
-                AuditAction.Logout,
-                "Đăng xuất hệ thống");
+            try
+            {
+                // Ghi nhật ký đăng xuất
+                await AuditHelper.LogAsync(
+                    AuditAction.Logout,
+                    "Đăng xuất hệ thống");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Không thể ghi nhật ký đăng xuất: {ex.Message}",
+                    "Cảnh báo",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
+            finally
+            {
+                // Đóng Dashboard công tác nếu đang mở
+                if (_missionDashboard != null)
+                {
+                    if (!_missionDashboard.IsDisposed)
+                    {
+                        _missionDashboard.Close();
+                    }
 
-            this.Close();
+                    _missionDashboard = null;
+                }
+
+                // Đóng Trung tâm thông báo nếu đang mở
+                if (_notificationForm != null)
+                {
+                    if (!_notificationForm.IsDisposed)
+                    {
+                        _notificationForm.Close();
+                    }
+
+                    _notificationForm = null;
+                }
+
+                // Đóng màn hình quản lý hồ sơ
+                this.Close();
+            }
         }
+
 
         private void btnUsers_Click(
             object sender,
