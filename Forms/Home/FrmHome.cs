@@ -3,6 +3,7 @@ using QuanLyCBCS.Data;
 using QuanLyCBCS.DTOs;
 using QuanLyCBCS.Models;
 using QuanLyCBCS.Services;
+using QuanLyCBCS.Forms.PersonnelForms;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -436,6 +437,17 @@ namespace QuanLyCBCS.Forms.Home
                         .ToListAsync();
                 }
 
+                List<User> allUsers;
+                using (ApplicationDbContext db = new ApplicationDbContext())
+                {
+                    // Dùng cùng thứ tự với UserService.GetAllAsync để danh sách
+                    // tài khoản trên Trang chủ nhất quán với màn hình quản lý.
+                    allUsers = await db.Users
+                        .AsNoTracking()
+                        .OrderBy(x => x.Username)
+                        .ToListAsync();
+                }
+
                 MissionService missionService = new MissionService();
                 Task<List<Mission>> recentMissionsTask = missionService.GetRecentMissionsAsync();
                 Task<List<PersonnelMissionStatisticDto>> topPersonnelTask = missionService.GetTopPersonnelAsync();
@@ -445,7 +457,8 @@ namespace QuanLyCBCS.Forms.Home
                 RenderHomeDashboard(
                     allPersonnel,
                     recentMissionsTask.Result,
-                    topPersonnelTask.Result);
+                    topPersonnelTask.Result,
+                    allUsers);
             }
             catch (Exception ex)
             {
@@ -468,7 +481,8 @@ namespace QuanLyCBCS.Forms.Home
         private void RenderHomeDashboard(
             List<Personnel> personnel,
             List<Mission> recentMissions,
-            List<PersonnelMissionStatisticDto> topPersonnel)
+            List<PersonnelMissionStatisticDto> topPersonnel,
+            List<User> users)
         {
             if (pnlContent == null)
                 return;
@@ -670,33 +684,45 @@ namespace QuanLyCBCS.Forms.Home
             missionGrid.DataSource = missionTable;
             SetColumnWidths(missionGrid, new[] { 48, 180, 122, 128, 174 });
 
-            DataGridView topGrid;
-            Panel topPanel = CreateGridSection("\uE7C1", "TOP 5 CBCS CÔNG TÁC NHIỀU NHẤT", out topGrid);
-            topPanel.Margin = new Padding(6, 0, 0, 0);
-            DataTable topTable = new DataTable();
-            topTable.Columns.Add("STT");
-            topTable.Columns.Add("Số hiệu");
-            topTable.Columns.Add("Họ tên");
-            topTable.Columns.Add("Đơn vị");
-            topTable.Columns.Add("Cấp bậc hàm");
-            topTable.Columns.Add("Số lần");
-            var orderedTopPersonnel = (topPersonnel ?? new List<PersonnelMissionStatisticDto>())
-                .OrderByDescending(x => x.SoLanCongTac)
-                .ThenBy(x => x.HoTen)
+            DataGridView accountsGrid;
+            Panel accountsPanel = CreateGridSection("\uE77B", "QUẢN TRỊ NGƯỜI DÙNG", out accountsGrid);
+            accountsPanel.Margin = new Padding(6, 0, 0, 0);
+
+            DataTable accountsTable = new DataTable();
+            accountsTable.Columns.Add("STT");
+            accountsTable.Columns.Add("Tên tài khoản");
+            accountsTable.Columns.Add("Vai trò");
+            accountsTable.Columns.Add("Trạng thái");
+            accountsTable.Columns.Add("Bảo mật");
+
+            // Không hiển thị tài khoản quản trị mặc định "admin" trong bảng tóm tắt Trang chủ.
+            // Lọc trước khi lấy 5 tài khoản để hiển thị tối đa 5 tài khoản còn lại.
+            var firstFiveUsers = (users ?? new List<User>())
+                .Where(x => !string.Equals(x.Username?.Trim(), "admin", StringComparison.OrdinalIgnoreCase))
+                .OrderBy(x => x.Username)
                 .Take(5)
                 .ToList();
-            for (int i = 0; i < orderedTopPersonnel.Count; i++)
+
+            for (int i = 0; i < firstFiveUsers.Count; i++)
             {
-                PersonnelMissionStatisticDto x = orderedTopPersonnel[i];
-                topTable.Rows.Add(i + 1, x.SoHieu, x.HoTen, x.DonVi, x.CapBacHam ?? "", x.SoLanCongTac);
+                User user = firstFiveUsers[i];
+                bool isLocked = user.LockedUntil.HasValue && user.LockedUntil.Value > DateTime.Now;
+                accountsTable.Rows.Add(
+                    i + 1,
+                    user.Username,
+                    user.Role,
+                    isLocked ? "Đang khóa" : "Hoạt động",
+                    user.MustChangePassword ? "Cần đổi MK" : "Đã thiết lập");
             }
-            if (topTable.Rows.Count == 0)
-                topTable.Rows.Add("", "", "Chưa có dữ liệu CBCS", "", "", "");
-            topGrid.DataSource = topTable;
-            SetColumnWidths(topGrid, new[] { 48, 110, 168, 98, 134, 74 });
+
+            if (accountsTable.Rows.Count == 0)
+                accountsTable.Rows.Add("", "Chưa có tài khoản", "", "", "");
+
+            accountsGrid.DataSource = accountsTable;
+            SetColumnWidths(accountsGrid, new[] { 48, 145, 90, 105, 112 });
 
             bottom.Controls.Add(missionPanel, 0, 0);
-            bottom.Controls.Add(topPanel, 1, 0);
+            bottom.Controls.Add(accountsPanel, 1, 0);
             dashboard.Controls.Add(bottom, 0, 2);
 
             // Dashboard chiếm toàn bộ vùng nội dung bên dưới thanh tài khoản.
@@ -929,12 +955,12 @@ namespace QuanLyCBCS.Forms.Home
             header.Controls.Add(sectionHeading);
 
             if (heading == "5 CÔNG TÁC GẦN NHẤT" ||
-                heading == "TOP 5 CBCS CÔNG TÁC NHIỀU NHẤT")
+                heading == "QUẢN TRỊ NGƯỜI DÙNG")
             {
                 // Dùng một nhãn duy nhất để chữ và dấu chevron luôn thẳng hàng theo chiều dọc.
                 var viewAll = new Label
                 {
-                    Name = heading.StartsWith("5 CÔNG TÁC") ? "lnkViewAllMissions" : "lnkViewAllTopPersonnel",
+                    Name = heading.StartsWith("5 CÔNG TÁC", StringComparison.Ordinal) ? "lnkViewAllMissions" : "lnkViewAllAccounts",
                     Text = "Xem tất cả   ›",
                     AutoSize = false,
                     Size = new Size(142, 32),
@@ -953,9 +979,86 @@ namespace QuanLyCBCS.Forms.Home
                 header.Resize += (sender, e) => PositionViewAll();
                 EventHandler navigateToSection = (sender, e) =>
                 {
-                    string destination = heading.StartsWith("5 CÔNG TÁC") ? "Công tác" : "Quản lý CBCS";
-                    Button? nav = _navigationButtons.FirstOrDefault(b => string.Equals(b.Tag?.ToString(), destination, StringComparison.Ordinal));
-                    if (nav != null) NavigationButton_Click(nav, EventArgs.Empty);
+                    if (heading.StartsWith("5 CÔNG TÁC", StringComparison.Ordinal))
+                    {
+                        // Mở FrmMissionDashboard dưới dạng hộp thoại, không chuyển trang
+                        // và không làm thay đổi bố cục Trang chủ.
+                        Type? missionDashboardType = typeof(FrmHome).Assembly
+                            .GetTypes()
+                            .FirstOrDefault(t =>
+                                t.Name == "FrmMissionDashboard" &&
+                                typeof(Form).IsAssignableFrom(t));
+
+                        if (missionDashboardType == null)
+                        {
+                            MessageBox.Show(
+                                this,
+                                "Không tìm thấy biểu mẫu FrmMissionDashboard trong dự án. " +
+                                "Hãy kiểm tra tên lớp và bảo đảm biểu mẫu đã được thêm vào dự án.",
+                                "Không thể mở bảng điều khiển công tác",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
+                            return;
+                        }
+
+                        try
+                        {
+                            if (Activator.CreateInstance(missionDashboardType) is Form missionDashboard)
+                            {
+                                using (missionDashboard)
+                                {
+                                    missionDashboard.StartPosition = FormStartPosition.CenterParent;
+                                    missionDashboard.ShowDialog(this);
+                                }
+                            }
+                            else
+                            {
+                                MessageBox.Show(
+                                    this,
+                                    "Không thể khởi tạo FrmMissionDashboard.",
+                                    "Lỗi mở biểu mẫu",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Warning);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(
+                                this,
+                                "Không thể mở FrmMissionDashboard. Chi tiết: " + ex.Message,
+                                "Lỗi mở biểu mẫu",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
+                        }
+
+                        return;
+                    }
+
+                    // Mở bảng điều khiển quản trị dưới dạng hộp thoại, giữ nguyên Trang chủ.
+                    try
+                    {
+                        using FrmAdminDashboard adminDashboard = new FrmAdminDashboard();
+                        adminDashboard.StartPosition = FormStartPosition.CenterParent;
+                        adminDashboard.ShowDialog(this);
+                    }
+                    catch (UnauthorizedAccessException ex)
+                    {
+                        MessageBox.Show(
+                            this,
+                            ex.Message,
+                            "Không có quyền",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(
+                            this,
+                            "Không thể mở FrmAdminDashboard. Chi tiết: " + ex.Message,
+                            "Lỗi mở bảng điều khiển quản trị",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                    }
                 };
                 viewAll.Click += navigateToSection;
                 header.Controls.Add(viewAll);
