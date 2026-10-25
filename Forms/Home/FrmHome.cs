@@ -4,6 +4,7 @@ using QuanLyCBCS.DTOs;
 using QuanLyCBCS.Models;
 using QuanLyCBCS.Services;
 using QuanLyCBCS.Forms.PersonnelForms;
+using QuanLyCBCS.Forms.CommonForms;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,16 @@ namespace QuanLyCBCS.Forms.Home
         private Panel? pnlTop;
         private Panel? pnlContent;
         private Panel? pnlStatus;
+
+        // Giữ một phiên FrmPersonnelList để hiển thị trực tiếp trong vùng nội dung của FrmHome.
+        private FrmPersonnelList? _personnelListForm;
+
+        // Trung tâm thông báo được nhúng vào một panel dropdown, không mở bằng ShowDialog.
+        private Button? _btnNotifications;
+        private Label? _lblNotificationBadge;
+        private Panel? _pnlNotificationDropdown;
+        private FrmNotificationCenter? _notificationCenterForm;
+        private readonly NotificationService _notificationService = new NotificationService();
 
         private Label? lblBrand;
         private Label? lblVersion;
@@ -150,7 +161,7 @@ namespace QuanLyCBCS.Forms.Home
             {
                 Name = "headerLayout",
                 Dock = DockStyle.Fill,
-                ColumnCount = 3,
+                ColumnCount = 4,
                 RowCount = 1,
                 BackColor = Color.Transparent,
                 Padding = new Padding(12, 7, 10, 7),
@@ -159,6 +170,7 @@ namespace QuanLyCBCS.Forms.Home
             // Chừa vùng trống bên trái; tài khoản nằm sát bên phải,
             // ngay cạnh nút đăng xuất giống bản thiết kế.
             headerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            headerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 48F));
             headerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 220F));
             headerLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 54F));
             headerLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
@@ -191,9 +203,77 @@ namespace QuanLyCBCS.Forms.Home
                 }
             };
 
-            // Cột 0 là khoảng đệm; không cần ô tìm kiếm trên trang chủ.
-            headerLayout.Controls.Add(lblUser, 1, 0);
-            headerLayout.Controls.Add(btnLogout, 2, 0);
+            // Chuông thông báo nằm cạnh thông tin tài khoản. Badge chỉ hiện khi có thông báo.
+            var notificationHost = new Panel
+            {
+                Name = "notificationButtonHost",
+                Dock = DockStyle.Fill,
+                BackColor = Color.Transparent,
+                Margin = Padding.Empty
+            };
+            _btnNotifications = new Button
+            {
+                Name = "btnNotifications",
+                Text = "\uEA8F",
+                Font = new Font("Segoe MDL2 Assets", 20F, FontStyle.Regular),
+                ForeColor = textColor,
+                BackColor = Color.Transparent,
+                FlatStyle = FlatStyle.Flat,
+                Size = new Size(42, 42),
+                Anchor = AnchorStyles.None,
+                Cursor = Cursors.Hand,
+                UseVisualStyleBackColor = false,
+                Margin = Padding.Empty,
+                TabStop = false
+            };
+            _btnNotifications.FlatAppearance.BorderSize = 0;
+            _btnNotifications.FlatAppearance.MouseOverBackColor = Color.FromArgb(210, 230, 250);
+            _btnNotifications.Click += async (sender, e) =>
+            {
+                await UpdateNotificationBadgeAsync();
+                ToggleNotificationDropdown();
+            };
+            notificationHost.Controls.Add(_btnNotifications);
+            notificationHost.Resize += (sender, e) =>
+            {
+                if (_btnNotifications != null)
+                    _btnNotifications.Location = new Point(
+                        (notificationHost.ClientSize.Width - _btnNotifications.Width) / 2,
+                        (notificationHost.ClientSize.Height - _btnNotifications.Height) / 2);
+                PositionNotificationDropdown();
+            };
+
+            _lblNotificationBadge = new Label
+            {
+                Name = "lblNotificationBadge",
+                AutoSize = false,
+                Size = new Size(19, 19),
+                Location = new Point(29, 4),
+                BackColor = Color.FromArgb(220, 35, 45),
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 8F, FontStyle.Bold),
+                TextAlign = ContentAlignment.MiddleCenter,
+                Visible = false
+            };
+            _lblNotificationBadge.Paint += (sender, e) =>
+            {
+                if (_lblNotificationBadge == null) return;
+                using var path = CreateRoundedRectangle(_lblNotificationBadge.ClientRectangle, 9);
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                using var brush = new SolidBrush(_lblNotificationBadge.BackColor);
+                e.Graphics.FillPath(brush, path);
+                TextRenderer.DrawText(e.Graphics, _lblNotificationBadge.Text,
+                    _lblNotificationBadge.Font, _lblNotificationBadge.ClientRectangle,
+                    _lblNotificationBadge.ForeColor,
+                    TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+            };
+            notificationHost.Controls.Add(_lblNotificationBadge);
+            _lblNotificationBadge.BringToFront();
+
+            // Cột 0 là khoảng đệm; giữ tài khoản và đăng xuất sát mép phải.
+            headerLayout.Controls.Add(notificationHost, 1, 0);
+            headerLayout.Controls.Add(lblUser, 2, 0);
+            headerLayout.Controls.Add(btnLogout, 3, 0);
             pnlTop.Controls.Add(headerLayout);
 
             pnlStatus = new Panel
@@ -222,8 +302,111 @@ namespace QuanLyCBCS.Forms.Home
             rootLayout.Controls.Add(mainLayout, 0, 0);
             rootLayout.Controls.Add(pnlStatus, 0, 1);
             Controls.Add(rootLayout);
-
             BuildSidebarNavigation();
+            BuildNotificationDropdown();
+            Shown += async (sender, e) => await UpdateNotificationBadgeAsync();
+            Resize += (sender, e) => PositionNotificationDropdown();
+        }
+
+        private void BuildNotificationDropdown()
+        {
+            _pnlNotificationDropdown = new Panel
+            {
+                Name = "pnlNotificationDropdown",
+                Size = new Size(700, 470),
+                BackColor = Color.White,
+                BorderStyle = BorderStyle.FixedSingle,
+                Visible = false,
+                Padding = Padding.Empty
+            };
+
+            _notificationCenterForm = new FrmNotificationCenter();
+            _notificationCenterForm.SetHostedInDropdown(true);
+            // Cho phép form con co giãn theo kích thước dropdown, không giữ MinimumSize 900x550
+            // vốn làm nội dung bị cắt khi nhúng trong FrmHome.
+            _notificationCenterForm.MinimumSize = Size.Empty;
+            _notificationCenterForm.TopLevel = false;
+            _notificationCenterForm.FormBorderStyle = FormBorderStyle.None;
+            _notificationCenterForm.ShowInTaskbar = false;
+            _notificationCenterForm.Dock = DockStyle.Fill;
+            _notificationCenterForm.Margin = Padding.Empty;
+            _pnlNotificationDropdown.Controls.Add(_notificationCenterForm);
+            Controls.Add(_pnlNotificationDropdown);
+            _pnlNotificationDropdown.BringToFront();
+            PositionNotificationDropdown();
+        }
+
+        private void ToggleNotificationDropdown()
+        {
+            if (_pnlNotificationDropdown == null || _notificationCenterForm == null)
+                return;
+
+            if (_pnlNotificationDropdown.Visible)
+            {
+                _pnlNotificationDropdown.Visible = false;
+                return;
+            }
+
+            PositionNotificationDropdown();
+            _pnlNotificationDropdown.Visible = true;
+            _pnlNotificationDropdown.BringToFront();
+            _notificationCenterForm.Show();
+            _notificationCenterForm.BringToFront();
+        }
+
+        private void PositionNotificationDropdown()
+        {
+            if (_pnlNotificationDropdown == null || _btnNotifications == null || pnlTop == null)
+                return;
+
+            // Dropdown đủ rộng để hiển thị bảng, nhưng luôn nằm trong vùng FrmHome.
+            int width = Math.Min(760, Math.Max(520, ClientSize.Width - 24));
+            int height = Math.Min(500, Math.Max(340, ClientSize.Height - pnlTop.Height - 48));
+            _pnlNotificationDropdown.Size = new Size(width, height);
+
+            Point anchor = _btnNotifications.PointToScreen(new Point(_btnNotifications.Width, _btnNotifications.Height));
+            Point clientAnchor = PointToClient(anchor);
+            int x = clientAnchor.X - width + 12;
+            int y = pnlTop.Bottom - 2;
+            x = Math.Max(8, Math.Min(x, ClientSize.Width - width - 8));
+            // Nếu không đủ chỗ phía dưới, giảm chiều cao thay vì để dropdown tràn khỏi cửa sổ.
+            height = Math.Min(height, Math.Max(240, ClientSize.Height - y - 36));
+            _pnlNotificationDropdown.Size = new Size(width, height);
+            _pnlNotificationDropdown.Location = new Point(x, Math.Max(0, y));
+        }
+
+        private async Task UpdateNotificationBadgeAsync()
+        {
+            try
+            {
+                var notifications = await _notificationService.GetNotificationsAsync();
+                int count = notifications?.Count ?? 0;
+                if (_lblNotificationBadge == null) return;
+
+                _lblNotificationBadge.Text = count > 99 ? "99+" : count.ToString();
+                _lblNotificationBadge.Size = count > 99 ? new Size(27, 19) : new Size(19, 19);
+                _lblNotificationBadge.Location = count > 99 ? new Point(22, 4) : new Point(29, 4);
+                _lblNotificationBadge.Visible = count > 0;
+                _lblNotificationBadge.Invalidate();
+            }
+            catch
+            {
+                // Không làm gián đoạn FrmHome nếu dịch vụ thông báo tạm thời không truy cập được.
+                if (_lblNotificationBadge != null)
+                    _lblNotificationBadge.Visible = false;
+            }
+        }
+
+        private static GraphicsPath CreateRoundedRectangle(Rectangle bounds, int radius)
+        {
+            var path = new GraphicsPath();
+            int d = Math.Max(1, Math.Min(radius * 2, Math.Min(bounds.Width, bounds.Height)));
+            path.AddArc(bounds.X, bounds.Y, d, d, 180, 90);
+            path.AddArc(bounds.Right - d, bounds.Y, d, d, 270, 90);
+            path.AddArc(bounds.Right - d, bounds.Bottom - d, d, d, 0, 90);
+            path.AddArc(bounds.X, bounds.Bottom - d, d, d, 90, 90);
+            path.CloseFigure();
+            return path;
         }
 
         private void BuildSidebarNavigation()
@@ -402,6 +585,13 @@ namespace QuanLyCBCS.Forms.Home
                 return;
             }
 
+            if (pageName == "Quản lý CBCS")
+            {
+                ShowPersonnelListInContent();
+                return;
+            }
+
+            DetachPersonnelListFromContent();
             pnlContent.Controls.Clear();
             Label lblTitle = new Label
             {
@@ -416,12 +606,83 @@ namespace QuanLyCBCS.Forms.Home
             pnlContent.Controls.Add(lblTitle);
         }
 
+        // Hiển thị FrmPersonnelList như một control con trong pnlContent, không mở hộp thoại.
+        private void ShowPersonnelListInContent()
+        {
+            if (pnlContent == null)
+                return;
+
+            // Nếu đang được gắn ở vùng nội dung thì giữ nguyên instance hiện tại.
+            if (_personnelListForm != null &&
+                !_personnelListForm.IsDisposed &&
+                ReferenceEquals(_personnelListForm.Parent, pnlContent))
+            {
+                _personnelListForm.Visible = true;
+                _personnelListForm.BringToFront();
+                return;
+            }
+
+            DetachPersonnelListFromContent();
+            pnlContent.Controls.Clear();
+
+            try
+            {
+                if (_personnelListForm == null || _personnelListForm.IsDisposed)
+                {
+                    _personnelListForm = new FrmPersonnelList();
+                    _personnelListForm.SetHostedInHome(true);
+                    _personnelListForm.TopLevel = false;
+                    _personnelListForm.FormBorderStyle = FormBorderStyle.None;
+                    _personnelListForm.Dock = DockStyle.Fill;
+                    _personnelListForm.StartPosition = FormStartPosition.Manual;
+                    _personnelListForm.Location = Point.Empty;
+                    _personnelListForm.Margin = Padding.Empty;
+                }
+
+                pnlContent.Controls.Add(_personnelListForm);
+                _personnelListForm.Show();
+                _personnelListForm.Visible = true;
+                _personnelListForm.BringToFront();
+            }
+            catch (Exception ex)
+            {
+                if (_personnelListForm != null && !_personnelListForm.IsDisposed)
+                {
+                    _personnelListForm.Dispose();
+                    _personnelListForm = null;
+                }
+
+                MessageBox.Show(
+                    this,
+                    "Không thể hiển thị màn hình Quản lý CBCS trong FrmHome. Chi tiết: " + ex.Message,
+                    "Lỗi hiển thị",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
+        // Tạm tháo form con khi chuyển tab để FrmHome có thể hiển thị nội dung khác.
+        // Không Dispose form, nhờ đó giữ được trạng thái tìm kiếm/lọc khi quay lại tab.
+        private void DetachPersonnelListFromContent()
+        {
+            if (_personnelListForm == null || _personnelListForm.IsDisposed)
+                return;
+
+            if (pnlContent != null &&
+                ReferenceEquals(_personnelListForm.Parent, pnlContent))
+            {
+                _personnelListForm.Visible = false;
+                pnlContent.Controls.Remove(_personnelListForm);
+            }
+        }
+
         // ========================= TRANG CHỦ =========================
         private async Task ShowHomeDashboardAsync()
         {
             if (pnlContent == null)
                 return;
 
+            DetachPersonnelListFromContent();
             pnlContent.SuspendLayout();
             pnlContent.Controls.Clear();
             pnlContent.ResumeLayout(true);

@@ -28,6 +28,13 @@ namespace QuanLyCBCS.Forms.PersonnelForms
         private int _selectedPersonnelId;
 
         private bool _filterLoaded;
+        private bool _isHostedInHome;
+
+        // Được FrmHome gọi trước khi nhúng form vào tab Quản lý CBCS.
+        public void SetHostedInHome(bool hosted)
+        {
+            _isHostedInHome = hosted;
+        }
         private ToolTip _toolTip = new();
 
         private FrmMissionDashboard?
@@ -67,6 +74,9 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             _notificationService =
                 new NotificationService();
+
+            ApplyCompactPersonnelLayout();
+            this.Resize += (_, _) => ApplyCompactPersonnelLayout();
         }
 
         private void ApplyPermission()
@@ -461,7 +471,9 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             await LoadNotificationBadgeAsync();
 
-            if (PermissionHelper.CanViewStatistics)
+            // Chỉ tự mở dashboard khi FrmPersonnelList chạy độc lập.
+            // Khi được nhúng trong FrmHome, không được bật hộp thoại ngoài ý muốn.
+            if (!_isHostedInHome && PermissionHelper.CanViewStatistics)
             {
                 BeginInvoke(() =>
                 {
@@ -1526,7 +1538,11 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             object? sender,
             EventArgs e)
         {
-            if (CurrentUser.HasPermission("Mission.View"))
+            // Khi được nhúng trong tab Quản lý CBCS của FrmHome,
+            // không tự mở FrmMissionDashboard thành cửa sổ riêng.
+            // Chỉ mở dashboard khi FrmPersonnelList chạy độc lập.
+            if (!_isHostedInHome
+                && CurrentUser.HasPermission("Mission.View"))
             {
                 ShowMissionDashboard();
             }
@@ -1815,6 +1831,139 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
+        }
+
+
+        /// <summary>
+        /// Bố cục gọn cho màn hình Quản lý CBCS: chỉ giữ các thao tác
+        /// quản lý hồ sơ, bộ lọc và các chức năng dữ liệu cần thiết.
+        /// Có thể chạy độc lập hoặc được nhúng trong FrmHome.
+        /// </summary>
+        private void ApplyCompactPersonnelLayout()
+        {
+            if (IsDisposed)
+                return;
+
+            // Ẩn các nút chức năng không còn dùng tại màn hình này.
+            btnUsers.Visible = false;
+            btnAuditLog.Visible = false;
+            btnChangePassword.Visible = false;
+            btnMission.Visible = false;
+            btnStatistics.Visible = false;
+            btnNotification.Visible = false;
+            btnAdminDashboard.Visible = false;
+            btnPermission.Visible = false;
+            btnReport.Visible = false;
+
+            // Ẩn thẻ thống kê và thông tin người dùng/đăng xuất ở đầu form.
+            pnlThongKe.Visible = false;
+            pnlTongCBCS.Visible = false;
+            pnlChienSi.Visible = false;
+            pnlCanBo.Visible = false;
+            pnlDangVien.Visible = false;
+            lblCurrentUser.Visible = false;
+            btnLogout.Visible = false;
+            statusStrip1.Visible = false;
+
+            // Giữ lại các thành phần cần dùng.
+            pnlSearch.Visible = true;
+            txtSearch.Visible = true;
+            btnAdd.Visible = CurrentUser.HasPermission("Personnel.Create");
+            btnEdit.Visible = CurrentUser.HasPermission("Personnel.Update");
+            btnDelete.Visible = CurrentUser.HasPermission("Personnel.Delete");
+            btnBackup.Visible = CurrentUser.HasPermission("Database.Backup");
+            btnRestore.Visible = CurrentUser.HasPermission("Database.Restore");
+            btnImportExcel.Visible = CurrentUser.HasPermission("Personnel.Create");
+            btnExport.Visible = true;
+            btnRefresh.Visible = true;
+            cboDonVi.Visible = true;
+            cboCapBac.Visible = true;
+            cboChucVu.Visible = true;
+            dgvPersonnel.Visible = true;
+
+            int formWidth = ClientSize.Width;
+            int formHeight = ClientSize.Height;
+            if (formWidth < 600 || formHeight < 300)
+                return;
+
+            const int left = 10;
+            const int right = 10;
+            const int gap = 8;
+            const int rowHeight = 36;
+            const int row1Y = 10;
+            const int row2Y = 54;
+
+            // Hàng 1: tìm kiếm + Thêm/Sửa/Xóa.
+            int availableWidth = Math.Max(500, formWidth - left - right);
+            int crudWidth = Math.Max(82, Math.Min(104, (availableWidth - 320 - gap * 3) / 3));
+            int searchWidth = Math.Max(260, Math.Min(480, availableWidth - (crudWidth * 3) - (gap * 3)));
+
+            pnlSearch.SetBounds(left, row1Y, searchWidth, rowHeight);
+            pnlSearch.Padding = new Padding(8, 5, 8, 4);
+            txtSearch.SetBounds(8, 5, Math.Max(80, pnlSearch.ClientSize.Width - 16), 25);
+            txtSearch.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+
+            int x = left + searchWidth + gap;
+            btnAdd.SetBounds(x, row1Y, crudWidth, rowHeight);
+            x += crudWidth + gap;
+            btnEdit.SetBounds(x, row1Y, crudWidth, rowHeight);
+            x += crudWidth + gap;
+            btnDelete.SetBounds(x, row1Y, crudWidth, rowHeight);
+
+            // Hàng 2: ba bộ lọc bên trái, năm chức năng dữ liệu bên phải.
+            int actionWidth = Math.Max(82, Math.Min(112, (availableWidth - 3 * 105 - 7 * gap) / 5));
+            int filterGap = gap;
+            int filterWidth = Math.Max(105, Math.Min(160,
+                (availableWidth - (5 * actionWidth) - (7 * gap)) / 3));
+
+            int filterX = left;
+            cboDonVi.SetBounds(filterX, row2Y, filterWidth, rowHeight);
+            filterX += filterWidth + filterGap;
+            cboCapBac.SetBounds(filterX, row2Y, filterWidth, rowHeight);
+            filterX += filterWidth + filterGap;
+            cboChucVu.SetBounds(filterX, row2Y, filterWidth, rowHeight);
+
+            int actionX = formWidth - right - actionWidth;
+            btnRefresh.SetBounds(actionX, row2Y, actionWidth, rowHeight);
+            actionX -= actionWidth + gap;
+            btnRestore.SetBounds(actionX, row2Y, actionWidth, rowHeight);
+            actionX -= actionWidth + gap;
+            btnExport.SetBounds(actionX, row2Y, actionWidth, rowHeight);
+            actionX -= actionWidth + gap;
+            btnImportExcel.SetBounds(actionX, row2Y, actionWidth, rowHeight);
+            actionX -= actionWidth + gap;
+            btnBackup.SetBounds(actionX, row2Y, actionWidth, rowHeight);
+
+            // Bảng bắt đầu ngay dưới thanh công cụ, thẳng hàng với lề form.
+            int gridTop = row2Y + rowHeight + 10;
+            int gridHeight = Math.Max(120, formHeight - gridTop - 8);
+            dgvPersonnel.SetBounds(left, gridTop,
+                Math.Max(200, formWidth - left - right), gridHeight);
+            dgvPersonnel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom |
+                                  AnchorStyles.Left | AnchorStyles.Right;
+
+            // Giữ nhãn ngắn để các nút chức năng không bị chật chữ.
+            btnImportExcel.Text = "⬆ Upload";
+            btnExport.Text = "📊 Excel";
+            foreach (var button in new[] { btnBackup, btnImportExcel, btnExport, btnRestore, btnRefresh })
+            {
+                button.FlatStyle = FlatStyle.Flat;
+                button.FlatAppearance.BorderSize = 0;
+                button.ForeColor = Color.White;
+                button.TextAlign = ContentAlignment.MiddleCenter;
+                if (button.Font.Size != 9F || button.Font.Style != FontStyle.Bold)
+                    button.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            }
+
+            RoundedControlHelper.SetRounded(pnlSearch, 10);
+            RoundedControlHelper.SetRounded(btnAdd, 8);
+            RoundedControlHelper.SetRounded(btnEdit, 8);
+            RoundedControlHelper.SetRounded(btnDelete, 8);
+            RoundedControlHelper.SetRounded(btnBackup, 8);
+            RoundedControlHelper.SetRounded(btnImportExcel, 8);
+            RoundedControlHelper.SetRounded(btnExport, 8);
+            RoundedControlHelper.SetRounded(btnRestore, 8);
+            RoundedControlHelper.SetRounded(btnRefresh, 8);
         }
 
     }
