@@ -11,6 +11,7 @@ using System.Diagnostics;
 using QuanLyCBCS.Forms.CommonForms;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace QuanLyCBCS.Forms.PersonnelForms
 {
@@ -36,6 +37,30 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             _isHostedInHome = hosted;
         }
         private ToolTip _toolTip = new();
+
+        // Thành phần giao diện mới theo bản thiết kế FrmPersonnelList.
+        private Panel? _designHeader;
+        private Panel? _designFilterPanel;
+        private Panel? _designGridFrame;
+        private Panel? _designFooter;
+        private Label? _designTitle;
+        private Label? _designSubtitle;
+        private Label? _designSearchIcon;
+        private Label? _designFilterUnitIcon;
+        private Label? _designFilterRankIcon;
+        private Label? _designFilterPositionIcon;
+        private Label? _designUnitLabel;
+        private Label? _designRankLabel;
+        private Label? _designPositionLabel;
+        private Label? _designTotalLabel;
+        private Label? _designShowingLabel;
+        private Label? _designSelectedLabel;
+        private Button? _designFirstPage;
+        private Button? _designPrevPage;
+        private Button? _designPageNumber;
+        private Button? _designNextPage;
+        private Button? _designLastPage;
+        private ComboBox? _designPageSize;
 
         private FrmMissionDashboard?
            _missionDashboard;
@@ -325,6 +350,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
         {
             lblRecordCount.Text =
                 $"📋 Hiển thị: {currentCount}/{_allPersonnel.Count} CBCS";
+            UpdateDesignedFooter();
         }
 
         private void SearchPersonnel()
@@ -1839,12 +1865,350 @@ namespace QuanLyCBCS.Forms.PersonnelForms
         /// quản lý hồ sơ, bộ lọc và các chức năng dữ liệu cần thiết.
         /// Có thể chạy độc lập hoặc được nhúng trong FrmHome.
         /// </summary>
-        private void ApplyCompactPersonnelLayout()
+        private void EnsureDesignedLayoutControls()
         {
-            if (IsDisposed)
+            if (_designHeader != null)
                 return;
 
-            // Ẩn các nút chức năng không còn dùng tại màn hình này.
+            BackColor = Color.FromArgb(242, 248, 253);
+            Font = new Font("Segoe UI", 10F, FontStyle.Regular);
+            MinimumSize = new Size(1100, 700);
+
+            _designHeader = new Panel
+            {
+                Name = "pnlDesignHeader",
+                BackColor = Color.FromArgb(20, 61, 105),
+                Height = 110,
+                Dock = DockStyle.None
+            };
+            _designHeader.Paint += (_, e) =>
+            {
+                var rect = _designHeader.ClientRectangle;
+                if (rect.Width <= 0 || rect.Height <= 0) return;
+                using var brush = new System.Drawing.Drawing2D.LinearGradientBrush(
+                    rect, Color.FromArgb(15, 43, 82), Color.FromArgb(37, 111, 183), 0f);
+                e.Graphics.FillRectangle(brush, rect);
+                using var overlay = new SolidBrush(Color.FromArgb(28, 255, 255, 255));
+                e.Graphics.FillEllipse(overlay, rect.Width - 290, -100, 300, 300);
+                using var linePen = new Pen(Color.FromArgb(45, 180, 220, 255), 2);
+                e.Graphics.DrawEllipse(linePen, rect.Width - 260, -75, 230, 230);
+                e.Graphics.DrawEllipse(linePen, rect.Width - 245, -60, 200, 200);
+                using var starFont = new Font("Segoe UI Symbol", 74F, FontStyle.Regular);
+                using var starBrush = new SolidBrush(Color.FromArgb(45, 160, 205, 255));
+                e.Graphics.DrawString("★", starFont, starBrush, rect.Width - 205, -22);
+            };
+
+            var emblem = new Panel
+            {
+                Name = "pnlDesignEmblem",
+                BackColor = Color.Transparent
+            };
+            emblem.Paint += (_, e) =>
+            {
+                e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                using var white = new SolidBrush(Color.White);
+                // Ba khuôn mặt và phần vai tạo thành biểu tượng nhóm người màu trắng.
+                e.Graphics.FillEllipse(white, 39, 7, 22, 22);
+                e.Graphics.FillEllipse(white, 15, 15, 18, 18);
+                e.Graphics.FillEllipse(white, 66, 15, 18, 18);
+                using var bodyCenter = CreateDesignRoundedPath(new Rectangle(29, 31, 42, 36), 10);
+                using var bodyLeft = CreateDesignRoundedPath(new Rectangle(5, 36, 29, 29), 9);
+                using var bodyRight = CreateDesignRoundedPath(new Rectangle(63, 36, 29, 29), 9);
+                e.Graphics.FillPath(white, bodyCenter);
+                e.Graphics.FillPath(white, bodyLeft);
+                e.Graphics.FillPath(white, bodyRight);
+            };
+            _designTitle = new Label
+            {
+                Name = "lblDesignTitle",
+                Text = "QUẢN LÝ CBCS",
+                Font = new Font("Segoe UI", 25F, FontStyle.Bold),
+                ForeColor = Color.White,
+                AutoSize = true,
+                BackColor = Color.Transparent
+            };
+            _designSubtitle = new Label
+            {
+                Name = "lblDesignSubtitle",
+                Text = "Quản lý thông tin cán bộ, chiến sĩ trong đơn vị",
+                Font = new Font("Segoe UI", 14F, FontStyle.Regular),
+                ForeColor = Color.FromArgb(224, 237, 251),
+                AutoSize = true,
+                BackColor = Color.Transparent
+            };
+            _designHeader.Controls.Add(emblem);
+            _designHeader.Controls.Add(_designTitle);
+            _designHeader.Controls.Add(_designSubtitle);
+            Controls.Add(_designHeader);
+
+            _designFilterPanel = new Panel
+            {
+                Name = "pnlDesignFilters",
+                BackColor = Color.FromArgb(235, 246, 255),
+                BorderStyle = BorderStyle.None
+            };
+            _designFilterPanel.Paint += (_, e) =>
+            {
+                var r = _designFilterPanel.ClientRectangle;
+                r.Width -= 1; r.Height -= 1;
+                using var pen = new Pen(Color.FromArgb(195, 224, 250));
+                using var path = CreateDesignRoundedPath(r, 9);
+                e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                e.Graphics.DrawPath(pen, path);
+            };
+            Controls.Add(_designFilterPanel);
+
+            _designGridFrame = new Panel
+            {
+                Name = "pnlDesignGridFrame",
+                BackColor = Color.FromArgb(242, 248, 253),
+                Padding = new Padding(9),
+                BorderStyle = BorderStyle.None
+            };
+            _designGridFrame.Paint += (_, e) =>
+            {
+                var r = _designGridFrame.ClientRectangle;
+                r.Width -= 1; r.Height -= 1;
+                using var pen = new Pen(Color.FromArgb(211, 232, 250));
+                using var path = CreateDesignRoundedPath(r, 10);
+                e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                e.Graphics.DrawPath(pen, path);
+            };
+            Controls.Remove(dgvPersonnel);
+            _designGridFrame.Controls.Add(dgvPersonnel);
+            Controls.Add(_designGridFrame);
+
+            _designFooter = new Panel
+            {
+                Name = "pnlDesignFooter",
+                BackColor = Color.FromArgb(242, 248, 253)
+            };
+            Controls.Add(_designFooter);
+
+            _designSearchIcon = new Label
+            {
+                Text = "\uE721",
+                Font = new Font("Segoe MDL2 Assets", 17F, FontStyle.Regular),
+                ForeColor = Color.FromArgb(20, 66, 126),
+                TextAlign = ContentAlignment.MiddleCenter,
+                BackColor = Color.Transparent
+            };
+            // Vẽ viền bo bằng GDI+ để không bị mất nét ở bốn góc.
+            pnlSearch.BorderStyle = BorderStyle.None;
+            pnlSearch.Paint += (_, e) =>
+            {
+                var r = pnlSearch.ClientRectangle;
+                r.Width -= 1; r.Height -= 1;
+                e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                using var pen = new Pen(Color.FromArgb(177, 204, 238), 1F);
+                using var path = CreateDesignRoundedPath(r, 8);
+                e.Graphics.DrawPath(pen, path);
+            };
+            pnlSearch.Controls.Add(_designSearchIcon);
+            _designSearchIcon.BringToFront();
+
+            _designUnitLabel = MakeFilterLabel("Đơn vị");
+            _designRankLabel = MakeFilterLabel("Cấp bậc:");
+            _designPositionLabel = MakeFilterLabel("Chức vụ:");
+            _designFilterUnitIcon = MakeFilterIcon("\uE80F");
+            _designFilterRankIcon = MakeFilterIcon("\uE735");
+            _designFilterPositionIcon = MakeFilterIcon("\uE821");
+            _designFilterPanel.Controls.AddRange(new Control[]
+            {
+                _designUnitLabel, _designRankLabel, _designPositionLabel,
+                _designFilterUnitIcon, _designFilterRankIcon, _designFilterPositionIcon,
+                cboDonVi, cboCapBac, cboChucVu
+            });
+
+            _designTotalLabel = MakeFooterLabel("Tổng số: 0", 11F, FontStyle.Bold);
+            _designShowingLabel = MakeFooterLabel("Đang hiển thị: 0", 11F, FontStyle.Bold);
+            _designSelectedLabel = MakeFooterLabel("Đã chọn: 0", 11F, FontStyle.Bold);
+            _designFirstPage = MakePagerButton("«");
+            _designPrevPage = MakePagerButton("‹");
+            _designPageNumber = MakePagerButton("1", true);
+            _designNextPage = MakePagerButton("›");
+            _designLastPage = MakePagerButton("»");
+            _designPageSize = new ComboBox
+            {
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Font = new Font("Segoe UI", 10F),
+                BackColor = Color.White,
+                ForeColor = Color.FromArgb(30, 55, 90)
+            };
+            _designPageSize.Items.AddRange(new object[] { "50 dòng/trang", "100 dòng/trang", "200 dòng/trang" });
+            _designPageSize.AccessibleName = "Số dòng mỗi trang";
+            _designPageSize.IntegralHeight = true;
+            _designPageSize.SelectedIndex = 0;
+            var footerSeparator1 = new Label { Name = "lblFooterSeparator1", Text = "│", AutoSize = true, Font = new Font("Segoe UI", 12F), ForeColor = Color.FromArgb(166, 190, 219) };
+            var footerSeparator2 = new Label { Name = "lblFooterSeparator2", Text = "│", AutoSize = true, Font = new Font("Segoe UI", 12F), ForeColor = Color.FromArgb(166, 190, 219) };
+            _designFooter.Controls.AddRange(new Control[]
+            {
+                _designTotalLabel, footerSeparator1, _designShowingLabel, footerSeparator2, _designSelectedLabel,
+                _designFirstPage, _designPrevPage, _designPageNumber,
+                _designNextPage, _designLastPage, _designPageSize
+            });
+
+            dgvPersonnel.SelectionChanged += (_, _) => UpdateDesignedFooter();
+            _designPageSize.SelectedIndexChanged += (_, _) => UpdateDesignedFooter();
+        }
+
+        private static System.Drawing.Drawing2D.GraphicsPath CreateDesignRoundedPath(Rectangle rect, int radius)
+        {
+            var path = new System.Drawing.Drawing2D.GraphicsPath();
+            int d = Math.Max(2, radius * 2);
+            if (rect.Width <= d || rect.Height <= d)
+            {
+                path.AddRectangle(rect);
+                return path;
+            }
+            path.AddArc(rect.X, rect.Y, d, d, 180, 90);
+            path.AddArc(rect.Right - d, rect.Y, d, d, 270, 90);
+            path.AddArc(rect.Right - d, rect.Bottom - d, d, d, 0, 90);
+            path.AddArc(rect.X, rect.Bottom - d, d, d, 90, 90);
+            path.CloseFigure();
+            return path;
+        }
+
+        private static Label MakeFilterLabel(string text) => new Label
+        {
+            Text = text,
+            AutoSize = false,
+            Font = new Font("Segoe UI", 10F, FontStyle.Bold),
+            ForeColor = Color.FromArgb(15, 39, 91),
+            TextAlign = ContentAlignment.MiddleLeft,
+            BackColor = Color.Transparent
+        };
+
+        private static Label MakeFilterIcon(string text) => new Label
+        {
+            Text = text,
+            Font = new Font("Segoe MDL2 Assets", 17F, FontStyle.Regular),
+            ForeColor = Color.FromArgb(22, 73, 139),
+            BackColor = Color.FromArgb(215, 236, 255),
+            TextAlign = ContentAlignment.MiddleCenter
+        };
+
+        private static Label MakeFooterLabel(string text, float size, FontStyle style) => new Label
+        {
+            Text = text,
+            AutoSize = true,
+            Font = new Font("Segoe UI", size, style),
+            ForeColor = Color.FromArgb(20, 48, 104),
+            TextAlign = ContentAlignment.MiddleLeft
+        };
+
+        private void DgvPersonnel_CellPaintingHeaderWithoutOuterBorder(
+            object? sender,
+            DataGridViewCellPaintingEventArgs e)
+        {
+            if (e.RowIndex != -1 || e.ColumnIndex < 0)
+                return;
+
+            // Vẽ nền, chữ và biểu tượng header nhưng bỏ border mặc định,
+            // để không xuất hiện đường viền bao quanh mép ngoài của header.
+            e.Paint(e.ClipBounds, e.PaintParts & ~DataGridViewPaintParts.Border);
+
+            using (var separatorPen = new Pen(Color.White, 1F))
+            {
+                var currentColumn = dgvPersonnel.Columns[e.ColumnIndex];
+                bool hasColumnAfter = dgvPersonnel.Columns
+                    .Cast<DataGridViewColumn>()
+                    .Any(c => c.Visible && c.DisplayIndex > currentColumn.DisplayIndex);
+
+                // Chỉ vẽ đường dọc giữa các cột, không vẽ ở cạnh phải ngoài cùng.
+                if (hasColumnAfter)
+                {
+                    int x = e.CellBounds.Right - 1;
+                    if (e.Graphics != null)
+                    {
+                        e.Graphics.DrawLine(
+                            separatorPen,
+                            x,
+                            e.CellBounds.Top,
+                            x,
+                            e.CellBounds.Bottom - 1);
+                    }
+                }
+            }
+
+            // Giữ đường phân cách dưới header, không vẽ đường trên hoặc hai cạnh ngoài.
+            using (var bottomPen = new Pen(Color.FromArgb(190, 211, 231), 1F))
+            {
+                int y = e.CellBounds.Bottom - 1;
+                if (e.Graphics != null)
+                {
+                    e.Graphics.DrawLine(
+                        bottomPen,
+                        e.CellBounds.Left,
+                        y,
+                        e.CellBounds.Right - 1,
+                        y);
+                }
+            }
+
+            e.Handled = true;
+        }
+
+        private static Button MakePagerButton(string text, bool selected = false)
+        {
+            var button = new Button
+            {
+                Text = text,
+                FlatStyle = FlatStyle.Flat,
+                BackColor = selected ? Color.FromArgb(0, 92, 204) : Color.White,
+                ForeColor = selected ? Color.White : Color.FromArgb(30, 70, 130),
+                Font = new Font("Segoe UI", 11F, FontStyle.Regular),
+                Size = new Size(40, 40),
+                Cursor = Cursors.Hand,
+                UseVisualStyleBackColor = false
+            };
+            button.FlatAppearance.BorderSize = 0;
+            button.Paint += (_, e) =>
+            {
+                var rect = button.ClientRectangle;
+                rect.Width -= 1;
+                rect.Height -= 1;
+                e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                using var path = CreateDesignRoundedPath(rect, 7);
+                using var pen = new Pen(
+                    selected ? Color.FromArgb(0, 92, 204) : Color.FromArgb(190, 216, 243),
+                    1.2F);
+                e.Graphics.DrawPath(pen, path);
+            };
+            button.Resize += (_, _) => ApplyRoundedRegion(button, 7);
+            ApplyRoundedRegion(button, 7);
+            return button;
+        }
+
+        private void UpdateDesignedFooter()
+        {
+            if (_designTotalLabel == null || _designShowingLabel == null || _designSelectedLabel == null)
+                return;
+            int total = _allPersonnel.Count;
+            int shown = dgvPersonnel.Rows.Cast<DataGridViewRow>().Count(r => !r.IsNewRow);
+            int selected = dgvPersonnel.SelectedRows.Count;
+            _designTotalLabel.Text = $"Tổng số: {total}";
+            _designShowingLabel.Text = $"Đang hiển thị: {shown}";
+            _designSelectedLabel.Text = $"Đã chọn: {selected}";
+            _designTotalLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            _designShowingLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            _designSelectedLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            _designTotalLabel.ForeColor = _designShowingLabel.ForeColor = _designSelectedLabel.ForeColor = Color.FromArgb(0, 70, 160);
+            if (_designPageNumber != null)
+                _designPageNumber.Text = "1";
+        }
+
+        /// <summary>
+        /// Bố cục theo bản thiết kế mới: header xanh, thanh thao tác,
+        /// vùng lọc, bảng có khung và thanh thông tin/phân trang phía dưới.
+        /// </summary>
+        private void ApplyCompactPersonnelLayout()
+        {
+            if (IsDisposed || ClientSize.Width < 700 || ClientSize.Height < 400)
+                return;
+
+            EnsureDesignedLayoutControls();
+
             btnUsers.Visible = false;
             btnAuditLog.Visible = false;
             btnChangePassword.Visible = false;
@@ -1854,8 +2218,6 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             btnAdminDashboard.Visible = false;
             btnPermission.Visible = false;
             btnReport.Visible = false;
-
-            // Ẩn thẻ thống kê và thông tin người dùng/đăng xuất ở đầu form.
             pnlThongKe.Visible = false;
             pnlTongCBCS.Visible = false;
             pnlChienSi.Visible = false;
@@ -1865,7 +2227,6 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             btnLogout.Visible = false;
             statusStrip1.Visible = false;
 
-            // Giữ lại các thành phần cần dùng.
             pnlSearch.Visible = true;
             txtSearch.Visible = true;
             btnAdd.Visible = CurrentUser.HasPermission("Personnel.Create");
@@ -1876,95 +2237,343 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             btnImportExcel.Visible = CurrentUser.HasPermission("Personnel.Create");
             btnExport.Visible = true;
             btnRefresh.Visible = true;
-            cboDonVi.Visible = true;
-            cboCapBac.Visible = true;
-            cboChucVu.Visible = true;
+            cboDonVi.Visible = cboCapBac.Visible = cboChucVu.Visible = true;
             dgvPersonnel.Visible = true;
 
-            int formWidth = ClientSize.Width;
-            int formHeight = ClientSize.Height;
-            if (formWidth < 600 || formHeight < 300)
-                return;
+            int w = ClientSize.Width;
+            int h = ClientSize.Height;
+            const int outer = 22;
+            const int gap = 10;
+            const int headerH = 110;
+            const int toolbarY = 120;
+            const int toolbarH = 50;
+            const int filterY = 192;
+            const int filterH = 72;
+            const int footerH = 70;
+            int toolbarW = w - outer * 2;
 
-            const int left = 10;
-            const int right = 10;
-            const int gap = 8;
-            const int rowHeight = 36;
-            const int row1Y = 10;
-            const int row2Y = 54;
+            _designHeader!.SetBounds(0, 0, w, headerH);
+            var emblem = _designHeader.Controls[0];
+            emblem.SetBounds(26, 16, 100, 78);
+            _designTitle!.Location = new Point(142, 18);
+            _designSubtitle!.Location = new Point(143, 67);
 
-            // Hàng 1: tìm kiếm + Thêm/Sửa/Xóa.
-            int availableWidth = Math.Max(500, formWidth - left - right);
-            int crudWidth = Math.Max(82, Math.Min(104, (availableWidth - 320 - gap * 3) / 3));
-            int searchWidth = Math.Max(260, Math.Min(480, availableWidth - (crudWidth * 3) - (gap * 3)));
-
-            pnlSearch.SetBounds(left, row1Y, searchWidth, rowHeight);
-            pnlSearch.Padding = new Padding(8, 5, 8, 4);
-            txtSearch.SetBounds(8, 5, Math.Max(80, pnlSearch.ClientSize.Width - 16), 25);
+            // Tìm kiếm và ba nút CRUD ở nửa trái.
+            int searchW = Math.Min(502, Math.Max(300, (int)(toolbarW * 0.315)));
+            pnlSearch.SetBounds(outer, toolbarY, searchW, toolbarH);
+            pnlSearch.BackColor = Color.White;
+            pnlSearch.Padding = new Padding(8, 5, 8, 5);
+            pnlSearch.BorderStyle = BorderStyle.None;
+            _designSearchIcon!.SetBounds(8, 4, 34, toolbarH - 8);
+            // TextBox đơn dòng có chiều cao cố định theo font; đặt Top thủ công để placeholder nằm giữa.
+            int searchTextH = 26;
+            txtSearch.SetBounds(45, (toolbarH - searchTextH) / 2, Math.Max(100, searchW - 55), searchTextH);
             txtSearch.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtSearch.Font = new Font("Segoe UI", 11F);
+            txtSearch.BorderStyle = BorderStyle.None;
+            txtSearch.BackColor = Color.White;
+            txtSearch.ForeColor = Color.FromArgb(55, 76, 110);
 
-            int x = left + searchWidth + gap;
-            btnAdd.SetBounds(x, row1Y, crudWidth, rowHeight);
-            x += crudWidth + gap;
-            btnEdit.SetBounds(x, row1Y, crudWidth, rowHeight);
-            x += crudWidth + gap;
-            btnDelete.SetBounds(x, row1Y, crudWidth, rowHeight);
+            int crudX = outer + searchW + gap;
+            int crudGap = 10;
+            int crudW = Math.Min(126, Math.Max(92, (int)(toolbarW * 0.078)));
+            int crudH = toolbarH;
+            btnAdd.SetBounds(crudX, toolbarY, crudW, crudH);
+            btnEdit.SetBounds(crudX + crudW + crudGap, toolbarY, crudW, crudH);
+            btnDelete.SetBounds(crudX + (crudW + crudGap) * 2, toolbarY, crudW, crudH);
 
-            // Hàng 2: ba bộ lọc bên trái, năm chức năng dữ liệu bên phải.
-            int actionWidth = Math.Max(82, Math.Min(112, (availableWidth - 3 * 105 - 7 * gap) / 5));
-            int filterGap = gap;
-            int filterWidth = Math.Max(105, Math.Min(160,
-                (availableWidth - (5 * actionWidth) - (7 * gap)) / 3));
+            // Năm nút dữ liệu nằm bên phải, kích thước cân đối.
+            int actionW = Math.Min(134, Math.Max(100, (toolbarW - 3 * (crudW + crudGap) - searchW - 6 * gap) / 5));
+            int actionsTotal = actionW * 5 + gap * 4;
+            int actionX = w - outer - actionsTotal;
+            // Nếu không đủ chỗ, thu gọn tìm kiếm thay vì để các nút tràn khỏi form.
+            int minCrudEnd = crudX + (crudW + crudGap) * 2 + crudW;
+            if (actionX < minCrudEnd + gap)
+            {
+                actionW = Math.Max(78, (w - outer * 2 - minCrudEnd - gap * 5) / 5);
+                actionsTotal = actionW * 5 + gap * 4;
+                actionX = w - outer - actionsTotal;
+                int adjustedSearch = Math.Max(250, actionX - gap - (crudX + (crudW + crudGap) * 2 + crudW));
+                if (adjustedSearch < searchW)
+                {
+                    searchW = adjustedSearch;
+                    pnlSearch.Width = searchW;
+                    txtSearch.Width = Math.Max(100, searchW - 55);
+                    crudX = outer + searchW + gap;
+                    btnAdd.Left = crudX;
+                    btnEdit.Left = crudX + crudW + crudGap;
+                    btnDelete.Left = crudX + (crudW + crudGap) * 2;
+                    minCrudEnd = btnDelete.Right;
+                    actionX = Math.Max(minCrudEnd + gap, w - outer - actionsTotal);
+                }
+            }
+            btnBackup.SetBounds(actionX, toolbarY, actionW, toolbarH);
+            btnImportExcel.SetBounds(actionX + actionW + gap, toolbarY, actionW, toolbarH);
+            btnExport.SetBounds(actionX + (actionW + gap) * 2, toolbarY, actionW, toolbarH);
+            btnRestore.SetBounds(actionX + (actionW + gap) * 3, toolbarY, actionW, toolbarH);
+            btnRefresh.SetBounds(actionX + (actionW + gap) * 4, toolbarY, actionW, toolbarH);
 
-            int filterX = left;
-            cboDonVi.SetBounds(filterX, row2Y, filterWidth, rowHeight);
-            filterX += filterWidth + filterGap;
-            cboCapBac.SetBounds(filterX, row2Y, filterWidth, rowHeight);
-            filterX += filterWidth + filterGap;
-            cboChucVu.SetBounds(filterX, row2Y, filterWidth, rowHeight);
+            // Khu vực lọc với biểu tượng, nhãn và combobox theo mẫu.
+            _designFilterPanel!.SetBounds(outer, filterY, w - outer * 2, filterH);
+            int innerX = 20;
+            int groupW = (w - outer * 2 - 40) / 3;
+            int iconW = 42;
+            int labelW = 82;
+            int comboW = Math.Min(270, Math.Max(170, groupW - iconW - labelW - 58));
+            ConfigureFilterGroup(_designFilterUnitIcon!, _designUnitLabel!, cboDonVi, innerX, iconW, labelW, comboW, filterH);
+            ConfigureFilterGroup(_designFilterRankIcon!, _designRankLabel!, cboCapBac, innerX + groupW, iconW, labelW, comboW, filterH);
+            ConfigureFilterGroup(_designFilterPositionIcon!, _designPositionLabel!, cboChucVu, innerX + groupW * 2, iconW, labelW, comboW, filterH);
 
-            int actionX = formWidth - right - actionWidth;
-            btnRefresh.SetBounds(actionX, row2Y, actionWidth, rowHeight);
-            actionX -= actionWidth + gap;
-            btnRestore.SetBounds(actionX, row2Y, actionWidth, rowHeight);
-            actionX -= actionWidth + gap;
-            btnExport.SetBounds(actionX, row2Y, actionWidth, rowHeight);
-            actionX -= actionWidth + gap;
-            btnImportExcel.SetBounds(actionX, row2Y, actionWidth, rowHeight);
-            actionX -= actionWidth + gap;
-            btnBackup.SetBounds(actionX, row2Y, actionWidth, rowHeight);
+            // Lưới có lề bên trong khung, tránh chạm vào viền cửa sổ.
+            int gridTop = filterY + filterH + 12;
+            int gridBottom = h - footerH - 8;
+            int gridH = Math.Max(150, gridBottom - gridTop);
+            _designGridFrame!.SetBounds(outer - 2, gridTop, w - (outer - 2) * 2, gridH);
+            dgvPersonnel.SetBounds(8, 5, _designGridFrame.ClientSize.Width - 18, _designGridFrame.ClientSize.Height - 12);
+            dgvPersonnel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dgvPersonnel.BackgroundColor = Color.White;
+            dgvPersonnel.BorderStyle = BorderStyle.None;
+            dgvPersonnel.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            // Bỏ đường viền bao quanh header; vẽ lại các đường phân cách bên trong.
+            dgvPersonnel.AdvancedColumnHeadersBorderStyle.All = DataGridViewAdvancedCellBorderStyle.None;
+            dgvPersonnel.CellPainting -= DgvPersonnel_CellPaintingHeaderWithoutOuterBorder;
+            dgvPersonnel.CellPainting += DgvPersonnel_CellPaintingHeaderWithoutOuterBorder;
+            dgvPersonnel.AdvancedCellBorderStyle.Left = DataGridViewAdvancedCellBorderStyle.None;
+            dgvPersonnel.AdvancedCellBorderStyle.Right = DataGridViewAdvancedCellBorderStyle.None;
+            dgvPersonnel.RowHeadersVisible = false;
+            dgvPersonnel.ColumnHeadersHeight = 58;
+            dgvPersonnel.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            ApplyRoundedRegion(dgvPersonnel, 8);
+            dgvPersonnel.Resize -= DgvPersonnel_ApplyRoundedRegion;
+            dgvPersonnel.Resize += DgvPersonnel_ApplyRoundedRegion;
 
-            // Bảng bắt đầu ngay dưới thanh công cụ, thẳng hàng với lề form.
-            int gridTop = row2Y + rowHeight + 10;
-            int gridHeight = Math.Max(120, formHeight - gridTop - 8);
-            dgvPersonnel.SetBounds(left, gridTop,
-                Math.Max(200, formWidth - left - right), gridHeight);
-            dgvPersonnel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom |
-                                  AnchorStyles.Left | AnchorStyles.Right;
+            _designFooter!.SetBounds(outer, h - footerH, w - outer * 2, footerH - 4);
+            _designTotalLabel!.Location = new Point(14, 23);
+            _designShowingLabel!.Location = new Point(164, 23);
+            _designSelectedLabel!.Location = new Point(335, 23);
+            if (_designFooter.Controls[1] is Label separator1) separator1.Location = new Point(145, 21);
+            if (_designFooter.Controls[3] is Label separator2) separator2.Location = new Point(316, 21);
+            int pagerY = 8;
+            int pagerButtonW = 40;
+            int pagerGap = 10;
+            // Ô chọn số dòng có cùng chiều cao với nút phân trang nhưng giữ
+            // chiều rộng đủ để hiển thị đầy đủ nội dung "50 dòng/trang".
+            int pageSizeW = 150;
+            int pagerTotalW = pagerButtonW * 5 + pagerGap * 5 + pageSizeW;
+            int pagerX = _designFooter.Width - pagerTotalW;
+            _designFirstPage!.SetBounds(pagerX, pagerY, pagerButtonW, 40);
+            _designPrevPage!.SetBounds(pagerX + (pagerButtonW + pagerGap), pagerY, pagerButtonW, 40);
+            _designPageNumber!.SetBounds(pagerX + (pagerButtonW + pagerGap) * 2, pagerY, pagerButtonW, 40);
+            _designNextPage!.SetBounds(pagerX + (pagerButtonW + pagerGap) * 3, pagerY, pagerButtonW, 40);
+            _designLastPage!.SetBounds(pagerX + (pagerButtonW + pagerGap) * 4, pagerY, pagerButtonW, 40);
+            // ComboBox DropDownList thường chỉ vẽ phần hộp cao khoảng 28 px;
+            // dịch xuống 6 px để phần hộp hiển thị nằm giữa các nút cao 40 px.
+            _designPageSize!.SetBounds(
+                pagerX + (pagerButtonW + pagerGap) * 5,
+                pagerY + 6,
+                pageSizeW,
+                40);
+            _designPageSize.DropDownWidth = 150;
+            _designPageSize.DropDownHeight = 120;
+            _designPageSize.DropDown -= ComboBox_RoundDropDown;
+            _designPageSize.DropDown += ComboBox_RoundDropDown;
+            _designPageSize.Resize -= ComboBox_ApplyRoundedRegion;
+            _designPageSize.Resize += ComboBox_ApplyRoundedRegion;
+            ApplyRoundedRegion(_designPageSize, 7);
+            foreach (var pagerButton in new[] { _designFirstPage, _designPrevPage, _designPageNumber, _designNextPage, _designLastPage })
+                RoundedControlHelper.SetRounded(pagerButton, 6);
+            RoundedControlHelper.SetRounded(_designPageSize, 6);
 
-            // Giữ nhãn ngắn để các nút chức năng không bị chật chữ.
-            btnImportExcel.Text = "⬆ Upload";
-            btnExport.Text = "📊 Excel";
-            foreach (var button in new[] { btnBackup, btnImportExcel, btnExport, btnRestore, btnRefresh })
+            // Màu sắc/nội dung các nút giữ nguyên luồng xử lý hiện có.
+            btnAdd.Text = "\uE710  Thêm";
+            btnEdit.Text = "\uE70F  Sửa";
+            btnDelete.Text = "\uE74D  Xóa";
+            btnBackup.Text = "\uE1D8  Backup";
+            btnImportExcel.Text = "\uE898  Upload";
+            btnExport.Text = "\uE9F9  Excel";
+            btnRestore.Text = "\uE777  Restore";
+            btnRefresh.Text = "\uE72C  Làm mới";
+
+            btnAdd.BackColor = Color.FromArgb(0, 75, 190);
+            btnEdit.BackColor = Color.FromArgb(35, 112, 239);
+            btnDelete.BackColor = Color.FromArgb(245, 52, 43);
+            btnBackup.BackColor = Color.FromArgb(34, 117, 237);
+            btnImportExcel.BackColor = Color.FromArgb(0, 151, 83);
+            btnExport.BackColor = Color.FromArgb(0, 157, 89);
+            btnRestore.BackColor = Color.FromArgb(239, 145, 0);
+            btnRefresh.BackColor = Color.FromArgb(29, 54, 91);
+            foreach (var button in new[] { btnAdd, btnEdit, btnDelete, btnBackup, btnImportExcel, btnExport, btnRestore, btnRefresh })
             {
                 button.FlatStyle = FlatStyle.Flat;
                 button.FlatAppearance.BorderSize = 0;
                 button.ForeColor = Color.White;
                 button.TextAlign = ContentAlignment.MiddleCenter;
-                if (button.Font.Size != 9F || button.Font.Style != FontStyle.Bold)
-                    button.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+                button.Font = new Font("Segoe MDL2 Assets", 10F, FontStyle.Regular);
+                button.Cursor = Cursors.Hand;
+                RoundedControlHelper.SetRounded(button, 8);
             }
+            RoundedControlHelper.SetRounded(pnlSearch, 8);
+            RoundedControlHelper.SetRounded(_designFilterPanel, 9);
+            UpdateDesignedFooter();
 
-            RoundedControlHelper.SetRounded(pnlSearch, 10);
-            RoundedControlHelper.SetRounded(btnAdd, 8);
-            RoundedControlHelper.SetRounded(btnEdit, 8);
-            RoundedControlHelper.SetRounded(btnDelete, 8);
-            RoundedControlHelper.SetRounded(btnBackup, 8);
-            RoundedControlHelper.SetRounded(btnImportExcel, 8);
-            RoundedControlHelper.SetRounded(btnExport, 8);
-            RoundedControlHelper.SetRounded(btnRestore, 8);
-            RoundedControlHelper.SetRounded(btnRefresh, 8);
+            // Đảm bảo các khung trang trí nằm phía sau nội dung tương ứng.
+            _designHeader.SendToBack();
+            _designFilterPanel.SendToBack();
+            _designGridFrame.SendToBack();
+            _designFooter.BringToFront();
+            pnlSearch.BringToFront();
+            btnAdd.BringToFront(); btnEdit.BringToFront(); btnDelete.BringToFront();
+            btnBackup.BringToFront(); btnImportExcel.BringToFront(); btnExport.BringToFront(); btnRestore.BringToFront(); btnRefresh.BringToFront();
         }
+
+        private void DgvPersonnel_ApplyRoundedRegion(object? sender, EventArgs e)
+        {
+            if (sender is Control control)
+                ApplyRoundedRegion(control, 8);
+        }
+
+        private static void ApplyRoundedRegion(Control control, int radius)
+        {
+            if (control.Width < 2 || control.Height < 2) return;
+            using var path = CreateDesignRoundedPath(new Rectangle(0, 0, control.Width - 1, control.Height - 1), radius);
+            var newRegion = new Region(path);
+            var oldRegion = control.Region;
+            control.Region = newRegion;
+            oldRegion?.Dispose();
+        }
+
+        private static void ConfigureFilterGroup(
+            Label icon, Label label, ComboBox combo, int x,
+            int iconW, int labelW, int comboW, int groupHeight)
+        {
+            icon.SetBounds(x, 15, iconW, 42);
+            RoundedControlHelper.SetRounded(icon, 8);
+            label.SetBounds(x + iconW + 10, 14, labelW, groupHeight - 24);
+            // Chỉ dịch ComboBox xuống nhẹ để phần hiển thị native nằm giữa thẻ;
+            // vị trí icon và label được giữ nguyên theo thiết kế.
+            combo.SetBounds(x + iconW + labelW + 18, 23, comboW, 34);
+            combo.Font = new Font("Segoe UI", 10F);
+            combo.BackColor = Color.White;
+            combo.ForeColor = Color.FromArgb(30, 50, 85);
+            combo.DropDownStyle = ComboBoxStyle.DropDownList;
+            combo.FlatStyle = FlatStyle.Flat;
+            combo.DrawMode = DrawMode.OwnerDrawFixed;
+            combo.ItemHeight = 22;
+            combo.DropDownHeight = 180;
+            combo.DropDownWidth = Math.Max(combo.Width, 220);
+            ApplyRoundedRegion(combo, 6);
+            combo.Resize -= ComboBox_ApplyRoundedRegion;
+            combo.Resize += ComboBox_ApplyRoundedRegion;
+            combo.DropDown -= ComboBox_RoundDropDown;
+            combo.DropDown += ComboBox_RoundDropDown;
+            combo.DrawItem -= FilterCombo_DrawItem;
+            combo.DrawItem += FilterCombo_DrawItem;
+        }
+
+        private static void ComboBox_ApplyRoundedRegion(object? sender, EventArgs e)
+        {
+            if (sender is Control control)
+                ApplyRoundedRegion(control, 6);
+        }
+
+        private static void FilterCombo_DrawItem(object? sender, DrawItemEventArgs e)
+        {
+            if (sender is not ComboBox combo || e.Index < 0) return;
+            bool selected = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
+            Color back = selected ? Color.FromArgb(0, 105, 210) : Color.White;
+            Color fore = selected ? Color.White : Color.FromArgb(30, 50, 85);
+            using (var brush = new SolidBrush(back))
+                e.Graphics.FillRectangle(brush, e.Bounds);
+            TextRenderer.DrawText(
+                e.Graphics,
+                combo.GetItemText(combo.Items[e.Index]),
+                combo.Font,
+                Rectangle.Inflate(e.Bounds, -7, 0),
+                fore,
+                TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis);
+        }
+
+        private static void ComboBox_RoundDropDown(object? sender, EventArgs e)
+        {
+            if (sender is not ComboBox combo) return;
+            try
+            {
+                var info = new ComboBoxInfo { cbSize = Marshal.SizeOf<ComboBoxInfo>() };
+                if (GetComboBoxInfo(combo.Handle, ref info) && info.hwndList != IntPtr.Zero)
+                {
+                    // Lấy kích thước thật của popup native thay vì dùng DropDownWidth/
+                    // DropDownHeight (các giá trị này không luôn khớp kích thước thực).
+                    var popupRect = new RECT();
+                    if (!GetWindowRect(info.hwndList, ref popupRect)) return;
+
+                    int width = Math.Max(1, popupRect.Right - popupRect.Left);
+                    int height = Math.Max(1, popupRect.Bottom - popupRect.Top);
+                    int radius = Math.Min(12, Math.Max(4, height / 8));
+
+                    // Tạo vùng bo góc, sau đó lấp phần góc trên bằng hình chữ nhật:
+                    // hai góc trên vuông, chỉ hai góc dưới còn bo tròn.
+                    IntPtr roundedRegion = CreateRoundRectRgn(0, 0, width + 1, height + 1, radius * 2, radius * 2);
+                    IntPtr topRegion = CreateRectRgn(0, 0, width + 1, Math.Min(height + 1, radius + 2));
+                    if (roundedRegion != IntPtr.Zero && topRegion != IntPtr.Zero)
+                    {
+                        CombineRgn(roundedRegion, roundedRegion, topRegion, RGN_OR);
+                        if (SetWindowRgn(info.hwndList, roundedRegion, true) != 0)
+                            roundedRegion = IntPtr.Zero; // Windows sở hữu region khi SetWindowRgn thành công.
+                    }
+                    if (roundedRegion != IntPtr.Zero) DeleteObject(roundedRegion);
+                    if (topRegion != IntPtr.Zero) DeleteObject(topRegion);
+                }
+            }
+            catch
+            {
+                // Nếu Windows không cho áp dụng vùng bo cho popup native,
+                // ComboBox vẫn hoạt động bình thường.
+            }
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct ComboBoxInfo
+        {
+            public int cbSize;
+            public RECT rcItem;
+            public RECT rcButton;
+            public int stateButton;
+            public IntPtr hwndCombo;
+            public IntPtr hwndItem;
+            public IntPtr hwndList;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct RECT
+        {
+            public int Left;
+            public int Top;
+            public int Right;
+            public int Bottom;
+        }
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern bool GetComboBoxInfo(IntPtr hwndCombo, ref ComboBoxInfo info);
+
+        [DllImport("gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
+        private static extern IntPtr CreateRoundRectRgn(int left, int top, int right, int bottom, int width, int height);
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowRgn")]
+        private static extern int SetWindowRgn(IntPtr hWnd, IntPtr hRgn, bool redraw);
+
+        [DllImport("user32.dll", EntryPoint = "GetWindowRect")]
+        private static extern bool GetWindowRect(IntPtr hWnd, ref RECT rect);
+
+        [DllImport("gdi32.dll", EntryPoint = "CreateRectRgn")]
+        private static extern IntPtr CreateRectRgn(int left, int top, int right, int bottom);
+
+        [DllImport("gdi32.dll", EntryPoint = "CombineRgn")]
+        private static extern int CombineRgn(IntPtr destination, IntPtr source1, IntPtr source2, int mode);
+
+        private const int RGN_OR = 2;
+
+        [DllImport("gdi32.dll", EntryPoint = "DeleteObject")]
+        private static extern bool DeleteObject(IntPtr hObject);
 
     }
 }

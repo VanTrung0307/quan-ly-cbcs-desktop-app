@@ -100,7 +100,7 @@
             txtSearch.ForeColor = Color.FromArgb(40, 40, 40);
             txtSearch.Location = new Point(12, 6);
             txtSearch.Name = "txtSearch";
-            txtSearch.PlaceholderText = "🔍 Tìm theo họ tên, số hiệu, CCCD, đơn vị...";
+            txtSearch.PlaceholderText = "Tìm theo họ tên, số hiệu, CCCD, đơn vị...";
             txtSearch.Size = new Size(484, 25);
             txtSearch.TabIndex = 0;
             txtSearch.TextChanged += txtSearch_TextChanged;
