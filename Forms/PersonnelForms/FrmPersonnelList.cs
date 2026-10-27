@@ -393,6 +393,26 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             dgvPersonnel.Columns["QueQuanMoi"].Width = 220;
             dgvPersonnel.Columns["HKTTMoi"].Width = 170;
+
+            // Bảo đảm đường kẻ dọc và ngang của từng ô luôn hiển thị rõ.
+            // Gọi sau ApplyModernStyle vì helper có thể thay đổi thiết lập mặc định.
+            ApplyClearGridLines();
+        }
+
+        private void ApplyClearGridLines()
+        {
+            dgvPersonnel.GridColor = Color.FromArgb(164, 195, 231);
+            dgvPersonnel.CellBorderStyle = DataGridViewCellBorderStyle.Single;
+
+            // Đường viền của từng ô dữ liệu: trái, phải, trên và dưới.
+            dgvPersonnel.AdvancedCellBorderStyle.All = DataGridViewAdvancedCellBorderStyle.Single;
+            dgvPersonnel.AdvancedCellBorderStyle.Left = DataGridViewAdvancedCellBorderStyle.Single;
+            dgvPersonnel.AdvancedCellBorderStyle.Right = DataGridViewAdvancedCellBorderStyle.Single;
+            dgvPersonnel.AdvancedCellBorderStyle.Top = DataGridViewAdvancedCellBorderStyle.Single;
+            dgvPersonnel.AdvancedCellBorderStyle.Bottom = DataGridViewAdvancedCellBorderStyle.Single;
+
+            // Giữ nguyên cách vẽ header hiện tại; chỉ tăng độ rõ đường kẻ ô dữ liệu.
+            dgvPersonnel.AdvancedColumnHeadersBorderStyle.All = DataGridViewAdvancedCellBorderStyle.None;
         }
 
         private void SetupRoundedControls()
@@ -2333,13 +2353,12 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             dgvPersonnel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvPersonnel.BackgroundColor = Color.White;
             dgvPersonnel.BorderStyle = BorderStyle.None;
-            dgvPersonnel.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-            // Bỏ đường viền bao quanh header; vẽ lại các đường phân cách bên trong.
-            dgvPersonnel.AdvancedColumnHeadersBorderStyle.All = DataGridViewAdvancedCellBorderStyle.None;
+            // Hiển thị đầy đủ đường kẻ dọc/ngang giữa tất cả các ô dữ liệu.
+            ApplyClearGridLines();
+
+            // Bỏ đường viền mặc định của header; giữ nguyên cách vẽ header hiện tại.
             dgvPersonnel.CellPainting -= DgvPersonnel_CellPaintingHeaderWithoutOuterBorder;
             dgvPersonnel.CellPainting += DgvPersonnel_CellPaintingHeaderWithoutOuterBorder;
-            dgvPersonnel.AdvancedCellBorderStyle.Left = DataGridViewAdvancedCellBorderStyle.None;
-            dgvPersonnel.AdvancedCellBorderStyle.Right = DataGridViewAdvancedCellBorderStyle.None;
             dgvPersonnel.RowHeadersVisible = false;
             dgvPersonnel.ColumnHeadersHeight = 58;
             dgvPersonnel.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;

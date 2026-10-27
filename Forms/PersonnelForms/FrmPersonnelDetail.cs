@@ -37,6 +37,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             InitializeComponent();
 
             ApplyBasicTabDesign();
+            ApplyAddressTabDesign();
 
             // Keep the form at a practical dialog size; the maximize button is disabled.
             AutoSize = false;
@@ -46,10 +47,11 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             Shown += (_, _) =>
             {
                 UpdateTabLayout();
+                UpdateAddressTabLayout();
                 ApplyRoundedInputs();
                 btnResetBasicTabInvalidate();
             };
-            Resize += (_, _) => UpdateTabLayout();
+            Resize += (_, _) => { UpdateTabLayout(); UpdateAddressTabLayout(); };
 
             epValidation.BlinkStyle = ErrorBlinkStyle.NeverBlink;
 
@@ -470,6 +472,215 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             tabPage1.ResumeLayout(true);
             ResumeLayout(true);
+        }
+
+        // Restyle only the Address tab to match the approved reference image.
+        // Existing TextBox instances and their data-binding/save logic are preserved.
+        private void ApplyAddressTabDesign()
+        {
+            tabPage2.BackColor = BackColor;
+            tabPage2.Padding = new Padding(0);
+
+            var card = tabPage2.Controls.Find("pnlAddressCard", false).FirstOrDefault() as Panel;
+            if (card == null)
+            {
+                card = new Panel { Name = "pnlAddressCard", BackColor = Color.FromArgb(247, 251, 255) };
+                tabPage2.Controls.Add(card);
+            }
+            card.BorderStyle = BorderStyle.None;
+            card.Paint -= AddressCard_Paint;
+            card.Paint += AddressCard_Paint;
+            card.SendToBack();
+
+            void StyleAddressLabel(Label label, string text, bool heading = false)
+            {
+                label.Text = text;
+                label.AutoSize = false;
+                label.Font = heading
+                    ? new Font("Segoe UI", 14F, FontStyle.Bold)
+                    : new Font("Segoe UI", 10.5F, FontStyle.Regular);
+                label.ForeColor = Color.FromArgb(20, 45, 92);
+                label.BackColor = Color.Transparent;
+                label.TextAlign = ContentAlignment.MiddleLeft;
+            }
+
+            StyleAddressLabel(lblQueQuanMoi, "Quê quán hiện nay", true);
+            StyleAddressLabel(lblQueQuanCu, "Quê quán trước sáp nhập", true);
+            StyleAddressLabel(lblTinhMoi, "Tỉnh/thành hiện nay");
+            StyleAddressLabel(lblTinhCu, "Tỉnh/thành trước sáp nhập");
+            StyleAddressLabel(lblHKTTMoi, "HKTT hiện nay", true);
+            StyleAddressLabel(lblHKTTCu, "HKTT trước sáp nhập", true);
+
+            void StyleAddressTextBox(TextBox textBox, string placeholder, bool multiline)
+            {
+                textBox.Font = new Font("Segoe UI", 11F, FontStyle.Regular);
+                textBox.BackColor = Color.White;
+                textBox.ForeColor = Color.FromArgb(35, 45, 60);
+                textBox.BorderStyle = BorderStyle.FixedSingle;
+                textBox.PlaceholderText = placeholder;
+                textBox.Multiline = multiline;
+                textBox.ScrollBars = multiline ? ScrollBars.Vertical : ScrollBars.None;
+                textBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            }
+
+            StyleAddressTextBox(txtQueQuanMoi, "Nhập thông tin quê quán hiện nay...", true);
+            StyleAddressTextBox(txtQueQuanCu, "Nhập thông tin quê quán trước sáp nhập...", true);
+            StyleAddressTextBox(txtTinhMoi, "Nhập tỉnh/thành hiện nay...", false);
+            StyleAddressTextBox(txtTinhCu, "Nhập tỉnh/thành trước sáp nhập...", false);
+            StyleAddressTextBox(txtHKTTMoi, "Nhập thông tin hộ khẩu thường trú hiện nay...", true);
+            StyleAddressTextBox(txtHKTTCu, "Nhập thông tin hộ khẩu thường trú trước sáp nhập...", true);
+
+            AddAddressIcon("pnlAddressIconCurrent", "\uE80F", tabPage2);
+            AddAddressIcon("pnlAddressIconPrevious", "\uE81C", tabPage2);
+            AddAddressIcon("pnlAddressIconHKTTCurrent", "\uE707", tabPage2);
+            AddAddressIcon("pnlAddressIconHKTTPrevious", "\uE707", tabPage2);
+
+            UpdateAddressTabLayout();
+        }
+
+        private void AddAddressIcon(string name, string glyph, Control parent)
+        {
+            var iconPanel = parent.Controls.Find(name, false).FirstOrDefault() as Panel;
+            if (iconPanel == null)
+            {
+                iconPanel = new Panel { Name = name, Tag = glyph };
+                parent.Controls.Add(iconPanel);
+            }
+            // Keep the panel itself transparent. Otherwise WinForms paints its
+            // rectangular BackColor behind the rounded icon tile, leaving square
+            // corners visible outside the rounded fill.
+            iconPanel.BackColor = Color.Transparent;
+            iconPanel.BorderStyle = BorderStyle.None;
+            iconPanel.Paint -= AddressIcon_Paint;
+            iconPanel.Paint += AddressIcon_Paint;
+            iconPanel.SizeChanged -= AddressIcon_SizeChanged;
+            iconPanel.SizeChanged += AddressIcon_SizeChanged;
+            ApplyAddressIconRegion(iconPanel);
+            iconPanel.BringToFront();
+        }
+
+        private void UpdateAddressTabLayout()
+        {
+            if (IsDisposed || tabPage2 == null || tabPage2.IsDisposed || tabPage2.ClientSize.Width < 100)
+                return;
+
+            int w = tabPage2.ClientSize.Width;
+            int h = tabPage2.ClientSize.Height;
+            var card = tabPage2.Controls.Find("pnlAddressCard", false).FirstOrDefault() as Panel;
+            if (card != null)
+            {
+                card.Location = new Point(0, 0);
+                card.Size = new Size(w, h);
+                card.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+                card.SendToBack();
+                card.Invalidate();
+            }
+
+            int margin = 24;
+            int gap = 42;
+            int colWidth = Math.Max(250, (w - margin * 2 - gap) / 2);
+            int leftX = margin;
+            int rightX = margin + colWidth + gap;
+            int iconSize = 46;
+            int headingXOffset = 64;
+            int headingY = 16;
+            int textareaY = 68;
+            int textareaH = Math.Max(95, Math.Min(122, (h - 250) / 2));
+            int provinceLabelY = textareaY + textareaH + 10;
+            int provinceInputY = provinceLabelY + 28;
+            int secondHeadingY = Math.Max(provinceInputY + 58, h - 204);
+            int secondTextareaY = secondHeadingY + 54;
+            int secondTextareaH = Math.Max(75, h - secondTextareaY - 20);
+
+            void PositionLabel(Label label, int x, int y, int width, int height)
+            {
+                label.Location = new Point(x, y);
+                label.Size = new Size(width, height);
+                label.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+                label.BringToFront();
+            }
+            void PositionText(TextBox textBox, int x, int y, int width, int height)
+            {
+                textBox.Location = new Point(x, y);
+                textBox.Size = new Size(width, height);
+                textBox.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+                textBox.BringToFront();
+            }
+            void PositionIcon(string name, int x, int y)
+            {
+                var icon = tabPage2.Controls.Find(name, false).FirstOrDefault() as Panel;
+                if (icon == null) return;
+                icon.Location = new Point(x, y);
+                icon.Size = new Size(iconSize, iconSize);
+                ApplyAddressIconRegion(icon);
+                icon.Invalidate();
+                icon.BringToFront();
+            }
+
+            PositionIcon("pnlAddressIconCurrent", leftX, headingY);
+            PositionIcon("pnlAddressIconPrevious", rightX, headingY);
+            PositionLabel(lblQueQuanMoi, leftX + headingXOffset, headingY, colWidth - headingXOffset, iconSize);
+            PositionLabel(lblQueQuanCu, rightX + headingXOffset, headingY, colWidth - headingXOffset, iconSize);
+            PositionText(txtQueQuanMoi, leftX + headingXOffset, textareaY, colWidth - headingXOffset, textareaH);
+            PositionText(txtQueQuanCu, rightX + headingXOffset, textareaY, colWidth - headingXOffset, textareaH);
+
+            PositionLabel(lblTinhMoi, leftX + headingXOffset, provinceLabelY, colWidth - headingXOffset, 25);
+            PositionLabel(lblTinhCu, rightX + headingXOffset, provinceLabelY, colWidth - headingXOffset, 25);
+            PositionText(txtTinhMoi, leftX + headingXOffset, provinceInputY, colWidth - headingXOffset, 38);
+            PositionText(txtTinhCu, rightX + headingXOffset, provinceInputY, colWidth - headingXOffset, 38);
+
+            PositionIcon("pnlAddressIconHKTTCurrent", leftX, secondHeadingY);
+            PositionIcon("pnlAddressIconHKTTPrevious", rightX, secondHeadingY);
+            PositionLabel(lblHKTTMoi, leftX + headingXOffset, secondHeadingY, colWidth - headingXOffset, iconSize);
+            PositionLabel(lblHKTTCu, rightX + headingXOffset, secondHeadingY, colWidth - headingXOffset, iconSize);
+            PositionText(txtHKTTMoi, leftX + headingXOffset, secondTextareaY, colWidth - headingXOffset, secondTextareaH);
+            PositionText(txtHKTTCu, rightX + headingXOffset, secondTextareaY, colWidth - headingXOffset, secondTextareaH);
+        }
+
+        private void AddressCard_Paint(object? sender, PaintEventArgs e)
+        {
+            if (sender is not Panel panel || panel.Width < 4 || panel.Height < 4) return;
+            e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            using var path = RoundedRectangle(new Rectangle(1, 1, panel.Width - 3, panel.Height - 3), 10);
+            using var pen = new Pen(Color.FromArgb(190, 211, 244), 1.2F);
+            e.Graphics.DrawPath(pen, path);
+        }
+
+        private void AddressIcon_SizeChanged(object? sender, EventArgs e)
+        {
+            if (sender is Panel panel)
+                ApplyAddressIconRegion(panel);
+        }
+
+        private static void ApplyAddressIconRegion(Panel panel)
+        {
+            if (panel.Width < 4 || panel.Height < 4) return;
+            // Clip the native control to the same rounded shape we paint. This
+            // removes any square panel pixels that can otherwise show at corners.
+            using var regionPath = RoundedRectangle(
+                new Rectangle(0, 0, panel.Width - 1, panel.Height - 1), 8);
+            var newRegion = new Region(regionPath);
+            var oldRegion = panel.Region;
+            panel.Region = newRegion;
+            oldRegion?.Dispose();
+        }
+
+        private void AddressIcon_Paint(object? sender, PaintEventArgs e)
+        {
+            if (sender is not Panel panel) return;
+            e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            e.Graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+            using var path = RoundedRectangle(new Rectangle(1, 1, panel.Width - 3, panel.Height - 3), 8);
+            using var fill = new SolidBrush(Color.FromArgb(222, 238, 255));
+            using var border = new Pen(Color.FromArgb(190, 218, 250), 1F);
+            e.Graphics.FillPath(fill, path);
+            e.Graphics.DrawPath(border, path);
+            using var font = new Font("Segoe MDL2 Assets", 22F, FontStyle.Regular);
+            using var brush = new SolidBrush(Color.FromArgb(0, 75, 170));
+            string glyph = panel.Tag as string ?? "\uE707";
+            var size = e.Graphics.MeasureString(glyph, font);
+            e.Graphics.DrawString(glyph, font, brush,
+                (panel.Width - size.Width) / 2F, (panel.Height - size.Height) / 2F + 1F);
         }
 
         private void UpdateTabLayout()
