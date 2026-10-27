@@ -1,4 +1,6 @@
-﻿using QuanLyCBCS.Enums;
+﻿using System.Drawing.Drawing2D;
+using System.Runtime.InteropServices;
+using QuanLyCBCS.Enums;
 using QuanLyCBCS.Helpers;
 using QuanLyCBCS.Models;
 using QuanLyCBCS.Services;
@@ -16,11 +18,40 @@ namespace QuanLyCBCS.Forms.PersonnelForms
         private readonly PersonnelHistoryService _historyService =
             new PersonnelHistoryService();
 
+        // UI-only fields used to match the approved basic-information mockup.
+        // Quê quán is synchronized with the existing persisted QueQuanMoi field.
+        private TextBox? _txtBasicQueQuan;
+        // Retained as nullable compatibility fields for existing load/reset code;
+        // the approved UI no longer creates email or gender radio controls.
+        private TextBox? _txtBasicEmail;
+        private Panel? _headerIconPanel;
+        private readonly Dictionary<Control, RoundedInputBorderWindow> _roundedInputBorderWindows = new Dictionary<Control, RoundedInputBorderWindow>();
+        private readonly Dictionary<Control, Label> _validationLabels = new Dictionary<Control, Label>();
+        private readonly Dictionary<Control, string> _validationMessages = new Dictionary<Control, string>();
+        private readonly HashSet<Control> _invalidControls = new HashSet<Control>();
+
         public FrmPersonnelDetail(
             FormMode mode,
             int personnelId = 0)
         {
             InitializeComponent();
+
+            ApplyBasicTabDesign();
+
+            // Keep the form at a practical dialog size; the maximize button is disabled.
+            AutoSize = false;
+            WindowState = FormWindowState.Normal;
+            MaximizeBox = false;
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            Shown += (_, _) =>
+            {
+                UpdateTabLayout();
+                ApplyRoundedInputs();
+                btnResetBasicTabInvalidate();
+            };
+            Resize += (_, _) => UpdateTabLayout();
+
+            epValidation.BlinkStyle = ErrorBlinkStyle.NeverBlink;
 
             _service = new PersonnelService();
 
@@ -51,6 +82,14 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             txtSoDienThoai.TextChanged +=
                 (_, _) => ClearError(txtSoDienThoai);
 
+            // Keep ErrorProvider feedback from covering the input area. Validation text
+            // remains available through the provider tooltip while field borders stay intact.
+            foreach (Control validationControl in new Control[] { txtSoHieu, txtHoTen, txtCCCD, txtSoDienThoai, txtHeSoLuong, cboGioiTinh, cboPersonnelType, dtNgaySinh })
+            {
+                epValidation.SetIconAlignment(validationControl, ErrorIconAlignment.MiddleLeft);
+                epValidation.SetIconPadding(validationControl, -1000);
+            }
+
             txtCCCD.KeyPress += TxtNumberOnly_KeyPress;
 
             txtSoDienThoai.KeyPress += TxtNumberOnly_KeyPress;
@@ -79,6 +118,518 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             dtNgaySinh.MaxDate = DateTime.Today;
 
             dtNgaySinh.ValueChanged += (_, _) => UpdateAge();
+        }
+
+
+        // Reorganize the existing controls to match the approved first-tab mockup.
+        // Existing data-bound controls and save/validation handlers are preserved.
+        private void ApplyBasicTabDesign()
+        {
+            SuspendLayout();
+            tabPage1.SuspendLayout();
+
+            AutoScaleMode = AutoScaleMode.Font;
+            AutoSize = false;
+            Font = new Font("Segoe UI", 10F, FontStyle.Regular);
+            BackColor = Color.FromArgb(242, 248, 255);
+            ClientSize = new Size(1480, 790);
+            MinimumSize = new Size(1280, 700);
+            MaximizeBox = false;
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            WindowState = FormWindowState.Normal;
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Thông tin CBCS";
+
+            // Banner: same proportions and typography as the reference design.
+            tabPage1.Controls.Remove(pnlHeader);
+            Controls.Add(pnlHeader);
+            pnlHeader.Dock = DockStyle.None;
+            pnlHeader.Location = new Point(0, 0);
+            pnlHeader.Size = new Size(ClientSize.Width, 126);
+            pnlHeader.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            pnlHeader.BackColor = Color.FromArgb(18, 70, 132);
+            pnlHeader.Paint -= PnlHeader_Paint;
+            pnlHeader.Paint += PnlHeader_Paint;
+
+            lblTitle.Dock = DockStyle.None;
+            lblTitle.Location = new Point(170, 20);
+            lblTitle.Size = new Size(760, 52);
+            lblTitle.Font = new Font("Segoe UI", 24F, FontStyle.Bold);
+            lblTitle.ForeColor = Color.White;
+            lblTitle.Text = "THÔNG TIN CBCS";
+            lblTitle.TextAlign = ContentAlignment.MiddleLeft;
+
+            lblSubTitle.Dock = DockStyle.None;
+            lblSubTitle.Location = new Point(172, 72);
+            lblSubTitle.Size = new Size(800, 30);
+            lblSubTitle.Font = new Font("Segoe UI", 13F, FontStyle.Regular);
+            lblSubTitle.ForeColor = Color.FromArgb(226, 239, 255);
+            lblSubTitle.Text = "Quản lý, cập nhật thông tin cán bộ, chiến sĩ";
+            lblSubTitle.TextAlign = ContentAlignment.MiddleLeft;
+
+            if (_headerIconPanel == null)
+            {
+                _headerIconPanel = new Panel { Name = "pnlHeaderIcon" };
+                pnlHeader.Controls.Add(_headerIconPanel);
+                _headerIconPanel.Paint += HeaderIconPanel_Paint;
+            }
+            _headerIconPanel.BackColor = Color.Transparent;
+            _headerIconPanel.Location = new Point(34, 17);
+            _headerIconPanel.Size = new Size(96, 96);
+            _headerIconPanel.BringToFront();
+            lblTitle.BringToFront();
+            lblSubTitle.BringToFront();
+
+            // Main tab strip: owner-drawn to avoid the legacy Windows tab appearance.
+            tabMain.Dock = DockStyle.None;
+            tabMain.Location = new Point(28, 138);
+            tabMain.Size = new Size(ClientSize.Width - 56, ClientSize.Height - 244);
+            tabMain.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tabMain.Appearance = TabAppearance.FlatButtons;
+            tabMain.DrawMode = TabDrawMode.OwnerDrawFixed;
+            tabMain.SizeMode = TabSizeMode.Fixed;
+            // Reserve space for the native TabControl header margins and DPI scaling.
+            // UpdateTabLayout recalculates this after the control has its final size.
+            tabMain.ItemSize = new Size(
+                Math.Max(100, (tabMain.ClientSize.Width - 120) / Math.Max(1, tabMain.TabPages.Count)),
+                42);
+            tabMain.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            tabMain.BackColor = BackColor;
+            tabMain.Padding = new Point(0, 0);
+            tabMain.BackColor = Color.FromArgb(242, 248, 255);
+            tabMain.DrawItem -= TabMain_DrawItem;
+            tabMain.DrawItem += TabMain_DrawItem;
+
+            // Save/cancel actions stay available at the bottom of every tab.
+            tabPage5.Controls.Remove(btnSave);
+            tabPage5.Controls.Remove(btnCancel);
+            Controls.Add(btnSave);
+            Controls.Add(btnCancel);
+            btnSave.Text = "✓  Lưu";
+            btnSave.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            btnSave.BackColor = Color.FromArgb(0, 103, 235);
+            btnSave.ForeColor = Color.White;
+            btnSave.FlatStyle = FlatStyle.Flat;
+            btnSave.FlatAppearance.BorderSize = 0;
+            btnSave.Size = new Size(154, 48);
+            btnSave.Location = new Point(ClientSize.Width - 350, ClientSize.Height - 78);
+            btnSave.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnSave.UseVisualStyleBackColor = false;
+
+            btnCancel.Text = "✕  Hủy";
+            btnCancel.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            btnCancel.BackColor = Color.FromArgb(242, 53, 53);
+            btnCancel.ForeColor = Color.White;
+            btnCancel.FlatStyle = FlatStyle.Flat;
+            btnCancel.FlatAppearance.BorderSize = 0;
+            btnCancel.Size = new Size(154, 48);
+            btnCancel.Location = new Point(ClientSize.Width - 180, ClientSize.Height - 78);
+            btnCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnCancel.UseVisualStyleBackColor = false;
+            btnCancel.Click -= btnCancel_Click_Layout;
+            btnCancel.Click += btnCancel_Click_Layout;
+
+            var btnReset = Controls.Find("btnResetBasicTab", false).FirstOrDefault() as Button;
+            if (btnReset == null)
+            {
+                btnReset = new Button { Name = "btnResetBasicTab" };
+                Controls.Add(btnReset);
+            }
+            btnReset.Text = "⟳  Làm mới";
+            btnReset.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            btnReset.ForeColor = Color.FromArgb(17, 66, 135);
+            btnReset.BackColor = Color.White;
+            btnReset.FlatStyle = FlatStyle.Flat;
+            btnReset.FlatAppearance.BorderColor = Color.FromArgb(153, 183, 224);
+            btnReset.FlatAppearance.BorderSize = 1;
+            btnReset.FlatAppearance.MouseOverBackColor = Color.FromArgb(242, 248, 255);
+            btnReset.Size = new Size(172, 48);
+            btnReset.Location = new Point(32, ClientSize.Height - 78);
+            btnReset.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            btnReset.UseVisualStyleBackColor = false;
+            btnReset.Click -= btnResetBasicTab_Click;
+            btnReset.Click += btnResetBasicTab_Click;
+
+            // Basic-information card with a soft blue rounded outline.
+            tabPage1.BackColor = BackColor;
+            tabPage1.Padding = new Padding(0);
+            foreach (TabPage page in tabMain.TabPages)
+            {
+                page.BackColor = BackColor;
+                page.Padding = new Padding(0);
+            }
+            tabPage1.Controls.Remove(lblTitle);
+            tabPage1.Controls.Remove(lblSubTitle);
+
+            var card = Controls.Find("pnlBasicInfoCard", true).FirstOrDefault() as Panel;
+            if (card == null)
+            {
+                card = new Panel { Name = "pnlBasicInfoCard" };
+                tabPage1.Controls.Add(card);
+            }
+            card.BackColor = Color.FromArgb(247, 251, 255);
+            card.BorderStyle = BorderStyle.None;
+            // The card itself draws only the rounded blue outline; no native rectangular border.
+            // Fill the tab page's display area so the native grey page frame is not visible
+            // around the rounded information card.
+            card.Location = new Point(0, 0);
+            card.Size = new Size(tabPage1.ClientSize.Width, tabPage1.ClientSize.Height);
+            card.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            card.Paint -= BasicInfoCard_Paint;
+            card.Paint += BasicInfoCard_Paint;
+            card.SendToBack();
+
+            int leftLabel = 28, leftInput = 190, leftWidth = 330;
+            int rightLabel = 535, rightInput = 690, rightWidth = 330;
+            int[] ys = { 48, 108, 168, 228, 288 };
+
+            void PlaceLabel(Label label, int x, int y, string text)
+            {
+                label.Text = text;
+                label.Font = new Font("Segoe UI", 10.5F, FontStyle.Regular);
+                label.ForeColor = Color.FromArgb(20, 45, 92);
+                label.BackColor = Color.Transparent;
+                label.AutoSize = false;
+                label.TextAlign = ContentAlignment.MiddleLeft;
+                label.Location = new Point(x, y + 1);
+                label.Size = new Size(150, 38);
+                label.BringToFront();
+            }
+
+            void PlaceInput(Control input, int x, int y, int width, int height = 51)
+            {
+                input.Font = new Font("Segoe UI", 10.5F, FontStyle.Regular);
+                input.Location = new Point(x, y);
+                input.Size = new Size(width, height == 51 ? 38 : height);
+                input.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+                if (input is TextBox tb)
+                {
+                    tb.BorderStyle = BorderStyle.FixedSingle;
+                    tb.BackColor = Color.White;
+                    tb.ForeColor = Color.FromArgb(35, 45, 60);
+                }
+                else if (input is ComboBox cb)
+                {
+                    cb.DropDownStyle = ComboBoxStyle.DropDownList;
+                    cb.FlatStyle = FlatStyle.Flat;
+                    cb.BackColor = Color.White;
+                }
+                input.BringToFront();
+            }
+
+            PlaceLabel(lblSoHieu, leftLabel, ys[0], "Số hiệu");
+            PlaceInput(txtSoHieu, leftInput, ys[0], leftWidth);
+            PlaceLabel(lblHoTen, leftLabel, ys[1], "Họ và tên");
+            PlaceInput(txtHoTen, leftInput, ys[1], leftWidth);
+            PlaceLabel(lblType, leftLabel, ys[2], "Loại CBCS");
+            PlaceInput(cboPersonnelType, leftInput, ys[2], 220);
+            PlaceLabel(lblGioiTinh, leftLabel, ys[3], "Giới tính");
+            PlaceInput(cboGioiTinh, leftInput, ys[3], 220);
+            cboGioiTinh.Visible = true;
+            PlaceLabel(lblNgaySinh, leftLabel, ys[4], "Ngày sinh");
+            PlaceInput(dtNgaySinh, leftInput, ys[4], 220, 38);
+            var lblBasicNgaySinhRequired = Controls.Find("lblBasicNgaySinhRequired", true).FirstOrDefault() as Label;
+            if (lblBasicNgaySinhRequired == null)
+            {
+                lblBasicNgaySinhRequired = new Label { Name = "lblBasicNgaySinhRequired", Text = "*", ForeColor = Color.Red, BackColor = Color.Transparent };
+                tabPage1.Controls.Add(lblBasicNgaySinhRequired);
+            }
+            lblBasicNgaySinhRequired.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            lblBasicNgaySinhRequired.Location = new Point(leftLabel + 80, ys[4] + 4);
+            lblBasicNgaySinhRequired.Size = new Size(18, 28);
+            lblBasicNgaySinhRequired.BringToFront();
+
+            PlaceLabel(lblNoiSinh, rightLabel, ys[0], "Nơi sinh");
+            PlaceInput(txtNoiSinh, rightInput, ys[0], rightWidth);
+            PlaceLabel(lblCCCD, rightLabel, ys[2], "CCCD");
+            PlaceInput(txtCCCD, rightInput, ys[2], rightWidth);
+            PlaceLabel(lblNgayCap, rightLabel, ys[3], "Ngày cấp");
+            PlaceInput(dtNgayCapCCCD, rightInput, ys[3], 220, 38);
+            PlaceLabel(lblSoDienThoai, rightLabel, ys[4], "Số điện thoại");
+            PlaceInput(txtSoDienThoai, rightInput, ys[4], rightWidth);
+
+            // Quê quán reuses the existing persisted field in the Address tab.
+            if (_txtBasicQueQuan == null)
+            {
+                _txtBasicQueQuan = new TextBox { Name = "txtBasicQueQuan" };
+                tabPage1.Controls.Add(_txtBasicQueQuan);
+                _txtBasicQueQuan.TextChanged += (_, _) =>
+                {
+                    if (txtQueQuanMoi.Text != _txtBasicQueQuan.Text)
+                        txtQueQuanMoi.Text = _txtBasicQueQuan.Text;
+                };
+                txtQueQuanMoi.TextChanged += (_, _) =>
+                {
+                    if (_txtBasicQueQuan.Text != txtQueQuanMoi.Text)
+                        _txtBasicQueQuan.Text = txtQueQuanMoi.Text;
+                };
+            }
+            var lblBasicQueQuan = Controls.Find("lblBasicQueQuan", true).FirstOrDefault() as Label;
+            if (lblBasicQueQuan == null)
+            {
+                lblBasicQueQuan = new Label { Name = "lblBasicQueQuan" };
+                tabPage1.Controls.Add(lblBasicQueQuan);
+            }
+            PlaceLabel(lblBasicQueQuan, rightLabel, ys[1], "Quê quán");
+            PlaceInput(_txtBasicQueQuan, rightInput, ys[1], rightWidth);
+
+            // Email is intentionally omitted from this form.
+            var lblBasicEmail = Controls.Find("lblBasicEmail", true).FirstOrDefault() as Label;
+            if (lblBasicEmail != null) { tabPage1.Controls.Remove(lblBasicEmail); lblBasicEmail.Dispose(); }
+            if (_txtBasicEmail != null) { tabPage1.Controls.Remove(_txtBasicEmail); _txtBasicEmail.Dispose(); _txtBasicEmail = null; }
+
+            // Required-field markers remain aligned with the fields they annotate.
+            lblVaSoHieu.Location = new Point(leftLabel + 72, ys[0] + 5);
+            lblVaHoTen.Location = new Point(leftLabel + 100, ys[1] + 5);
+            lblVaType.Location = new Point(leftLabel + 88, ys[2] + 4);
+            lblVaGioiTinh.Location = new Point(leftLabel + 88, ys[3] + 4);
+            lblVaCCCD.Location = new Point(rightLabel + 52, ys[2] + 4);
+            lblVaSDT.Location = new Point(rightLabel + 115, ys[4] + 4);
+            foreach (var star in new[] { lblVaSoHieu, lblVaHoTen, lblVaType, lblVaGioiTinh, lblVaCCCD, lblVaSDT })
+            {
+                star.BackColor = Color.Transparent;
+                star.BringToFront();
+            }
+
+            lblTuoi.Text = "Tuổi: " + Math.Max(0, DateTime.Today.Year - dtNgaySinh.Value.Year).ToString();
+            lblTuoi.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
+            lblTuoi.ForeColor = Color.FromArgb(0, 103, 235);
+            lblTuoi.BackColor = Color.Transparent;
+            lblTuoi.Location = new Point(leftInput + 230, ys[4] + 2);
+            lblTuoi.Size = new Size(100, 36);
+            lblTuoi.BringToFront();
+
+            // Keep the personnel type on the Basic Information tab, directly below name.
+            tabPage6.Controls.Remove(lblType);
+            tabPage6.Controls.Remove(cboPersonnelType);
+            tabPage6.Controls.Remove(lblVaType);
+            if (!tabPage1.Controls.Contains(lblType)) tabPage1.Controls.Add(lblType);
+            if (!tabPage1.Controls.Contains(cboPersonnelType)) tabPage1.Controls.Add(cboPersonnelType);
+            if (!tabPage1.Controls.Contains(lblVaType)) tabPage1.Controls.Add(lblVaType);
+            lblVaType.BringToFront();
+
+            // Photo card with a person silhouette, matching the reference more closely.
+            var photoPanel = Controls.Find("pnlPhotoPlaceholder", true).FirstOrDefault() as Panel;
+            if (photoPanel == null)
+            {
+                photoPanel = new Panel { Name = "pnlPhotoPlaceholder" };
+                tabPage1.Controls.Add(photoPanel);
+            }
+            photoPanel.Controls.Clear();
+            photoPanel.BackColor = Color.FromArgb(247, 251, 255);
+            photoPanel.BorderStyle = BorderStyle.None;
+            photoPanel.Location = new Point(Math.Max(0, tabPage1.ClientSize.Width - 205), 28);
+            photoPanel.Size = new Size(180, 220);
+            photoPanel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            photoPanel.Paint -= PhotoPanel_Paint;
+            photoPanel.Paint += PhotoPanel_Paint;
+
+            // Use fixed, non-overlapping bounds instead of Dock=Fill; the previous
+            // dock order caused the avatar and file-format hint to be clipped.
+            var avatarCanvas = new Panel
+            {
+                Name = "pnlAvatarCanvas",
+                Location = new Point(0, 8),
+                Size = new Size(180, 116),
+                BackColor = Color.Transparent
+            };
+            avatarCanvas.Paint += AvatarCanvas_Paint;
+            var choose = new Label
+            {
+                Name = "lblChoosePhoto",
+                Text = "Chọn ảnh",
+                Font = new Font("Segoe UI", 10F, FontStyle.Bold),
+                ForeColor = Color.FromArgb(17, 50, 112),
+                TextAlign = ContentAlignment.MiddleCenter,
+                Location = new Point(4, 126),
+                Size = new Size(172, 30),
+                BackColor = Color.Transparent
+            };
+            var photoHint = new Label
+            {
+                Name = "lblPhotoHint",
+                Text = "JPG, PNG (tối đa 2MB)",
+                Font = new Font("Segoe UI", 9F),
+                ForeColor = Color.FromArgb(82, 105, 150),
+                TextAlign = ContentAlignment.MiddleCenter,
+                Location = new Point(4, 158),
+                Size = new Size(172, 30),
+                BackColor = Color.Transparent
+            };
+            photoPanel.Controls.Add(avatarCanvas);
+            photoPanel.Controls.Add(choose);
+            photoPanel.Controls.Add(photoHint);
+            photoPanel.BringToFront();
+
+            // Ensure title/footer controls stay above the tab control.
+            UpdateTabLayout();
+            pnlHeader.BringToFront();
+            btnReset.BringToFront();
+            btnSave.BringToFront();
+            btnCancel.BringToFront();
+
+            tabPage1.ResumeLayout(true);
+            ResumeLayout(true);
+        }
+
+        private void UpdateTabLayout()
+        {
+            if (IsDisposed || tabMain == null || tabMain.TabPages.Count == 0)
+                return;
+
+            // Expand each tab slightly and evenly while preserving a small native
+            // header margin so the left/right overflow buttons remain hidden.
+            int tabCount = tabMain.TabPages.Count;
+            int availableWidth = Math.Max(tabCount * 100, tabMain.ClientSize.Width - 72);
+            int tabWidth = Math.Max(100, availableWidth / tabCount);
+            if (tabMain.SizeMode != TabSizeMode.Fixed)
+                tabMain.SizeMode = TabSizeMode.Fixed;
+            if (tabMain.DrawMode != TabDrawMode.OwnerDrawFixed)
+                tabMain.DrawMode = TabDrawMode.OwnerDrawFixed;
+            if (tabMain.Appearance != TabAppearance.FlatButtons)
+                tabMain.Appearance = TabAppearance.FlatButtons;
+            if (tabMain.ItemSize.Width != tabWidth || tabMain.ItemSize.Height != 42)
+                tabMain.ItemSize = new Size(tabWidth, 42);
+            if (tabMain.Font.Size != 9F || tabMain.Font.Name != "Segoe UI")
+                tabMain.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            tabMain.Padding = new Point(0, 0);
+
+            // Keep the rounded card and photo placeholder aligned after DPI/layout changes.
+            var card = Controls.Find("pnlBasicInfoCard", true).FirstOrDefault() as Panel;
+            if (card != null)
+                card.Size = new Size(Math.Max(100, tabPage1.ClientSize.Width), Math.Max(100, tabPage1.ClientSize.Height));
+            var photoPanel = Controls.Find("pnlPhotoPlaceholder", true).FirstOrDefault() as Panel;
+            if (photoPanel != null)
+                photoPanel.Location = new Point(Math.Max(0, tabPage1.ClientSize.Width - photoPanel.Width - 14), 28);
+            tabMain.Invalidate();
+        }
+
+        private void PnlHeader_Paint(object? sender, PaintEventArgs e)
+        {
+            var g = e.Graphics;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            using var ringPen = new Pen(Color.FromArgb(45, 160, 215, 255), 2F);
+            g.DrawEllipse(ringPen, pnlHeader.Width - 230, -95, 300, 300);
+            g.DrawEllipse(ringPen, pnlHeader.Width - 210, -75, 260, 260);
+            using var starBrush = new SolidBrush(Color.FromArgb(35, 225, 241, 255));
+            PointF[] star = new PointF[10];
+            float cx = pnlHeader.Width - 100, cy = 60, outer = 48, inner = 22;
+            for (int i = 0; i < 10; i++)
+            {
+                double angle = -Math.PI / 2 + i * Math.PI / 5;
+                float radius = i % 2 == 0 ? outer : inner;
+                star[i] = new PointF(cx + (float)Math.Cos(angle) * radius, cy + (float)Math.Sin(angle) * radius);
+            }
+            g.FillPolygon(starBrush, star);
+        }
+
+        private void HeaderIconPanel_Paint(object? sender, PaintEventArgs e)
+        {
+            var g = e.Graphics;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            using var white = new SolidBrush(Color.FromArgb(248, 252, 255));
+            using var blue = new SolidBrush(Color.FromArgb(22, 66, 124));
+            using var shadow = new SolidBrush(Color.FromArgb(60, 130, 180, 235));
+            using (var shadowPath = RoundedRectangle(new Rectangle(2, 7, 104, 98), 12)) g.FillPath(shadow, shadowPath);
+            using (var whitePath = RoundedRectangle(new Rectangle(7, 2, 96, 100), 12)) g.FillPath(white, whitePath);
+            g.FillEllipse(blue, 40, 22, 20, 20);
+            using (var bodyPath = RoundedRectangle(new Rectangle(27, 46, 46, 30), 8)) g.FillPath(blue, bodyPath);
+            using (var linePath = RoundedRectangle(new Rectangle(24, 80, 52, 7), 3)) g.FillPath(blue, linePath);
+        }
+
+        private void BasicInfoCard_Paint(object? sender, PaintEventArgs e)
+        {
+            if (sender is not Panel panel) return;
+            var g = e.Graphics;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            using var path = RoundedRectangle(new Rectangle(1, 1, panel.Width - 3, panel.Height - 3), 12);
+            using var pen = new Pen(Color.FromArgb(190, 211, 244), 1.3F);
+            g.DrawPath(pen, path);
+        }
+
+        private void PhotoPanel_Paint(object? sender, PaintEventArgs e)
+        {
+            if (sender is not Panel panel) return;
+            e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            using var path = RoundedRectangle(new Rectangle(1, 1, panel.Width - 3, panel.Height - 3), 10);
+            using var pen = new Pen(Color.FromArgb(153, 194, 247), 1.2F) { DashStyle = System.Drawing.Drawing2D.DashStyle.Dash };
+            e.Graphics.DrawPath(pen, path);
+        }
+
+        private void AvatarCanvas_Paint(object? sender, PaintEventArgs e)
+        {
+            var g = e.Graphics;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            using var pale = new SolidBrush(Color.FromArgb(219, 235, 255));
+            using var blue = new SolidBrush(Color.FromArgb(91, 159, 245));
+            // Center a 100px avatar inside the 180x116 canvas without clipping.
+            g.FillEllipse(pale, 40, 4, 100, 100);
+            g.FillEllipse(blue, 73, 20, 34, 34);
+            using (var bodyPath = RoundedRectangle(new Rectangle(61, 57, 58, 42), 21)) g.FillPath(blue, bodyPath);
+        }
+
+        private void TabMain_DrawItem(object? sender, DrawItemEventArgs e)
+        {
+            if (e.Index < 0 || e.Index >= tabMain.TabPages.Count) return;
+            bool selected = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
+            Rectangle r = e.Bounds;
+            using var bg = new SolidBrush(selected ? Color.FromArgb(0, 103, 235) : Color.FromArgb(242, 248, 255));
+            using var border = new Pen(Color.FromArgb(190, 211, 244), 1F);
+            using var tabPath = RoundedRectangle(new Rectangle(r.X + 1, r.Y + 1, r.Width - 3, r.Height - 3), selected ? 10 : 4);
+            e.Graphics.FillPath(bg, tabPath);
+            e.Graphics.DrawPath(border, tabPath);
+            string[] icons = { "\uE946", "\uE80F", "\uE821", "\uE7BE", "\uE8D7", "\uE8FD" };
+            string[] names = { "Thông tin cơ bản", "Địa chỉ", "Công tác", "Đào tạo", "Đảng", "Khác" };
+            Color fore = selected ? Color.White : Color.FromArgb(17, 48, 112);
+            using var iconFont = new Font("Segoe MDL2 Assets", 14F, FontStyle.Regular);
+            using var textFont = new Font("Segoe UI", 8.5F, FontStyle.Bold);
+            using var brush = new SolidBrush(fore);
+            var iconSize = e.Graphics.MeasureString(icons[e.Index], iconFont);
+            float textWidth = e.Graphics.MeasureString(names[e.Index], textFont).Width;
+            float totalWidth = iconSize.Width + 10 + textWidth;
+            float startX = r.X + (r.Width - totalWidth) / 2;
+            float y = r.Y + (r.Height - 24) / 2;
+            e.Graphics.DrawString(icons[e.Index], iconFont, brush, startX, y);
+            e.Graphics.DrawString(names[e.Index], textFont, brush, startX + iconSize.Width + 6, y + 3);
+        }
+
+        private static System.Drawing.Drawing2D.GraphicsPath RoundedRectangle(Rectangle bounds, int radius)
+        {
+            int d = radius * 2;
+            var path = new System.Drawing.Drawing2D.GraphicsPath();
+            path.AddArc(bounds.X, bounds.Y, d, d, 180, 90);
+            path.AddArc(bounds.Right - d, bounds.Y, d, d, 270, 90);
+            path.AddArc(bounds.Right - d, bounds.Bottom - d, d, d, 0, 90);
+            path.AddArc(bounds.X, bounds.Bottom - d, d, d, 90, 90);
+            path.CloseFigure();
+            return path;
+        }
+        private void btnCancel_Click_Layout(object? sender, EventArgs e)
+        {
+            DialogResult = DialogResult.Cancel;
+            Close();
+        }
+
+        private void btnResetBasicTab_Click(object? sender, EventArgs e)
+        {
+            if (_mode == FormMode.Add)
+            {
+                txtSoHieu.Clear();
+                txtHoTen.Clear();
+                txtNoiSinh.Clear();
+                txtCCCD.Clear();
+                txtSoDienThoai.Clear();
+                cboGioiTinh.SelectedIndex = -1;
+                cboPersonnelType.SelectedIndex = 0;
+                dtNgaySinh.Value = DateTime.Today.AddYears(-18);
+                dtNgayCapCCCD.Value = DateTime.Today;
+                epValidation.Clear();
+                UpdateAge();
+            }
+            else
+            {
+                MessageBox.Show("Chức năng Làm mới ở chế độ chỉnh sửa không xóa dữ liệu đã lưu.", "Thông tin", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
 
         private void chkDangVien_CheckedChanged(
@@ -117,10 +668,11 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             if (_mode == FormMode.Add
                 && soHieuExists)
             {
-                epValidation.SetError(
+                SetValidationError(
                     txtSoHieu,
                     "Số hiệu đã tồn tại");
 
+                SyncValidationUi();
                 FocusControl(txtSoHieu);
 
                 return false;
@@ -136,10 +688,11 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             if (cccdExists)
             {
-                epValidation.SetError(
+                SetValidationError(
                     txtCCCD,
                     "CCCD đã tồn tại");
 
+                SyncValidationUi();
                 FocusControl(txtCCCD);
 
                 return false;
@@ -155,10 +708,11 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             if (phoneExists)
             {
-                epValidation.SetError(
+                SetValidationError(
                     txtSoDienThoai,
                     "Số điện thoại đã tồn tại");
 
+                SyncValidationUi();
                 FocusControl(txtSoDienThoai);
 
                 return false;
@@ -166,9 +720,10 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             if (dtNgaySinh.Value > DateTime.Today)
             {
-                epValidation.SetError(
+                SetValidationError(
                     dtNgaySinh,
                     "Ngày sinh không hợp lệ");
+                SyncValidationUi();
 
                 return false;
             }
@@ -402,8 +957,9 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             txtDonVi.Text =
                 p.DonVi;
 
-            cboGioiTinh.Text =
-                p.GioiTinh;
+            cboGioiTinh.SelectedItem = p.GioiTinh;
+            if (cboGioiTinh.SelectedIndex < 0)
+                cboGioiTinh.Text = p.GioiTinh;
 
             dtNgaySinh.Value =
                 p.NgaySinh ?? DateTime.Now;
@@ -424,6 +980,9 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             txtQueQuanMoi.Text =
                 p.QueQuanMoi;
+
+            if (_txtBasicQueQuan != null)
+                _txtBasicQueQuan.Text = p.QueQuanMoi;
 
             txtQueQuanCu.Text =
                 p.QueQuanCu;
@@ -573,6 +1132,154 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             Close();
         }
 
+
+        private static IEnumerable<Control> GetAllControls(Control parent)
+        {
+            foreach (Control child in parent.Controls)
+            {
+                yield return child;
+                foreach (Control descendant in GetAllControls(child))
+                    yield return descendant;
+            }
+        }
+
+
+        private void btnResetBasicTabInvalidate()
+        {
+            var reset = Controls.Find("btnResetBasicTab", false).FirstOrDefault() as Button;
+            if (reset == null) return;
+            reset.FlatStyle = FlatStyle.Flat;
+            reset.FlatAppearance.BorderSize = 0;
+            reset.BackColor = Color.White;
+            RoundedControlHelper.SetRounded(reset, 9);
+            reset.Paint -= ResetButton_PaintRoundedBorder;
+            reset.Paint += ResetButton_PaintRoundedBorder;
+            reset.Invalidate();
+        }
+
+        private void ResetButton_PaintRoundedBorder(object? sender, PaintEventArgs e)
+        {
+            if (sender is not Button button || button.Width < 4 || button.Height < 4)
+                return;
+
+            e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            using var path = RoundedRectangle(
+                new Rectangle(1, 1, button.Width - 3, button.Height - 3), 9);
+            using var pen = new Pen(Color.FromArgb(153, 183, 224), 1.2F);
+            e.Graphics.DrawPath(pen, path);
+        }
+
+        private void ApplyRoundedInputs()
+        {
+            // IMPORTANT: this method only styles input controls. It does not change
+            // tab widths, tab layout, form dimensions, or any form behaviour.
+            foreach (Control control in GetAllControls(this).Where(c => c is Button && c.Name != "btnResetBasicTab"))
+            {
+                try { RoundedControlHelper.SetRounded(control, 9); }
+                catch { /* Keep the native button appearance if a region cannot be applied. */ }
+            }
+
+            foreach (ComboBox combo in GetAllControls(this).OfType<ComboBox>())
+            {
+                // Flat rendering prevents the native square 3D edge from competing
+                // with the rounded outline drawn by the parent container.
+                combo.FlatStyle = FlatStyle.Flat;
+                combo.BackColor = Color.White;
+            }
+
+            // Apply a rounded clipping region to every input, including controls
+            // created dynamically on the basic-information tab. Rebuild the region
+            // after resizing so the corner radius stays consistent and the outline
+            // is not clipped using stale dimensions.
+            foreach (Control input in GetAllControls(this).Where(c =>
+                c is TextBox || c is ComboBox || c is DateTimePicker ||
+                c is MaskedTextBox || c is NumericUpDown))
+            {
+                input.Resize -= InputControl_Resize;
+                input.Resize += InputControl_Resize;
+                ApplyRoundedInputRegion(input);
+
+                // Draw the outline on the input's own native window after native painting.
+                // Parent painting is covered by child controls and can leave the border missing.
+                if (!_roundedInputBorderWindows.ContainsKey(input))
+                {
+                    var borderWindow = new RoundedInputBorderWindow(input);
+                    _roundedInputBorderWindows.Add(input, borderWindow);
+                    borderWindow.Attach();
+                }
+
+                // As soon as the user edits an invalid field, remove the inline error
+                // and restore the normal outline. Validation is re-run when saving.
+                input.TextChanged -= InputValidation_TextChanged;
+                input.TextChanged += InputValidation_TextChanged;
+                input.Enter -= InputValidation_Enter;
+                input.Enter += InputValidation_Enter;
+                if (input is ComboBox combo)
+                {
+                    combo.SelectedIndexChanged -= InputValidation_SelectionChanged;
+                    combo.SelectedIndexChanged += InputValidation_SelectionChanged;
+                }
+                if (input is DateTimePicker datePicker)
+                {
+                    datePicker.ValueChanged -= InputValidation_ValueChanged;
+                    datePicker.ValueChanged += InputValidation_ValueChanged;
+                }
+            }
+
+            foreach (Control control in _validationMessages.Keys.ToList())
+                UpdateValidationPresentation(control);
+        }
+
+        private void InputValidation_TextChanged(object? sender, EventArgs e)
+        {
+            if (sender is Control control && _invalidControls.Contains(control))
+                ClearError(control);
+        }
+
+        private void InputValidation_Enter(object? sender, EventArgs e)
+        {
+            if (sender is Control control && _validationLabels.TryGetValue(control, out Label? label))
+                label.BringToFront();
+        }
+
+        private void InputValidation_SelectionChanged(object? sender, EventArgs e)
+        {
+            if (sender is Control control && _invalidControls.Contains(control))
+                ClearError(control);
+        }
+
+        private void InputValidation_ValueChanged(object? sender, EventArgs e)
+        {
+            if (sender is Control control && _invalidControls.Contains(control))
+                ClearError(control);
+        }
+
+        private void InputControl_Resize(object? sender, EventArgs e)
+        {
+            if (sender is Control input)
+                ApplyRoundedInputRegion(input);
+        }
+
+        private static void ApplyRoundedInputRegion(Control input)
+        {
+            if (input.IsDisposed || input.Width < 8 || input.Height < 8)
+                return;
+
+            try
+            {
+                using var path = RoundedRectangle(
+                    new Rectangle(0, 0, input.Width - 1, input.Height - 1), 7);
+                var newRegion = new Region(path);
+                var oldRegion = input.Region;
+                input.Region = newRegion;
+                oldRegion?.Dispose();
+            }
+            catch
+            {
+                // Keep the input usable if Windows rejects a region for a native control.
+            }
+        }
+
         private void StyleActionButton(
             Button button,
             Color color)
@@ -591,7 +1298,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             button.Font =
                 new Font(
                     "Segoe UI",
-                    10,
+                    13F,
                     FontStyle.Bold);
 
             RoundedControlHelper
@@ -604,31 +1311,23 @@ namespace QuanLyCBCS.Forms.PersonnelForms
         {
             StyleActionButton(
                 btnSave,
-                Color.FromArgb(
-                    39,
-                    174,
-                    96));
+                Color.FromArgb(0, 103, 235));
 
             StyleActionButton(
                 btnCancel,
-                Color.FromArgb(
-                    231,
-                    76,
-                    60));
+                Color.FromArgb(242, 53, 53));
         }
 
         private void SetupTabControl()
         {
-            tabMain.Appearance =
-                TabAppearance.FlatButtons;
-
-            tabMain.SizeMode =
-                TabSizeMode.Fixed;
-
-            tabMain.ItemSize =
-                new Size(
-                    120,
-                    35);
+            // Keep the owner-drawn, full-width tab strip configured in
+            // ApplyBasicTabDesign; the old 120x35 setting caused the overlap.
+            tabMain.Appearance = TabAppearance.FlatButtons;
+            tabMain.DrawMode = TabDrawMode.OwnerDrawFixed;
+            tabMain.SizeMode = TabSizeMode.Fixed;
+            tabMain.Padding = new Point(1, 1);
+            tabMain.BackColor = BackColor;
+            UpdateTabLayout();
         }
 
         private void StyleTextBox(
@@ -637,10 +1336,10 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             txt.Font =
                 new Font(
                     "Segoe UI",
-                    10);
+                    12F);
 
             txt.BorderStyle =
-                BorderStyle.FixedSingle;
+                BorderStyle.None;
         }
 
         private void SetupTextBoxes()
@@ -662,67 +1361,193 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
         private void SetupHeader()
         {
-            if (_mode == FormMode.Add)
-            {
-                lblTitle.Text =
-                    "THÊM CBCS MỚI";
-
-                lblSubTitle.Text =
-                    "Nhập thông tin cán bộ chiến sĩ";
-            }
-            else
-            {
-                lblTitle.Text =
-                    "CẬP NHẬT CBCS";
-
-                lblSubTitle.Text =
-                    "Chỉnh sửa hồ sơ cán bộ chiến sĩ";
-            }
+            // Use the exact heading/subheading shown in the approved mockup
+            // for both add and edit modes.
+            lblTitle.Text = "THÔNG TIN CBCS";
+            lblSubTitle.Text = "Quản lý, cập nhật thông tin cán bộ, chiến sĩ";
         }
 
         private void ClearValidationErrors()
         {
             epValidation.Clear();
+            _validationMessages.Clear();
+            _invalidControls.Clear();
+
+            foreach (var pair in _validationLabels)
+                pair.Value.Visible = false;
+
+            foreach (var pair in _roundedInputBorderWindows)
+                pair.Value.IsInvalid = false;
+        }
+
+        private void SetValidationError(Control control, string message)
+        {
+            if (control == null) return;
+
+            // Keep ErrorProvider's message empty so its red X icon is never displayed.
+            epValidation.SetIconPadding(control, -1000);
+            epValidation.SetError(control, string.Empty);
+
+            if (string.IsNullOrWhiteSpace(message))
+            {
+                _validationMessages.Remove(control);
+                _invalidControls.Remove(control);
+                if (_validationLabels.TryGetValue(control, out Label? oldLabel))
+                    oldLabel.Visible = false;
+                if (_roundedInputBorderWindows.TryGetValue(control, out RoundedInputBorderWindow? oldBorder))
+                    oldBorder.IsInvalid = false;
+                return;
+            }
+
+            _validationMessages[control] = message;
+            _invalidControls.Add(control);
+            EnsureValidationLabel(control);
+            UpdateValidationPresentation(control);
+        }
+
+        private void SyncValidationUi()
+        {
+            // ValidationHelper writes into ErrorProvider; transfer those messages to
+            // the inline label + red rounded border, then clear native error icons.
+            foreach (Control control in GetAllControls(this).Where(c =>
+                c is TextBox || c is ComboBox || c is DateTimePicker ||
+                c is MaskedTextBox || c is NumericUpDown))
+            {
+                string message = epValidation.GetError(control);
+                if (!string.IsNullOrWhiteSpace(message))
+                    SetValidationError(control, message);
+                else if (!_validationMessages.ContainsKey(control))
+                    epValidation.SetError(control, string.Empty);
+            }
+        }
+
+        private void EnsureValidationLabel(Control control)
+        {
+            if (_validationLabels.ContainsKey(control) || control.Parent == null)
+                return;
+
+            var label = new Label
+            {
+                Name = "inlineValidation_" + control.Name,
+                AutoSize = false,
+                BackColor = Color.Transparent,
+                ForeColor = Color.FromArgb(220, 35, 35),
+                Font = new Font("Segoe UI", 9.5F, FontStyle.Regular),
+                TextAlign = ContentAlignment.MiddleLeft,
+                Padding = new Padding(5, 0, 2, 0),
+                Visible = false,
+                Cursor = Cursors.IBeam,
+                Tag = control
+            };
+
+            // Keep the message inside the input bounds. Clicking it focuses the input,
+            // so the user can immediately correct the value.
+            label.Click += (_, _) =>
+            {
+                if (control.CanFocus) control.Focus();
+            };
+            control.Parent.Controls.Add(label);
+            label.BringToFront();
+            _validationLabels[control] = label;
+            control.LocationChanged += (_, _) => PositionValidationLabel(control);
+            control.SizeChanged += (_, _) => PositionValidationLabel(control);
+            control.ParentChanged += (_, _) => PositionValidationLabel(control);
+        }
+
+        private void PositionValidationLabel(Control control)
+        {
+            if (!_validationLabels.TryGetValue(control, out Label? label) || control.Parent == null)
+                return;
+
+            label.Parent = control.Parent;
+            label.SetBounds(control.Left + 5, control.Top + 1,
+                Math.Max(0, control.Width - 12), Math.Max(0, control.Height - 2));
+            label.BringToFront();
+        }
+
+        private void UpdateValidationPresentation(Control control)
+        {
+            EnsureValidationLabel(control);
+            if (!_validationLabels.TryGetValue(control, out Label? label)) return;
+
+            string message = _validationMessages.TryGetValue(control, out string? value) ? value : string.Empty;
+            label.Text = message;
+            bool empty = IsInputEmpty(control);
+            // Render the validation message inside the field for every invalid state.
+            // Editing the field clears the message and restores visibility of the value.
+            label.Visible = !string.IsNullOrWhiteSpace(message);
+            PositionValidationLabel(control);
+
+            if (_roundedInputBorderWindows.TryGetValue(control, out RoundedInputBorderWindow? border))
+                border.IsInvalid = !string.IsNullOrWhiteSpace(message);
+
+            if (!string.IsNullOrWhiteSpace(message) && !empty && toolTipMain != null)
+                toolTipMain.SetToolTip(control, message);
+        }
+
+        private static bool IsInputEmpty(Control control)
+        {
+            if (control is TextBoxBase textBox) return string.IsNullOrWhiteSpace(textBox.Text);
+            if (control is ComboBox combo) return combo.SelectedIndex < 0 || string.IsNullOrWhiteSpace(combo.Text);
+            if (control is NumericUpDown numeric) return numeric.Value == 0;
+            return false;
         }
 
         private bool ValidateForm()
         {
-            epValidation.Clear();
+            ClearValidationErrors();
 
             Control? firstErrorControl = null;
 
             bool isValid = true;
 
-            if (!ValidationHelper.ValidateRequired(
-                txtSoHieu,
-                epValidation,
-                "Nhập số hiệu"))
+            // Validate directly into the inline-message system. Do not use the
+            // ErrorProvider for these fields, because it draws the red X icon.
+            string soHieu = txtSoHieu.Text.Trim();
+            if (string.IsNullOrWhiteSpace(soHieu))
             {
+                SetValidationError(txtSoHieu, "Nhập số hiệu");
                 firstErrorControl ??= txtSoHieu;
                 isValid = false;
             }
 
-            if (!ValidationHelper.ValidateRequired(
-                txtHoTen,
-                epValidation,
-                "Nhập họ tên"))
+            if (string.IsNullOrWhiteSpace(txtHoTen.Text.Trim()))
             {
+                SetValidationError(txtHoTen, "Nhập họ tên");
                 firstErrorControl ??= txtHoTen;
                 isValid = false;
             }
 
-            if (!ValidationHelper.ValidateCCCD(
-                txtCCCD,
-                epValidation))
+            string cccd = txtCCCD.Text.Trim();
+            if (string.IsNullOrWhiteSpace(cccd))
             {
+                SetValidationError(txtCCCD, "Nhập CCCD");
+                firstErrorControl ??= txtCCCD;
+                isValid = false;
+            }
+            else if (cccd.Length != 12 || !cccd.All(char.IsDigit))
+            {
+                SetValidationError(txtCCCD, "CCCD phải gồm 12 số");
                 firstErrorControl ??= txtCCCD;
                 isValid = false;
             }
 
-            if (!ValidationHelper.ValidatePhone(
-                txtSoDienThoai,
-                epValidation))
+            string phone = txtSoDienThoai.Text.Trim();
+            if (string.IsNullOrWhiteSpace(phone))
             {
+                SetValidationError(txtSoDienThoai, "Nhập số điện thoại");
+                firstErrorControl ??= txtSoDienThoai;
+                isValid = false;
+            }
+            else if (!phone.StartsWith("0", StringComparison.Ordinal))
+            {
+                SetValidationError(txtSoDienThoai, "Số điện thoại không hợp lệ");
+                firstErrorControl ??= txtSoDienThoai;
+                isValid = false;
+            }
+            else if (phone.Length != 10 || !phone.All(char.IsDigit))
+            {
+                SetValidationError(txtSoDienThoai, "Số điện thoại chỉ bao gồm 10 số");
                 firstErrorControl ??= txtSoDienThoai;
                 isValid = false;
             }
@@ -733,7 +1558,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 !ValidationHelper.IsHeSoLuong(
                     txtHeSoLuong.Text))
             {
-                epValidation.SetError(
+                SetValidationError(
                     txtHeSoLuong,
                     "Hệ số lương không hợp lệ");
 
@@ -745,7 +1570,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             if (cboGioiTinh.SelectedIndex < 0)
             {
-                epValidation.SetError(
+                SetValidationError(
                     cboGioiTinh,
                     "Chọn giới tính");
 
@@ -756,7 +1581,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             if (cboPersonnelType.SelectedIndex < 0)
             {
-                epValidation.SetError(
+                SetValidationError(
                     cboPersonnelType,
                     "Chọn loại CBCS");
 
@@ -764,6 +1589,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
                 isValid = false;
             }
+
+            SyncValidationUi();
 
             if (firstErrorControl != null)
             {
@@ -805,9 +1632,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
         private void ClearError(
             Control control)
         {
-            epValidation.SetError(
-                control,
-                string.Empty);
+            SetValidationError(control, string.Empty);
         }
 
         private void FocusControl(
@@ -974,7 +1799,150 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             }
 
             lblTuoi.Text =
-                $"- {age} tuổi";
+                $"Tuổi: {age}";
+        }
+    }
+
+
+    // Removes the native rectangular frame around the tab strip/content area.
+    // Owner-drawn tabs and the rounded information card provide the visible borders.
+    internal class BorderlessTabControl : TabControl
+    {
+        private const int WM_NCPAINT = 0x0085;
+
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                const int WS_BORDER = 0x00800000;
+                const int WS_EX_CLIENTEDGE = 0x00000200;
+                cp.Style &= ~WS_BORDER;
+                cp.ExStyle &= ~WS_EX_CLIENTEDGE;
+                return cp;
+            }
+        }
+
+        // Suppress the native non-client frame which otherwise leaves a gray
+        // rectangular outline around the tab strip and page area on Windows.
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == WM_NCPAINT)
+            {
+                m.Result = IntPtr.Zero;
+                return;
+            }
+
+            base.WndProc(ref m);
+        }
+    }
+
+
+    /// <summary>Draws a complete rounded outline on top of native input controls.</summary>
+    internal sealed class RoundedInputBorderWindow : NativeWindow
+    {
+        private const int WM_PAINT = 0x000F;
+        private const int WM_NCPAINT = 0x0085;
+        private const int WM_SIZE = 0x0005;
+        private readonly Control _control;
+        private bool _attached;
+        private bool _isInvalid;
+
+        public bool IsInvalid
+        {
+            get => _isInvalid;
+            set
+            {
+                if (_isInvalid == value) return;
+                _isInvalid = value;
+                if (_control.IsHandleCreated) _control.Invalidate();
+                DrawRoundedBorder();
+            }
+        }
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetWindowDC(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        private static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
+
+        public RoundedInputBorderWindow(Control control)
+        {
+            _control = control;
+            _control.HandleCreated += Control_HandleCreated;
+            _control.HandleDestroyed += Control_HandleDestroyed;
+        }
+
+        public void Attach()
+        {
+            if (_control.IsHandleCreated && !_attached)
+            {
+                AssignHandle(_control.Handle);
+                _attached = true;
+                _control.Invalidate();
+            }
+        }
+
+        private void Control_HandleCreated(object? sender, EventArgs e) => Attach();
+
+        private void Control_HandleDestroyed(object? sender, EventArgs e)
+        {
+            if (_attached)
+            {
+                ReleaseHandle();
+                _attached = false;
+            }
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            base.WndProc(ref m);
+            if (m.Msg == WM_PAINT || m.Msg == WM_NCPAINT || m.Msg == WM_SIZE)
+                DrawRoundedBorder();
+        }
+
+        private void DrawRoundedBorder()
+        {
+            if (_control.IsDisposed || !_control.IsHandleCreated ||
+                _control.Width < 8 || _control.Height < 8)
+                return;
+
+            IntPtr hdc = GetWindowDC(_control.Handle);
+            if (hdc == IntPtr.Zero) return;
+
+            try
+            {
+                using Graphics graphics = Graphics.FromHdc(hdc);
+                graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                graphics.PixelOffsetMode = PixelOffsetMode.Half;
+                using var path = CreateRoundedPath(
+                    new RectangleF(0.65F, 0.65F, _control.Width - 1.3F, _control.Height - 1.3F), 8F);
+                Color borderColor = _isInvalid
+                    ? Color.FromArgb(220, 35, 35)
+                    : Color.FromArgb(125, 135, 150);
+                using var pen = new Pen(borderColor, _isInvalid ? 1.8F : 1.2F);
+                graphics.DrawPath(pen, path);
+            }
+            catch
+            {
+                // Do not interrupt normal input behaviour if drawing fails for a frame.
+            }
+            finally
+            {
+                ReleaseDC(_control.Handle, hdc);
+            }
+        }
+
+        private static GraphicsPath CreateRoundedPath(RectangleF bounds, float radius)
+        {
+            float d = Math.Min(radius * 2F, Math.Min(bounds.Width, bounds.Height));
+            var path = new GraphicsPath();
+            path.AddArc(bounds.X, bounds.Y, d, d, 180, 90);
+            path.AddArc(bounds.Right - d, bounds.Y, d, d, 270, 90);
+            path.AddArc(bounds.Right - d, bounds.Bottom - d, d, d, 0, 90);
+            path.AddArc(bounds.X, bounds.Bottom - d, d, d, 90, 90);
+            path.CloseFigure();
+            return path;
         }
     }
 }
