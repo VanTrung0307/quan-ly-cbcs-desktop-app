@@ -38,6 +38,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             ApplyBasicTabDesign();
             ApplyAddressTabDesign();
+            ApplyWorkTabDesign();
 
             // Keep the form at a practical dialog size; the maximize button is disabled.
             AutoSize = false;
@@ -48,10 +49,11 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             {
                 UpdateTabLayout();
                 UpdateAddressTabLayout();
+                UpdateWorkTabLayout();
                 ApplyRoundedInputs();
                 btnResetBasicTabInvalidate();
             };
-            Resize += (_, _) => { UpdateTabLayout(); UpdateAddressTabLayout(); };
+            Resize += (_, _) => { UpdateTabLayout(); UpdateAddressTabLayout(); UpdateWorkTabLayout(); };
 
             epValidation.BlinkStyle = ErrorBlinkStyle.NeverBlink;
 
@@ -538,6 +540,169 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             UpdateAddressTabLayout();
         }
 
+        // Restyle only the Work tab to match the approved third-tab mockup.
+        // Existing controls are reused so persistence, validation and event handlers remain intact.
+        private void ApplyWorkTabDesign()
+        {
+            if (tabPage3 == null) return;
+            tabPage3.BackColor = BackColor;
+            tabPage3.Padding = new Padding(0);
+
+            var card = tabPage3.Controls.Find("pnlWorkCard", false).FirstOrDefault() as Panel;
+            if (card == null)
+            {
+                card = new Panel { Name = "pnlWorkCard", BackColor = Color.FromArgb(247, 251, 255) };
+                tabPage3.Controls.Add(card);
+            }
+            card.BorderStyle = BorderStyle.None;
+            card.Paint -= AddressCard_Paint;
+            card.Paint += AddressCard_Paint;
+            card.SendToBack();
+
+            void StyleWorkLabel(Label label, string text)
+            {
+                label.Text = text;
+                label.AutoSize = false;
+                label.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+                label.ForeColor = Color.FromArgb(20, 45, 105);
+                label.BackColor = Color.Transparent;
+                label.TextAlign = ContentAlignment.MiddleLeft;
+            }
+
+            StyleWorkLabel(lblDonVi, "Đơn vị");
+            StyleWorkLabel(lblViTriCongTac, "Vị trí công tác");
+            StyleWorkLabel(lblCapBacHam, "Cấp bậc hàm");
+            StyleWorkLabel(lblNgayNhanCapBac, "Ngày nhận cấp bậc");
+            StyleWorkLabel(lblThangNamVaoNganh, "Tháng năm vào ngành");
+            StyleWorkLabel(lblThangNamNhanCongTac, "Tháng năm nhận công tác");
+            StyleWorkLabel(lblChucVu, "Chức vụ");
+            StyleWorkLabel(lblNgayBoNhiem, "Ngày bổ nhiệm");
+            StyleWorkLabel(lblHeSoLuong, "Hệ số lương");
+
+            void StyleWorkTextBox(TextBox textBox, string placeholder)
+            {
+                textBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular);
+                textBox.BackColor = Color.White;
+                textBox.ForeColor = Color.FromArgb(35, 45, 60);
+                textBox.BorderStyle = BorderStyle.FixedSingle;
+                textBox.PlaceholderText = placeholder;
+                textBox.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            }
+            StyleWorkTextBox(txtDonVi, "Nhập tên đơn vị...");
+            StyleWorkTextBox(txtViTriCongTac, "Nhập nơi công tác...");
+            StyleWorkTextBox(txtChucVu, "Nhập chức vụ hiện tại...");
+            StyleWorkTextBox(txtHeSoLuong, "Nhập hệ số lương...");
+
+            cboCapBacHam.Font = new Font("Segoe UI", 12F, FontStyle.Regular);
+            cboCapBacHam.BackColor = Color.White;
+            cboCapBacHam.ForeColor = Color.FromArgb(35, 45, 60);
+            cboCapBacHam.DropDownStyle = ComboBoxStyle.DropDownList;
+
+            foreach (var picker in new[] { dtNgayNhanCapBac, dtNgayBoNhiem })
+            {
+                picker.Font = new Font("Segoe UI", 12F, FontStyle.Regular);
+                picker.Format = DateTimePickerFormat.Custom;
+                picker.CustomFormat = "dd/MM/yyyy";
+            }
+            foreach (var picker in new[] { dtThangNamVaoNganh, dtThangNamNhanCongTac })
+            {
+                picker.Font = new Font("Segoe UI", 12F, FontStyle.Regular);
+                picker.Format = DateTimePickerFormat.Custom;
+                picker.CustomFormat = "MM/yyyy";
+                picker.ShowUpDown = false;
+            }
+
+            // Dedicated vector icons matching the approved Work tab mockup.
+            // The address tab keeps its existing Segoe MDL2 glyphs unchanged.
+            AddAddressIcon("pnlWorkIconUnit", "work:building", tabPage3);
+            AddAddressIcon("pnlWorkIconPosition", "work:map-pin", tabPage3);
+            AddAddressIcon("pnlWorkIconRank", "work:layers", tabPage3);
+            AddAddressIcon("pnlWorkIconRankDate", "work:calendar", tabPage3);
+            AddAddressIcon("pnlWorkIconIndustryDate", "work:briefcase", tabPage3);
+            AddAddressIcon("pnlWorkIconAssignmentDate", "work:calendar", tabPage3);
+            AddAddressIcon("pnlWorkIconTitle", "work:gear", tabPage3);
+            AddAddressIcon("pnlWorkIconAppointment", "work:calendar", tabPage3);
+            AddAddressIcon("pnlWorkIconSalary", "work:users", tabPage3);
+
+            UpdateWorkTabLayout();
+        }
+
+        private void UpdateWorkTabLayout()
+        {
+            if (IsDisposed || tabPage3 == null || tabPage3.IsDisposed || tabPage3.ClientSize.Width < 100)
+                return;
+
+            int w = tabPage3.ClientSize.Width;
+            int h = tabPage3.ClientSize.Height;
+            var card = tabPage3.Controls.Find("pnlWorkCard", false).FirstOrDefault() as Panel;
+            if (card != null)
+            {
+                card.Location = Point.Empty;
+                card.Size = new Size(w, h);
+                card.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+                card.SendToBack();
+                card.Invalidate();
+            }
+
+            int margin = 30;
+            int columnGap = 46;
+            int colWidth = Math.Max(300, (w - margin * 2 - columnGap) / 2);
+            int leftX = margin;
+            int rightX = margin + colWidth + columnGap;
+            int iconSize = 54;
+            int iconLabelGap = 24;
+            int labelWidth = 205;
+            int inputGap = 18;
+            int rowTop = 34;
+            int rowStep = Math.Max(72, Math.Min(84, (h - 55) / 5));
+            int inputXLeft = leftX + iconSize + iconLabelGap + labelWidth + inputGap;
+            int inputXRight = rightX + iconSize + iconLabelGap + labelWidth + inputGap;
+            int inputWidthLeft = Math.Max(140, leftX + colWidth - inputXLeft - 12);
+            int inputWidthRight = Math.Max(140, rightX + colWidth - inputXRight - 12);
+
+            void PositionLabel(Label label, int x, int y, int width, int height = 54)
+            {
+                label.Location = new Point(x, y);
+                label.Size = new Size(width, height);
+                label.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+                label.BringToFront();
+            }
+            void PositionControl(Control control, int x, int y, int width, int height = 50)
+            {
+                control.Location = new Point(x, y + (iconSize - height) / 2);
+                control.Size = new Size(width, height);
+                control.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+                control.BringToFront();
+            }
+            void PositionIcon(string name, int x, int y)
+            {
+                var icon = tabPage3.Controls.Find(name, false).FirstOrDefault() as Panel;
+                if (icon == null) return;
+                icon.Location = new Point(x, y);
+                icon.Size = new Size(iconSize, iconSize);
+                ApplyAddressIconRegion(icon);
+                icon.Invalidate();
+                icon.BringToFront();
+            }
+            void PlaceRow(string iconName, int left, int y, Label label, Control control, int inputWidth, string? glyph = null)
+            {
+                PositionIcon(iconName, left, y);
+                PositionLabel(label, left + iconSize + iconLabelGap, y, labelWidth);
+                PositionControl(control, left + iconSize + iconLabelGap + labelWidth + inputGap, y, inputWidth);
+            }
+
+            PlaceRow("pnlWorkIconUnit", leftX, rowTop, lblDonVi, txtDonVi, inputWidthLeft);
+            PlaceRow("pnlWorkIconPosition", leftX, rowTop + rowStep, lblViTriCongTac, txtViTriCongTac, inputWidthLeft);
+            PlaceRow("pnlWorkIconRank", leftX, rowTop + rowStep * 2, lblCapBacHam, cboCapBacHam, inputWidthLeft);
+            PlaceRow("pnlWorkIconRankDate", leftX, rowTop + rowStep * 3, lblNgayNhanCapBac, dtNgayNhanCapBac, inputWidthLeft);
+            PlaceRow("pnlWorkIconIndustryDate", leftX, rowTop + rowStep * 4, lblThangNamVaoNganh, dtThangNamVaoNganh, inputWidthLeft);
+
+            PlaceRow("pnlWorkIconAssignmentDate", rightX, rowTop, lblThangNamNhanCongTac, dtThangNamNhanCongTac, inputWidthRight);
+            PlaceRow("pnlWorkIconTitle", rightX, rowTop + rowStep, lblChucVu, txtChucVu, inputWidthRight);
+            PlaceRow("pnlWorkIconAppointment", rightX, rowTop + rowStep * 2, lblNgayBoNhiem, dtNgayBoNhiem, inputWidthRight);
+            PlaceRow("pnlWorkIconSalary", rightX, rowTop + rowStep * 3, lblHeSoLuong, txtHeSoLuong, inputWidthRight);
+        }
+
         private void AddAddressIcon(string name, string glyph, Control parent)
         {
             var iconPanel = parent.Controls.Find(name, false).FirstOrDefault() as Panel;
@@ -546,6 +711,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 iconPanel = new Panel { Name = name, Tag = glyph };
                 parent.Controls.Add(iconPanel);
             }
+            // Update Tag even when the icon panel was created by the Designer earlier.
+            iconPanel.Tag = glyph;
             // Keep the panel itself transparent. Otherwise WinForms paints its
             // rectangular BackColor behind the rounded icon tile, leaving square
             // corners visible outside the rounded fill.
@@ -675,12 +842,105 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             using var border = new Pen(Color.FromArgb(190, 218, 250), 1F);
             e.Graphics.FillPath(fill, path);
             e.Graphics.DrawPath(border, path);
+            string glyph = panel.Tag as string ?? "\uE707";
+            if (glyph.StartsWith("work:", StringComparison.Ordinal))
+            {
+                DrawWorkTabIcon(e.Graphics, glyph.Substring(5), panel.ClientRectangle);
+                return;
+            }
+
             using var font = new Font("Segoe MDL2 Assets", 22F, FontStyle.Regular);
             using var brush = new SolidBrush(Color.FromArgb(0, 75, 170));
-            string glyph = panel.Tag as string ?? "\uE707";
             var size = e.Graphics.MeasureString(glyph, font);
             e.Graphics.DrawString(glyph, font, brush,
                 (panel.Width - size.Width) / 2F, (panel.Height - size.Height) / 2F + 1F);
+        }
+
+        private static void DrawWorkTabIcon(Graphics g, string kind, Rectangle bounds)
+        {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            Color blue = Color.FromArgb(0, 91, 190);
+            Color white = Color.White;
+            using var blueBrush = new SolidBrush(blue);
+            using var whiteBrush = new SolidBrush(white);
+            using var bluePen = new Pen(blue, 2.2F) { LineJoin = LineJoin.Round, StartCap = LineCap.Round, EndCap = LineCap.Round };
+            using var whitePen = new Pen(white, 1.8F) { LineJoin = LineJoin.Round, StartCap = LineCap.Round, EndCap = LineCap.Round };
+            float s = Math.Min(bounds.Width, bounds.Height) / 54F;
+            g.TranslateTransform(bounds.Left + bounds.Width / 2F, bounds.Top + bounds.Height / 2F);
+            g.ScaleTransform(s, s);
+
+            switch (kind)
+            {
+                case "building":
+                    // Solid office building with a stepped roof and white windows.
+                    g.FillRectangle(blueBrush, -13, -17, 26, 34);
+                    g.FillPolygon(blueBrush, new[] { new PointF(-16, -17), new PointF(0, -23), new PointF(16, -17) });
+                    for (int row = 0; row < 3; row++)
+                        for (int col = 0; col < 3; col++)
+                            g.FillRectangle(whiteBrush, -8 + col * 7, -12 + row * 8, 3, 4);
+                    g.FillRectangle(whiteBrush, -3, 10, 6, 7);
+                    break;
+                case "map-pin":
+                    using (var pin = new GraphicsPath())
+                    {
+                        pin.AddArc(-12, -21, 24, 24, 205, 310);
+                        pin.AddLine(pin.GetLastPoint(), new PointF(0, 22));
+                        pin.CloseFigure();
+                        g.FillPath(blueBrush, pin);
+                    }
+                    g.FillEllipse(whiteBrush, -5, -15, 10, 10);
+                    break;
+                case "layers":
+                    g.FillPolygon(blueBrush, new[] { new PointF(0, -20), new PointF(17, -10), new PointF(0, 0), new PointF(-17, -10) });
+                    g.FillPolygon(blueBrush, new[] { new PointF(-16, -2), new PointF(0, 8), new PointF(16, -2), new PointF(16, 4), new PointF(0, 14), new PointF(-16, 4) });
+                    g.FillPolygon(blueBrush, new[] { new PointF(-13, 9), new PointF(0, 17), new PointF(13, 9), new PointF(13, 14), new PointF(0, 22), new PointF(-13, 14) });
+                    break;
+                case "calendar":
+                    g.FillRectangle(blueBrush, -16, -15, 32, 31);
+                    g.FillRectangle(whiteBrush, -11, -7, 22, 18);
+                    g.DrawLine(whitePen, -10, -10, 10, -10);
+                    g.DrawLine(whitePen, -9, -20, -9, -12);
+                    g.DrawLine(whitePen, 9, -20, 9, -12);
+                    using (var gridPen = new Pen(blue, 1.5F))
+                    {
+                        for (int x = -5; x <= 5; x += 5) g.DrawLine(gridPen, x, -4, x, 8);
+                        for (int y = 0; y <= 6; y += 6) g.DrawLine(gridPen, -9, y, 9, y);
+                    }
+                    break;
+                case "briefcase":
+                    g.FillRectangle(blueBrush, -18, -10, 36, 25);
+                    g.FillRectangle(blueBrush, -8, -17, 16, 8);
+                    g.FillRectangle(whiteBrush, -4, -14, 8, 3);
+                    g.FillRectangle(whiteBrush, -18, -2, 36, 3);
+                    g.FillRectangle(whiteBrush, -2, -3, 4, 7);
+                    break;
+                case "gear":
+                    // Filled cog, white hub, visually matching the solid settings icon in the mockup.
+                    for (int i = 0; i < 8; i++)
+                    {
+                        g.ResetTransform();
+                        g.TranslateTransform(bounds.Left + bounds.Width / 2F, bounds.Top + bounds.Height / 2F);
+                        g.ScaleTransform(s, s);
+                        g.RotateTransform(i * 45F);
+                        g.FillRectangle(blueBrush, -4.2F, -21F, 8.4F, 10F);
+                    }
+                    g.ResetTransform();
+                    g.TranslateTransform(bounds.Left + bounds.Width / 2F, bounds.Top + bounds.Height / 2F);
+                    g.ScaleTransform(s, s);
+                    g.FillEllipse(blueBrush, -15, -15, 30, 30);
+                    g.FillEllipse(whiteBrush, -6, -6, 12, 12);
+                    break;
+                case "users":
+                    g.FillEllipse(blueBrush, -6, -19, 12, 12);
+                    g.FillEllipse(blueBrush, -18, -13, 10, 10);
+                    g.FillEllipse(blueBrush, 8, -13, 10, 10);
+                    using (var body = RoundedRectangle(new Rectangle(-13, -4, 26, 18), 5)) g.FillPath(blueBrush, body);
+                    using (var leftBody = RoundedRectangle(new Rectangle(-23, -2, 13, 14), 4)) g.FillPath(blueBrush, leftBody);
+                    using (var rightBody = RoundedRectangle(new Rectangle(10, -2, 13, 14), 4)) g.FillPath(blueBrush, rightBody);
+                    break;
+            }
+            g.ResetTransform();
         }
 
         private void UpdateTabLayout()
