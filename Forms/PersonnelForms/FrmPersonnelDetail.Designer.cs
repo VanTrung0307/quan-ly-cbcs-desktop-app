@@ -30,7 +30,7 @@
         {
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmPersonnelDetail));
-            tabMain = new BorderlessTabControl();
+            tabMain = new TabControl();
             tabPage1 = new TabPage();
             lblTuoi = new Label();
             lblVaSDT = new Label();
@@ -1061,7 +1061,7 @@
 
         #endregion
 
-        private BorderlessTabControl tabMain;
+        private TabControl tabMain;
         public TabPage tabPage1;
         public TabPage tabPage2;
         public TabPage tabPage3;

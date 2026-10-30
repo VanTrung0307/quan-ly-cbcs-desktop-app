@@ -22,12 +22,21 @@ public class ApplicationDbContext : DbContext
     protected override void OnConfiguring(
         DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer(
-            @"Server=.\VANTRUNG;
-              Database=QuanLyCBCS_New   ;
-              Trusted_Connection=True;
-              TrustServerCertificate=True;
-              MultipleActiveResultSets=True");
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseSqlServer(
+                @"Server=.\VANTRUNG;
+                  Database=QuanLyCBCS_New;
+                  Trusted_Connection=True;
+                  TrustServerCertificate=True;
+                  MultipleActiveResultSets=True;
+                  Connect Timeout=30",
+                sqlOptions =>
+                {
+                    // Cho phép truy vấn chạy tối đa 60 giây.
+                    sqlOptions.CommandTimeout(60);
+                });
+        }
     }
 
     protected override void OnModelCreating(

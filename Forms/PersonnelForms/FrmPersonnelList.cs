@@ -255,14 +255,44 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 ThemeHelper.PrimaryColor;
         }
 
+        // Trả về đúng màu nền thiết kế của từng nút CRUD.
+        // Không dùng chung ThemeHelper.PrimaryColor vì nút Thêm, Sửa, Xóa
+        // có các màu nền khác nhau trong giao diện mới.
+        private Color GetButtonBaseColor(Button btn)
+        {
+            if (btn == btnAdd)
+                return Color.FromArgb(0, 75, 190);
+
+            if (btn == btnEdit)
+                return Color.FromArgb(35, 112, 239);
+
+            if (btn == btnDelete)
+                return Color.FromArgb(245, 52, 43);
+
+            return ThemeHelper.PrimaryColor;
+        }
+
+        private Color GetButtonHoverColor(Button btn)
+        {
+            if (btn == btnAdd)
+                return Color.FromArgb(20, 94, 210);
+
+            if (btn == btnEdit)
+                return Color.FromArgb(55, 132, 248);
+
+            if (btn == btnDelete)
+                return Color.FromArgb(255, 75, 65);
+
+            return ThemeHelper.SecondaryColor;
+        }
+
         private void Button_MouseEnter(
             object? sender,
             EventArgs e)
         {
             if (sender is Button btn)
             {
-                btn.BackColor =
-                    ThemeHelper.SecondaryColor;
+                btn.BackColor = GetButtonHoverColor(btn);
             }
         }
 
@@ -282,8 +312,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
         {
             if (sender is Button btn)
             {
-                btn.BackColor =
-                    ThemeHelper.PrimaryColor;
+                // Khôi phục màu gốc tương ứng, không ép cả ba nút về cùng màu.
+                btn.BackColor = GetButtonBaseColor(btn);
             }
         }
 
@@ -562,6 +592,191 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             await LoadPersonnelAsync();
         }
 
+        /// <summary>
+        /// Hộp thoại xác nhận xóa CBCS theo bản thiết kế.
+        /// Chỉ thay đổi phần trình bày, không thay đổi nghiệp vụ xóa.
+        /// </summary>
+        private DialogResult ShowCustomDeleteConfirmDialog(string personnelName)
+        {
+            using Form dialog = new Form();
+            using Panel contentPanel = new Panel();
+            using Label lblWarningIcon = new Label();
+            using Label lblMessage = new Label();
+            using Button btnYes = new Button();
+            using Button btnNo = new Button();
+
+            dialog.SuspendLayout();
+            dialog.Text = "Xác nhận";
+            dialog.StartPosition = FormStartPosition.CenterParent;
+            dialog.FormBorderStyle = FormBorderStyle.FixedDialog;
+            dialog.ClientSize = new Size(360, 164);
+            dialog.MaximizeBox = false;
+            dialog.MinimizeBox = false;
+            dialog.ShowInTaskbar = false;
+            dialog.BackColor = Color.White;
+            dialog.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+            dialog.AutoScaleMode = AutoScaleMode.Dpi;
+            dialog.ControlBox = true;
+
+            contentPanel.Name = "pnlDeleteConfirmContent";
+            contentPanel.Location = new Point(0, 0);
+            contentPanel.Size = new Size(360, 112);
+            contentPanel.BackColor = Color.White;
+            contentPanel.BorderStyle = BorderStyle.None;
+
+            lblWarningIcon.Name = "lblDeleteWarningIcon";
+            lblWarningIcon.Location = new Point(25, 37);
+            lblWarningIcon.Size = new Size(42, 42);
+            lblWarningIcon.Text = string.Empty;
+            lblWarningIcon.BackColor = Color.Transparent;
+            lblWarningIcon.Paint += (_, e) =>
+            {
+                e.Graphics.SmoothingMode =
+                    System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+                using SolidBrush circleBrush =
+                    new SolidBrush(Color.FromArgb(235, 55, 55));
+                using SolidBrush textBrush = new SolidBrush(Color.White);
+                using Font iconFont =
+                    new Font("Segoe UI", 25F, FontStyle.Bold, GraphicsUnit.Point);
+                using StringFormat format = new StringFormat
+                {
+                    Alignment = StringAlignment.Center,
+                    LineAlignment = StringAlignment.Center
+                };
+
+                e.Graphics.FillEllipse(circleBrush, 1, 1, 39, 39);
+                e.Graphics.DrawString(
+                    "!",
+                    iconFont,
+                    textBrush,
+                    new RectangleF(0, -1, lblWarningIcon.Width, lblWarningIcon.Height),
+                    format);
+            };
+
+            lblMessage.Name = "lblDeleteConfirmMessage";
+            lblMessage.Location = new Point(96, 31);
+            lblMessage.Size = new Size(250, 60);
+            lblMessage.Text = $"Bạn có chắc muốn xoá CBCS ?{Environment.NewLine}{personnelName} ?";
+            lblMessage.ForeColor = Color.FromArgb(35, 35, 35);
+            lblMessage.BackColor = Color.Transparent;
+            lblMessage.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+            lblMessage.TextAlign = ContentAlignment.MiddleLeft;
+            lblMessage.AutoEllipsis = false;
+
+            Panel buttonPanel = new Panel
+            {
+                Name = "pnlDeleteConfirmButtons",
+                Location = new Point(0, 112),
+                Size = new Size(360, 52),
+                BackColor = Color.FromArgb(248, 248, 248)
+            };
+
+            btnYes.Name = "btnDeleteConfirmYes";
+            btnYes.Text = string.Empty;
+            btnYes.TextAlign = ContentAlignment.MiddleCenter;
+            btnYes.Size = new Size(122, 39);
+            btnYes.Location = new Point(39, 7);
+            btnYes.BackColor = Color.FromArgb(0, 105, 235);
+            btnYes.ForeColor = Color.White;
+            btnYes.FlatStyle = FlatStyle.Flat;
+            btnYes.FlatAppearance.BorderSize = 0;
+            btnYes.FlatAppearance.MouseOverBackColor = Color.FromArgb(20, 119, 245);
+            btnYes.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 85, 205);
+            btnYes.Font = new Font("Segoe UI", 9.5F, FontStyle.Regular);
+            btnYes.Cursor = Cursors.Hand;
+            btnYes.DialogResult = DialogResult.Yes;
+            btnYes.UseVisualStyleBackColor = false;
+            // Vẽ biểu tượng thùng rác nét trắng theo mẫu, tránh ký tự Unicode/emoji
+            // bị thay đổi hình dạng tùy phiên bản Windows hoặc font đang cài.
+            btnYes.Paint += (_, e) =>
+            {
+                e.Graphics.SmoothingMode =
+                    System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+                using Pen trashPen = new Pen(Color.White, 1.8F)
+                {
+                    StartCap = System.Drawing.Drawing2D.LineCap.Round,
+                    EndCap = System.Drawing.Drawing2D.LineCap.Round,
+                    LineJoin = System.Drawing.Drawing2D.LineJoin.Round
+                };
+
+                // Nắp và tay cầm thùng rác.
+                e.Graphics.DrawLine(trashPen, 29, 13, 43, 13);
+                e.Graphics.DrawLine(trashPen, 33, 10, 39, 10);
+                e.Graphics.DrawLine(trashPen, 31, 15, 32, 28);
+                e.Graphics.DrawLine(trashPen, 41, 15, 40, 28);
+                e.Graphics.DrawLine(trashPen, 32, 28, 40, 28);
+                e.Graphics.DrawLine(trashPen, 35, 17, 35, 25);
+                e.Graphics.DrawLine(trashPen, 38, 17, 38, 25);
+
+                using Font yesTextFont = new Font(
+                    "Segoe UI", 9.5F, FontStyle.Regular, GraphicsUnit.Point);
+                TextRenderer.DrawText(
+                    e.Graphics,
+                    "Có",
+                    yesTextFont,
+                    new Rectangle(48, 0, btnYes.Width - 48, btnYes.Height),
+                    Color.White,
+                    TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter);
+            };
+
+            btnNo.Name = "btnDeleteConfirmNo";
+            btnNo.Text = "Không";
+            btnNo.Size = new Size(122, 39);
+            btnNo.Location = new Point(169, 7);
+            btnNo.BackColor = Color.White;
+            btnNo.ForeColor = Color.FromArgb(45, 45, 45);
+            btnNo.FlatStyle = FlatStyle.Flat;
+            btnNo.FlatAppearance.BorderColor = Color.FromArgb(210, 210, 210);
+            btnNo.FlatAppearance.BorderSize = 1;
+            btnNo.FlatAppearance.MouseOverBackColor = Color.FromArgb(242, 246, 252);
+            btnNo.Font = new Font("Segoe UI", 9.5F, FontStyle.Regular);
+            btnNo.Cursor = Cursors.Hand;
+            btnNo.DialogResult = DialogResult.No;
+            btnNo.UseVisualStyleBackColor = false;
+
+            void ApplyRoundedButton(Button button, int radius)
+            {
+                if (button.Width <= 0 || button.Height <= 0)
+                    return;
+
+                using var path = new System.Drawing.Drawing2D.GraphicsPath();
+                int diameter = radius * 2;
+                Rectangle rect = new Rectangle(0, 0, button.Width, button.Height);
+                path.AddArc(rect.X, rect.Y, diameter, diameter, 180, 90);
+                path.AddArc(rect.Right - diameter, rect.Y, diameter, diameter, 270, 90);
+                path.AddArc(rect.Right - diameter, rect.Bottom - diameter, diameter, diameter, 0, 90);
+                path.AddArc(rect.X, rect.Bottom - diameter, diameter, diameter, 90, 90);
+                path.CloseFigure();
+                button.Region?.Dispose();
+                button.Region = new Region(path);
+            }
+
+            btnYes.Resize += (_, _) => ApplyRoundedButton(btnYes, 7);
+            btnNo.Resize += (_, _) => ApplyRoundedButton(btnNo, 7);
+            ApplyRoundedButton(btnYes, 7);
+            ApplyRoundedButton(btnNo, 7);
+
+            contentPanel.Controls.Add(lblWarningIcon);
+            contentPanel.Controls.Add(lblMessage);
+            buttonPanel.Controls.Add(btnYes);
+            buttonPanel.Controls.Add(btnNo);
+            dialog.Controls.Add(contentPanel);
+            dialog.Controls.Add(buttonPanel);
+            dialog.AcceptButton = btnYes;
+            dialog.CancelButton = btnNo;
+
+            dialog.FormClosing += (_, _) =>
+            {
+                if (dialog.DialogResult == DialogResult.None)
+                    dialog.DialogResult = DialogResult.No;
+            };
+
+            dialog.ResumeLayout(true);
+            return dialog.ShowDialog(this);
+        }
+
         private async void btnDelete_Click(
             object sender,
             EventArgs e)
@@ -570,8 +785,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             {
                 if (_selectedPersonnelId == 0)
                 {
-                    MessageBox.Show(
-                        "Vui lòng chọn CBCS cần xóa.");
+                    ShowCustomInfoDialog(
+                        "Vui lòng chọn CBCS cần xoá.");
 
                     return;
                 }
@@ -589,11 +804,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 }
 
                 DialogResult result =
-                    MessageBox.Show(
-                        $"Bạn có chắc muốn xóa CBCS\n\n{personnel.HoTen} ?",
-                        "Xác nhận",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Warning);
+                    ShowCustomDeleteConfirmDialog(personnel.HoTen);
 
                 if (result != DialogResult.Yes)
                 {
@@ -627,11 +838,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
                 await LoadDashboardAsync();
 
-                MessageBox.Show(
-                    "Xóa CBCS thành công.",
-                    "Thông báo",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+                ShowCustomSuccessDialog("Xoá CBCS thành công.");
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -649,6 +856,116 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
+        }
+
+        /// <summary>
+        /// Hiển thị hộp thoại xóa CBCS thành công theo bản thiết kế.
+        /// Chỉ thay đổi giao diện thông báo, không tác động đến nghiệp vụ.
+        /// </summary>
+        private void ShowCustomSuccessDialog(string message)
+        {
+            using Form dialog = new Form();
+            using Label lblSuccessIcon = new Label();
+            using Label lblMessage = new Label();
+            using Button btnOK = new Button();
+
+            dialog.SuspendLayout();
+            dialog.Text = "Thông báo";
+            dialog.StartPosition = FormStartPosition.CenterParent;
+            dialog.FormBorderStyle = FormBorderStyle.FixedDialog;
+            dialog.ClientSize = new Size(235, 145);
+            dialog.MaximizeBox = false;
+            dialog.MinimizeBox = false;
+            dialog.ShowInTaskbar = false;
+            dialog.BackColor = Color.White;
+            dialog.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+            dialog.AutoScaleMode = AutoScaleMode.Dpi;
+            dialog.ControlBox = true;
+
+            // Biểu tượng dấu tích màu xanh, tự vẽ để không phụ thuộc emoji/font.
+            lblSuccessIcon.Name = "lblDeleteSuccessIcon";
+            lblSuccessIcon.Location = new Point(95, 13);
+            lblSuccessIcon.Size = new Size(45, 45);
+            lblSuccessIcon.BackColor = Color.Transparent;
+            lblSuccessIcon.Text = string.Empty;
+            lblSuccessIcon.Paint += (_, e) =>
+            {
+                e.Graphics.SmoothingMode =
+                    System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+                using SolidBrush circleBrush =
+                    new SolidBrush(Color.FromArgb(0, 126, 75));
+                using Pen checkPen = new Pen(Color.White, 3.6F)
+                {
+                    StartCap = System.Drawing.Drawing2D.LineCap.Round,
+                    EndCap = System.Drawing.Drawing2D.LineCap.Round,
+                    LineJoin = System.Drawing.Drawing2D.LineJoin.Round
+                };
+
+                e.Graphics.FillEllipse(circleBrush, 1, 1, 43, 43);
+                e.Graphics.DrawLines(checkPen, new[]
+                {
+                    new PointF(12, 23),
+                    new PointF(19, 30),
+                    new PointF(33, 15)
+                });
+            };
+
+            // Nội dung in đậm, màu xanh đậm, căn giữa như ảnh mẫu.
+            lblMessage.Name = "lblDeleteSuccessMessage";
+            lblMessage.Location = new Point(8, 64);
+            lblMessage.Size = new Size(219, 25);
+            lblMessage.Text = message;
+            lblMessage.ForeColor = Color.FromArgb(0, 45, 105);
+            lblMessage.BackColor = Color.Transparent;
+            lblMessage.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+            lblMessage.TextAlign = ContentAlignment.MiddleCenter;
+            lblMessage.AutoEllipsis = false;
+
+            // Nút OK xanh, đặt chính giữa và bo góc.
+            btnOK.Name = "btnDeleteSuccessOK";
+            btnOK.Text = "OK";
+            btnOK.Size = new Size(117, 38);
+            btnOK.Location = new Point((dialog.ClientSize.Width - 117) / 2, 99);
+            btnOK.BackColor = Color.FromArgb(0, 105, 235);
+            btnOK.ForeColor = Color.White;
+            btnOK.FlatStyle = FlatStyle.Flat;
+            btnOK.FlatAppearance.BorderSize = 0;
+            btnOK.FlatAppearance.MouseOverBackColor = Color.FromArgb(20, 119, 245);
+            btnOK.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 85, 205);
+            btnOK.Font = new Font("Segoe UI", 9.5F, FontStyle.Regular);
+            btnOK.Cursor = Cursors.Hand;
+            btnOK.DialogResult = DialogResult.OK;
+            btnOK.UseVisualStyleBackColor = false;
+
+            void ApplyRoundedOkButton()
+            {
+                if (btnOK.Width <= 0 || btnOK.Height <= 0)
+                    return;
+
+                using var path = new System.Drawing.Drawing2D.GraphicsPath();
+                int radius = 7;
+                int diameter = radius * 2;
+                Rectangle rect = new Rectangle(0, 0, btnOK.Width, btnOK.Height);
+                path.AddArc(rect.X, rect.Y, diameter, diameter, 180, 90);
+                path.AddArc(rect.Right - diameter, rect.Y, diameter, diameter, 270, 90);
+                path.AddArc(rect.Right - diameter, rect.Bottom - diameter, diameter, diameter, 0, 90);
+                path.AddArc(rect.X, rect.Bottom - diameter, diameter, diameter, 90, 90);
+                path.CloseFigure();
+                btnOK.Region?.Dispose();
+                btnOK.Region = new Region(path);
+            }
+
+            btnOK.Resize += (_, _) => ApplyRoundedOkButton();
+            ApplyRoundedOkButton();
+
+            dialog.Controls.Add(lblSuccessIcon);
+            dialog.Controls.Add(lblMessage);
+            dialog.Controls.Add(btnOK);
+            dialog.AcceptButton = btnOK;
+            dialog.CancelButton = btnOK;
+            dialog.ResumeLayout(true);
+            dialog.ShowDialog(this);
         }
 
         private async void btnAdd_Click(
@@ -684,6 +1001,121 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             }
         }
 
+        /// <summary>
+        /// Hiển thị hộp thoại thông tin theo giao diện đồng bộ với ứng dụng.
+        /// Chỉ thay đổi phần trình bày; không ảnh hưởng đến luồng xử lý nghiệp vụ.
+        /// </summary>
+        private void ShowCustomInfoDialog(string message)
+        {
+            using (Form dialog = new Form())
+            using (Label lblIcon = new Label())
+            using (Label lblMessage = new Label())
+            using (Button btnOK = new Button())
+            {
+                dialog.SuspendLayout();
+                dialog.Text = "Thông báo";
+                dialog.StartPosition = FormStartPosition.CenterParent;
+                dialog.FormBorderStyle = FormBorderStyle.FixedDialog;
+                dialog.ClientSize = new Size(340, 122);
+                dialog.MaximizeBox = false;
+                dialog.MinimizeBox = false;
+                dialog.ShowInTaskbar = false;
+                dialog.BackColor = Color.White;
+                dialog.Font = new Font("Segoe UI", 10F, FontStyle.Regular);
+                dialog.AutoScaleMode = AutoScaleMode.Dpi;
+
+                // Biểu tượng thông tin hình tròn màu xanh.
+                lblIcon.Name = "lblInfoIcon";
+                lblIcon.Location = new Point(22, 31);
+                lblIcon.Size = new Size(42, 42);
+                lblIcon.Text = string.Empty;
+                lblIcon.BackColor = Color.Transparent;
+                lblIcon.Paint += (sender, e) =>
+                {
+                    e.Graphics.SmoothingMode =
+                        System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+                    using (SolidBrush circleBrush = new SolidBrush(
+                        Color.FromArgb(0, 110, 235)))
+                    using (Font iconFont = new Font(
+                        "Segoe UI", 23F, FontStyle.Bold, GraphicsUnit.Point))
+                    using (SolidBrush textBrush = new SolidBrush(Color.White))
+                    {
+                        e.Graphics.FillEllipse(circleBrush, 0, 0,
+                            lblIcon.ClientSize.Width - 1,
+                            lblIcon.ClientSize.Height - 1);
+
+                        StringFormat format = new StringFormat
+                        {
+                            Alignment = StringAlignment.Center,
+                            LineAlignment = StringAlignment.Center
+                        };
+                        e.Graphics.DrawString("i", iconFont, textBrush,
+                            new RectangleF(0, 0, lblIcon.Width, lblIcon.Height),
+                            format);
+                        format.Dispose();
+                    }
+                };
+
+                // Nội dung thông báo.
+                lblMessage.Name = "lblInfoMessage";
+                lblMessage.Location = new Point(78, 27);
+                lblMessage.Size = new Size(250, 48);
+                lblMessage.Text = message;
+                lblMessage.ForeColor = Color.FromArgb(35, 35, 35);
+                lblMessage.BackColor = Color.Transparent;
+                lblMessage.Font = new Font("Segoe UI", 9.5F, FontStyle.Regular);
+                lblMessage.TextAlign = ContentAlignment.MiddleLeft;
+                lblMessage.AutoEllipsis = false;
+
+                // Nút OK màu xanh, đóng hộp thoại.
+                btnOK.Name = "btnInfoOK";
+                btnOK.Text = "OK";
+                btnOK.Size = new Size(112, 38);
+                btnOK.Location = new Point((dialog.ClientSize.Width - btnOK.Width) / 2, 76);
+                btnOK.BackColor = Color.FromArgb(0, 105, 235);
+                btnOK.ForeColor = Color.White;
+                btnOK.FlatStyle = FlatStyle.Flat;
+                btnOK.FlatAppearance.BorderSize = 0;
+                btnOK.Font = new Font("Segoe UI", 9.5F, FontStyle.Regular);
+                btnOK.Cursor = Cursors.Hand;
+                btnOK.DialogResult = DialogResult.OK;
+                btnOK.UseVisualStyleBackColor = false;
+                btnOK.FlatAppearance.MouseOverBackColor = Color.FromArgb(20, 119, 245);
+                btnOK.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 85, 205);
+
+                // Bo góc nút OK bằng Region; cập nhật lại khi kích thước thay đổi.
+                void ApplyRoundedOkButton()
+                {
+                    if (btnOK.Width <= 0 || btnOK.Height <= 0) return;
+                    using (var path = new System.Drawing.Drawing2D.GraphicsPath())
+                    {
+                        int radius = 7;
+                        int diameter = radius * 2;
+                        var rect = new Rectangle(0, 0, btnOK.Width, btnOK.Height);
+                        path.AddArc(rect.X, rect.Y, diameter, diameter, 180, 90);
+                        path.AddArc(rect.Right - diameter, rect.Y, diameter, diameter, 270, 90);
+                        path.AddArc(rect.Right - diameter, rect.Bottom - diameter, diameter, diameter, 0, 90);
+                        path.AddArc(rect.X, rect.Bottom - diameter, diameter, diameter, 90, 90);
+                        path.CloseFigure();
+                        btnOK.Region?.Dispose();
+                        btnOK.Region = new Region(path);
+                    }
+                }
+                btnOK.Resize += (_, _) => ApplyRoundedOkButton();
+                ApplyRoundedOkButton();
+
+                dialog.Controls.Add(lblIcon);
+                dialog.Controls.Add(lblMessage);
+                dialog.Controls.Add(btnOK);
+                dialog.AcceptButton = btnOK;
+                dialog.CancelButton = btnOK;
+                dialog.ResumeLayout(true);
+
+                dialog.ShowDialog(this);
+            }
+        }
+
         private async void btnEdit_Click(
             object sender,
             EventArgs e)
@@ -692,11 +1124,8 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             {
                 if (_selectedPersonnelId == 0)
                 {
-                    MessageBox.Show(
-                        "Vui lòng chọn CBCS cần chỉnh sửa.",
-                        "Thông báo",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
+                    ShowCustomInfoDialog(
+                        "Vui lòng chọn CBCS cần chỉnh sửa.");
 
                     return;
                 }
@@ -798,11 +1227,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                     AuditAction.ExportExcel,
                     $"Xuất danh sách CBCS ra file '{Path.GetFileName(saveDialog.FileName)}'");
 
-                MessageBox.Show(
-                    "Xuất Excel thành công!",
-                    "Thông báo",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+                ShowExcelExportSuccessDialog();
 
                 Process.Start(
                     new ProcessStartInfo
@@ -819,6 +1244,235 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                     "Lỗi",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
+            }
+        }
+
+        /// <summary>
+        /// Hiển thị hộp thoại thông báo xuất Excel thành công theo bản thiết kế.
+        /// Chỉ thay đổi giao diện thông báo, không tác động đến logic xuất dữ liệu.
+        /// </summary>
+        private void ShowExcelExportSuccessDialog()
+        {
+            using (Form dialog = new Form())
+            {
+                dialog.SuspendLayout();
+                dialog.Text = "Thông báo";
+                dialog.StartPosition = FormStartPosition.CenterParent;
+                dialog.FormBorderStyle = FormBorderStyle.FixedDialog;
+                dialog.ClientSize = new Size(270, 158);
+                dialog.MaximizeBox = false;
+                dialog.MinimizeBox = false;
+                dialog.ShowInTaskbar = false;
+                dialog.BackColor = Color.White;
+                dialog.Font = new Font("Segoe UI", 9.5F, FontStyle.Regular);
+                dialog.AutoScaleMode = AutoScaleMode.None;
+                dialog.KeyPreview = true;
+
+                // Vùng nội dung chính.
+                Panel pnlContent = new Panel
+                {
+                    Name = "pnlExcelExportSuccessContent",
+                    Location = new Point(0, 0),
+                    Size = new Size(270, 110),
+                    BackColor = Color.White
+                };
+
+                // Biểu tượng dấu tích tròn được vẽ trực tiếp để giữ đúng thiết kế.
+                Panel pnlSuccessIcon = new Panel
+                {
+                    Name = "pnlExcelExportSuccessIcon",
+                    Location = new Point(23, 34),
+                    Size = new Size(42, 42),
+                    BackColor = Color.Transparent
+                };
+                pnlSuccessIcon.Paint += (sender, e) =>
+                {
+                    e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                    using (Brush circleBrush = new SolidBrush(Color.FromArgb(0, 145, 67)))
+                    using (Pen checkPen = new Pen(Color.White, 3.2F))
+                    {
+                        checkPen.StartCap = System.Drawing.Drawing2D.LineCap.Round;
+                        checkPen.EndCap = System.Drawing.Drawing2D.LineCap.Round;
+                        e.Graphics.FillEllipse(circleBrush, 1, 1, 40, 40);
+                        e.Graphics.DrawLines(checkPen, new Point[]
+                        {
+                            new Point(11, 22),
+                            new Point(18, 29),
+                            new Point(31, 14)
+                        });
+                    }
+                };
+
+                Label lblMessage = new Label
+                {
+                    Name = "lblExcelExportSuccessMessage",
+                    Location = new Point(78, 34),
+                    Size = new Size(178, 42),
+                    Text = "Xuất Excel thành công!",
+                    TextAlign = ContentAlignment.MiddleLeft,
+                    ForeColor = Color.FromArgb(35, 35, 35),
+                    BackColor = Color.Transparent,
+                    Font = new Font("Segoe UI", 9.5F, FontStyle.Regular),
+                    AutoSize = false
+                };
+
+                // Chân hộp thoại và nút OK nằm cùng trong panel để không bị che khuất.
+                Panel pnlFooter = new Panel
+                {
+                    Name = "pnlExcelExportSuccessFooter",
+                    Location = new Point(0, 110),
+                    Size = new Size(270, 48),
+                    BackColor = Color.FromArgb(242, 242, 242)
+                };
+
+                Button btnOK = new Button
+                {
+                    Name = "btnExcelExportSuccessOK",
+                    Text = "OK",
+                    Location = new Point(143, 8),
+                    Size = new Size(104, 32),
+                    BackColor = Color.FromArgb(0, 105, 235),
+                    ForeColor = Color.White,
+                    FlatStyle = FlatStyle.Flat,
+                    Font = new Font("Segoe UI", 9.5F, FontStyle.Regular),
+                    Cursor = Cursors.Hand,
+                    DialogResult = DialogResult.OK,
+                    UseVisualStyleBackColor = false,
+                    TabStop = true
+                };
+                btnOK.FlatAppearance.BorderSize = 0;
+                btnOK.FlatAppearance.MouseOverBackColor = Color.FromArgb(20, 119, 245);
+                btnOK.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 85, 205);
+                ApplyRoundedRegion(btnOK, 6);
+
+                pnlContent.Controls.Add(pnlSuccessIcon);
+                pnlContent.Controls.Add(lblMessage);
+                pnlFooter.Controls.Add(btnOK);
+                dialog.Controls.Add(pnlContent);
+                dialog.Controls.Add(pnlFooter);
+                dialog.AcceptButton = btnOK;
+                dialog.CancelButton = btnOK;
+                dialog.ResumeLayout(true);
+                dialog.ShowDialog(this);
+            }
+        }
+
+        /// <summary>
+        /// Hiển thị hộp thoại Restore thành công theo cùng thiết kế với thông báo xuất Excel.
+        /// Chỉ thay đổi giao diện thông báo, không tác động đến quy trình Restore.
+        /// </summary>
+        private void ShowRestoreSuccessDialog()
+        {
+            using (Form dialog = new Form())
+            {
+                dialog.SuspendLayout();
+                dialog.Text = "Thông báo";
+                dialog.StartPosition = FormStartPosition.CenterParent;
+                dialog.FormBorderStyle = FormBorderStyle.FixedDialog;
+                dialog.ClientSize = new Size(270, 158);
+                dialog.MaximizeBox = false;
+                dialog.MinimizeBox = false;
+                dialog.ShowInTaskbar = false;
+                dialog.BackColor = Color.White;
+                dialog.Font = new Font("Segoe UI", 9.5F, FontStyle.Regular);
+                dialog.AutoScaleMode = AutoScaleMode.None;
+                dialog.KeyPreview = true;
+
+                Panel pnlContent = new Panel
+                {
+                    Name = "pnlRestoreSuccessContent",
+                    Location = new Point(0, 0),
+                    Size = new Size(270, 110),
+                    BackColor = Color.White
+                };
+
+                Panel pnlSuccessIcon = new Panel
+                {
+                    Name = "pnlRestoreSuccessIcon",
+                    Location = new Point(23, 34),
+                    Size = new Size(42, 42),
+                    BackColor = Color.Transparent
+                };
+
+                pnlSuccessIcon.Paint += (sender, e) =>
+                {
+                    e.Graphics.SmoothingMode =
+                        System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+                    using (Brush circleBrush =
+                        new SolidBrush(Color.FromArgb(0, 145, 67)))
+                    using (Pen checkPen = new Pen(Color.White, 3.2F))
+                    {
+                        checkPen.StartCap =
+                            System.Drawing.Drawing2D.LineCap.Round;
+                        checkPen.EndCap =
+                            System.Drawing.Drawing2D.LineCap.Round;
+
+                        e.Graphics.FillEllipse(circleBrush, 1, 1, 40, 40);
+                        e.Graphics.DrawLines(checkPen, new Point[]
+                        {
+                            new Point(11, 22),
+                            new Point(18, 29),
+                            new Point(31, 14)
+                        });
+                    }
+                };
+
+                Label lblMessage = new Label
+                {
+                    Name = "lblRestoreSuccessMessage",
+                    Location = new Point(78, 34),
+                    Size = new Size(178, 42),
+                    Text = "Restore thành công!",
+                    TextAlign = ContentAlignment.MiddleLeft,
+                    ForeColor = Color.FromArgb(35, 35, 35),
+                    BackColor = Color.Transparent,
+                    Font = new Font("Segoe UI", 9.5F, FontStyle.Regular),
+                    AutoSize = false
+                };
+
+                Panel pnlFooter = new Panel
+                {
+                    Name = "pnlRestoreSuccessFooter",
+                    Location = new Point(0, 110),
+                    Size = new Size(270, 48),
+                    BackColor = Color.FromArgb(242, 242, 242)
+                };
+
+                Button btnOK = new Button
+                {
+                    Name = "btnRestoreSuccessOK",
+                    Text = "OK",
+                    Location = new Point(143, 8),
+                    Size = new Size(104, 32),
+                    BackColor = Color.FromArgb(0, 105, 235),
+                    ForeColor = Color.White,
+                    FlatStyle = FlatStyle.Flat,
+                    Font = new Font("Segoe UI", 9.5F, FontStyle.Regular),
+                    Cursor = Cursors.Hand,
+                    DialogResult = DialogResult.OK,
+                    UseVisualStyleBackColor = false,
+                    TabStop = true
+                };
+
+                btnOK.FlatAppearance.BorderSize = 0;
+                btnOK.FlatAppearance.MouseOverBackColor =
+                    Color.FromArgb(20, 119, 245);
+                btnOK.FlatAppearance.MouseDownBackColor =
+                    Color.FromArgb(0, 85, 205);
+                ApplyRoundedRegion(btnOK, 6);
+
+                pnlContent.Controls.Add(pnlSuccessIcon);
+                pnlContent.Controls.Add(lblMessage);
+                pnlFooter.Controls.Add(btnOK);
+
+                dialog.Controls.Add(pnlContent);
+                dialog.Controls.Add(pnlFooter);
+                dialog.AcceptButton = btnOK;
+                dialog.CancelButton = btnOK;
+
+                dialog.ResumeLayout(true);
+                dialog.ShowDialog(this);
             }
         }
 
@@ -909,6 +1563,130 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 ThemeHelper.PrimaryColor);
         }
 
+        /// <summary>
+        /// Hiển thị thông báo sao lưu thành công theo bản thiết kế.
+        /// Chỉ thay đổi giao diện thông báo; không thay đổi quy trình sao lưu.
+        /// </summary>
+        private void ShowCustomBackupSuccessDialog(string backupFilePath)
+        {
+            using Form dialog = new Form();
+            using Label lblSuccessIcon = new Label();
+            using Label lblMessage = new Label();
+            using Label lblBackupPath = new Label();
+            using Button btnOK = new Button();
+
+            dialog.SuspendLayout();
+            dialog.Text = "Thông báo";
+            dialog.StartPosition = FormStartPosition.CenterParent;
+            dialog.FormBorderStyle = FormBorderStyle.FixedDialog;
+            dialog.ClientSize = new Size(292, 158);
+            dialog.MaximizeBox = false;
+            dialog.MinimizeBox = false;
+            dialog.ShowInTaskbar = false;
+            dialog.BackColor = Color.White;
+            dialog.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+            dialog.AutoScaleMode = AutoScaleMode.Dpi;
+            dialog.ControlBox = true;
+
+            // Biểu tượng dấu tích xanh lá, vẽ trực tiếp để giống bản thiết kế.
+            lblSuccessIcon.Name = "lblBackupSuccessIcon";
+            lblSuccessIcon.Location = new Point(16, 43);
+            lblSuccessIcon.Size = new Size(42, 42);
+            lblSuccessIcon.BackColor = Color.Transparent;
+            lblSuccessIcon.Text = string.Empty;
+            lblSuccessIcon.Paint += (_, e) =>
+            {
+                e.Graphics.SmoothingMode =
+                    System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+                using SolidBrush circleBrush =
+                    new SolidBrush(Color.FromArgb(0, 137, 78));
+                using Pen checkPen = new Pen(Color.White, 3.5F)
+                {
+                    StartCap = System.Drawing.Drawing2D.LineCap.Round,
+                    EndCap = System.Drawing.Drawing2D.LineCap.Round,
+                    LineJoin = System.Drawing.Drawing2D.LineJoin.Round
+                };
+
+                e.Graphics.FillEllipse(circleBrush, 1, 1, 40, 40);
+                e.Graphics.DrawLines(checkPen, new[]
+                {
+                    new PointF(11, 22),
+                    new PointF(17, 28),
+                    new PointF(30, 14)
+                });
+            };
+
+            lblMessage.Name = "lblBackupSuccessMessage";
+            lblMessage.Location = new Point(70, 43);
+            lblMessage.Size = new Size(205, 24);
+            lblMessage.Text = "Sao lưu thành công!";
+            lblMessage.ForeColor = Color.FromArgb(0, 45, 105);
+            lblMessage.BackColor = Color.Transparent;
+            lblMessage.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+            lblMessage.TextAlign = ContentAlignment.MiddleLeft;
+
+            // Hiển thị đường dẫn thật của file .bak, tự xuống dòng khi cần.
+            lblBackupPath.Name = "lblBackupFilePath";
+            lblBackupPath.Location = new Point(70, 68);
+            lblBackupPath.Size = new Size(205, 32);
+            string backupDirectory = Path.GetDirectoryName(backupFilePath) ?? string.Empty;
+            string backupFileName = Path.GetFileName(backupFilePath);
+            lblBackupPath.Text = string.IsNullOrWhiteSpace(backupDirectory)
+                ? backupFileName
+                : backupDirectory + "\\" + Environment.NewLine + backupFileName;
+            lblBackupPath.ForeColor = Color.FromArgb(35, 35, 35);
+            lblBackupPath.BackColor = Color.Transparent;
+            lblBackupPath.Font = new Font("Segoe UI", 7.5F, FontStyle.Regular);
+            lblBackupPath.TextAlign = ContentAlignment.TopLeft;
+            lblBackupPath.AutoEllipsis = true;
+
+            btnOK.Name = "btnBackupSuccessOK";
+            btnOK.Text = "OK";
+            btnOK.Size = new Size(103, 36);
+            btnOK.Location = new Point((dialog.ClientSize.Width - 103) / 2, 117);
+            btnOK.BackColor = Color.FromArgb(0, 105, 235);
+            btnOK.ForeColor = Color.White;
+            btnOK.FlatStyle = FlatStyle.Flat;
+            btnOK.FlatAppearance.BorderSize = 0;
+            btnOK.FlatAppearance.MouseOverBackColor = Color.FromArgb(20, 119, 245);
+            btnOK.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 85, 205);
+            btnOK.Font = new Font("Segoe UI", 9.5F, FontStyle.Regular);
+            btnOK.Cursor = Cursors.Hand;
+            btnOK.DialogResult = DialogResult.OK;
+            btnOK.UseVisualStyleBackColor = false;
+
+            void ApplyRoundedOkButton()
+            {
+                if (btnOK.Width <= 0 || btnOK.Height <= 0)
+                    return;
+
+                using var path = new System.Drawing.Drawing2D.GraphicsPath();
+                int radius = 6;
+                int diameter = radius * 2;
+                Rectangle rect = new Rectangle(0, 0, btnOK.Width, btnOK.Height);
+                path.AddArc(rect.X, rect.Y, diameter, diameter, 180, 90);
+                path.AddArc(rect.Right - diameter, rect.Y, diameter, diameter, 270, 90);
+                path.AddArc(rect.Right - diameter, rect.Bottom - diameter, diameter, diameter, 0, 90);
+                path.AddArc(rect.X, rect.Bottom - diameter, diameter, diameter, 90, 90);
+                path.CloseFigure();
+                btnOK.Region?.Dispose();
+                btnOK.Region = new Region(path);
+            }
+
+            btnOK.Resize += (_, _) => ApplyRoundedOkButton();
+            ApplyRoundedOkButton();
+
+            dialog.Controls.Add(lblSuccessIcon);
+            dialog.Controls.Add(lblMessage);
+            dialog.Controls.Add(lblBackupPath);
+            dialog.Controls.Add(btnOK);
+            dialog.AcceptButton = btnOK;
+            dialog.CancelButton = btnOK;
+            dialog.ResumeLayout(true);
+            dialog.ShowDialog(this);
+        }
+
         private async void btnBackup_Click(
             object sender,
             EventArgs e)
@@ -943,11 +1721,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                     .BackupDatabaseAsync(
                         backupFilePath);
 
-                MessageBox.Show(
-                    $"Sao lưu thành công!\n\n{backupFilePath}",
-                    "Thông báo",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+                ShowCustomBackupSuccessDialog(backupFilePath);
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -965,6 +1739,154 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
+        }
+
+
+        /// <summary>
+        /// Hộp thoại xác nhận Restore theo bản thiết kế.
+        /// Chỉ thay đổi giao diện xác nhận; kết quả Có/Không vẫn điều khiển
+        /// quy trình Restore hiện tại.
+        /// </summary>
+        private DialogResult ShowCustomRestoreConfirmDialog()
+        {
+            using Form dialog = new Form();
+            using Panel contentPanel = new Panel();
+            using Panel buttonPanel = new Panel();
+            using Label lblWarningIcon = new Label();
+            using Label lblMessage = new Label();
+            using Button btnYes = new Button();
+            using Button btnNo = new Button();
+
+            dialog.SuspendLayout();
+            dialog.Text = "Xác nhận";
+            dialog.StartPosition = FormStartPosition.CenterParent;
+            dialog.FormBorderStyle = FormBorderStyle.FixedDialog;
+            dialog.ClientSize = new Size(380, 166);
+            dialog.MaximizeBox = false;
+            dialog.MinimizeBox = false;
+            dialog.ShowInTaskbar = false;
+            dialog.BackColor = Color.White;
+            dialog.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+            dialog.AutoScaleMode = AutoScaleMode.None;
+            dialog.ControlBox = true;
+            dialog.KeyPreview = true;
+
+            contentPanel.Name = "pnlRestoreConfirmContent";
+            contentPanel.Location = new Point(0, 0);
+            contentPanel.Size = new Size(380, 106);
+            contentPanel.BackColor = Color.White;
+
+            // Biểu tượng cảnh báo tam giác vàng, tự vẽ để hiển thị đồng nhất.
+            lblWarningIcon.Name = "lblRestoreConfirmWarningIcon";
+            lblWarningIcon.Location = new Point(27, 29);
+            lblWarningIcon.Size = new Size(48, 48);
+            lblWarningIcon.BackColor = Color.Transparent;
+            lblWarningIcon.Text = string.Empty;
+            lblWarningIcon.Paint += (_, e) =>
+            {
+                e.Graphics.SmoothingMode =
+                    System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+                PointF[] triangle =
+                {
+                    new PointF(24, 2),
+                    new PointF(46, 43),
+                    new PointF(2, 43)
+                };
+
+                using SolidBrush yellowBrush =
+                    new SolidBrush(Color.FromArgb(255, 190, 0));
+                using Pen outlinePen =
+                    new Pen(Color.FromArgb(225, 151, 0), 1.4F);
+                using Pen markPen =
+                    new Pen(Color.FromArgb(45, 45, 45), 3F)
+                    {
+                        StartCap = System.Drawing.Drawing2D.LineCap.Round,
+                        EndCap = System.Drawing.Drawing2D.LineCap.Round
+                    };
+                using SolidBrush dotBrush =
+                    new SolidBrush(Color.FromArgb(45, 45, 45));
+
+                e.Graphics.FillPolygon(yellowBrush, triangle);
+                e.Graphics.DrawPolygon(outlinePen, triangle);
+                e.Graphics.DrawLine(markPen, 24, 15, 24, 29);
+                e.Graphics.FillEllipse(dotBrush, 22.2F, 33.5F, 3.6F, 3.6F);
+            };
+
+            lblMessage.Name = "lblRestoreConfirmMessage";
+            lblMessage.Location = new Point(104, 23);
+            lblMessage.Size = new Size(250, 65);
+            lblMessage.Text =
+                "Restore sẽ ghi đè toàn bộ dữ liệu hiện tại.\nTiếp tục?";
+            lblMessage.ForeColor = Color.FromArgb(35, 35, 35);
+            lblMessage.BackColor = Color.Transparent;
+            lblMessage.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+            lblMessage.TextAlign = ContentAlignment.MiddleLeft;
+            lblMessage.AutoSize = false;
+            lblMessage.AutoEllipsis = false;
+
+            buttonPanel.Name = "pnlRestoreConfirmButtons";
+            buttonPanel.Location = new Point(0, 106);
+            buttonPanel.Size = new Size(380, 60);
+            buttonPanel.BackColor = Color.FromArgb(248, 248, 248);
+
+            btnYes.Name = "btnRestoreConfirmYes";
+            btnYes.Text = "Có";
+            btnYes.Size = new Size(108, 36);
+            btnYes.Location = new Point(140, 12);
+            btnYes.BackColor = Color.FromArgb(0, 105, 235);
+            btnYes.ForeColor = Color.White;
+            btnYes.FlatStyle = FlatStyle.Flat;
+            btnYes.FlatAppearance.BorderSize = 0;
+            btnYes.FlatAppearance.MouseOverBackColor =
+                Color.FromArgb(20, 119, 245);
+            btnYes.FlatAppearance.MouseDownBackColor =
+                Color.FromArgb(0, 85, 205);
+            btnYes.Font = new Font("Segoe UI", 9.5F, FontStyle.Regular);
+            btnYes.Cursor = Cursors.Hand;
+            btnYes.DialogResult = DialogResult.Yes;
+            btnYes.UseVisualStyleBackColor = false;
+
+            btnNo.Name = "btnRestoreConfirmNo";
+            btnNo.Text = "Không";
+            btnNo.Size = new Size(108, 36);
+            btnNo.Location = new Point(257, 12);
+            btnNo.BackColor = Color.White;
+            btnNo.ForeColor = Color.FromArgb(45, 45, 45);
+            btnNo.FlatStyle = FlatStyle.Flat;
+            btnNo.FlatAppearance.BorderColor = Color.FromArgb(210, 210, 210);
+            btnNo.FlatAppearance.BorderSize = 1;
+            btnNo.FlatAppearance.MouseOverBackColor =
+                Color.FromArgb(242, 246, 252);
+            btnNo.Font = new Font("Segoe UI", 9.5F, FontStyle.Regular);
+            btnNo.Cursor = Cursors.Hand;
+            btnNo.DialogResult = DialogResult.No;
+            btnNo.UseVisualStyleBackColor = false;
+
+            btnYes.Resize += (_, _) => ApplyRoundedRegion(btnYes, 7);
+            btnNo.Resize += (_, _) => ApplyRoundedRegion(btnNo, 7);
+            ApplyRoundedRegion(btnYes, 7);
+            ApplyRoundedRegion(btnNo, 7);
+
+            contentPanel.Controls.Add(lblWarningIcon);
+            contentPanel.Controls.Add(lblMessage);
+            buttonPanel.Controls.Add(btnYes);
+            buttonPanel.Controls.Add(btnNo);
+
+            dialog.Controls.Add(contentPanel);
+            dialog.Controls.Add(buttonPanel);
+            dialog.AcceptButton = btnYes;
+            dialog.CancelButton = btnNo;
+
+            // Đóng bằng nút X tương đương chọn Không.
+            dialog.FormClosing += (_, _) =>
+            {
+                if (dialog.DialogResult == DialogResult.None)
+                    dialog.DialogResult = DialogResult.No;
+            };
+
+            dialog.ResumeLayout(true);
+            return dialog.ShowDialog(this);
         }
 
         private async void btnRestore_Click(
@@ -986,11 +1908,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 }
 
                 DialogResult result =
-                    MessageBox.Show(
-                        "Restore sẽ ghi đè toàn bộ dữ liệu hiện tại.\n\nTiếp tục?",
-                        "Xác nhận",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Warning);
+                    ShowCustomRestoreConfirmDialog();
 
                 if (result != DialogResult.Yes)
                 {
@@ -1014,11 +1932,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 await LoadPersonnelAsync();
                 await LoadDashboardAsync();
 
-                MessageBox.Show(
-                    "Restore thành công!",
-                    "Thông báo",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+                ShowRestoreSuccessDialog();
             }
             catch (Exception ex)
             {
@@ -1786,6 +2700,467 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             await ImportExcelFileAsync(filePath);
         }
 
+        /// <summary>
+        /// Hộp thoại xác nhận nhập Excel theo giao diện thiết kế của ứng dụng.
+        /// Chỉ thay đổi phần hiển thị; kết quả Yes/No vẫn điều khiển luồng nhập như cũ.
+        /// </summary>
+        private DialogResult ShowCustomExcelImportConfirmDialog(
+            string fileName,
+            int recordCount)
+        {
+            using Form dialog = new Form();
+            using Panel contentPanel = new Panel();
+            using Panel buttonPanel = new Panel();
+            using Label lblQuestionIcon = new Label();
+            using Label lblFile = new Label();
+            using Label lblRecordCount = new Label();
+            using Label lblNote1 = new Label();
+            using Label lblNote2 = new Label();
+            using Label lblPrompt = new Label();
+            using Button btnYes = new Button();
+            using Button btnNo = new Button();
+
+            dialog.SuspendLayout();
+            dialog.Text = "Xác nhận nhập Excel";
+            dialog.StartPosition = FormStartPosition.CenterParent;
+            dialog.FormBorderStyle = FormBorderStyle.FixedDialog;
+            dialog.ClientSize = new Size(540, 290);
+            dialog.MaximizeBox = false;
+            dialog.MinimizeBox = false;
+            dialog.ShowInTaskbar = false;
+            dialog.BackColor = Color.White;
+            dialog.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+            dialog.AutoScaleMode = AutoScaleMode.Dpi;
+            dialog.ControlBox = true;
+            dialog.KeyPreview = true;
+
+            contentPanel.Name = "pnlExcelImportConfirmContent";
+            contentPanel.Location = new Point(0, 0);
+            contentPanel.Size = new Size(540, 222);
+            contentPanel.BackColor = Color.White;
+
+            lblQuestionIcon.Name = "lblExcelImportQuestionIcon";
+            lblQuestionIcon.Location = new Point(28, 34);
+            lblQuestionIcon.Size = new Size(48, 48);
+            lblQuestionIcon.Text = string.Empty;
+            lblQuestionIcon.BackColor = Color.Transparent;
+            lblQuestionIcon.Paint += (_, e) =>
+            {
+                e.Graphics.SmoothingMode =
+                    System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+                using SolidBrush circleBrush =
+                    new SolidBrush(Color.FromArgb(20, 151, 218));
+                using SolidBrush textBrush = new SolidBrush(Color.White);
+                using Font questionFont =
+                    new Font("Segoe UI", 29F, FontStyle.Regular, GraphicsUnit.Point);
+                using StringFormat format = new StringFormat
+                {
+                    Alignment = StringAlignment.Center,
+                    LineAlignment = StringAlignment.Center
+                };
+
+                e.Graphics.FillEllipse(circleBrush, 1, 1, 46, 46);
+                e.Graphics.DrawString(
+                    "?", questionFont, textBrush,
+                    new RectangleF(0, -1, lblQuestionIcon.Width, lblQuestionIcon.Height),
+                    format);
+            };
+
+            lblFile.Name = "lblExcelImportFileName";
+            lblFile.Location = new Point(96, 28);
+            lblFile.Size = new Size(420, 24);
+            lblFile.Text = "File: " + fileName;
+            lblFile.ForeColor = Color.FromArgb(25, 25, 25);
+            lblFile.BackColor = Color.Transparent;
+            lblFile.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblFile.TextAlign = ContentAlignment.MiddleLeft;
+            lblFile.AutoEllipsis = true;
+
+            lblRecordCount.Name = "lblExcelImportRecordCount";
+            lblRecordCount.Location = new Point(96, 59);
+            lblRecordCount.Size = new Size(420, 23);
+            lblRecordCount.Text = $"Số hồ sơ đọc được: {recordCount}";
+            lblRecordCount.ForeColor = Color.FromArgb(35, 35, 35);
+            lblRecordCount.BackColor = Color.Transparent;
+            lblRecordCount.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+            lblRecordCount.TextAlign = ContentAlignment.MiddleLeft;
+
+            lblNote1.Name = "lblExcelImportNote1";
+            lblNote1.Location = new Point(96, 94);
+            lblNote1.Size = new Size(420, 22);
+            lblNote1.Text = "Hệ thống sẽ bỏ qua hồ sơ có Số hiệu hoặc CCCD đã tồn tại.";
+            lblNote1.ForeColor = Color.FromArgb(115, 115, 115);
+            lblNote1.BackColor = Color.Transparent;
+            lblNote1.Font = new Font("Segoe UI", 8.8F, FontStyle.Regular);
+            lblNote1.TextAlign = ContentAlignment.MiddleLeft;
+            lblNote1.AutoEllipsis = true;
+
+            lblNote2.Name = "lblExcelImportNote2";
+            lblNote2.Location = new Point(96, 119);
+            lblNote2.Size = new Size(420, 22);
+            lblNote2.Text = "Hồ sơ hiện có sẽ không bị sửa.";
+            lblNote2.ForeColor = Color.FromArgb(115, 115, 115);
+            lblNote2.BackColor = Color.Transparent;
+            lblNote2.Font = new Font("Segoe UI", 8.8F, FontStyle.Regular);
+            lblNote2.TextAlign = ContentAlignment.MiddleLeft;
+
+            lblPrompt.Name = "lblExcelImportConfirmPrompt";
+            lblPrompt.Location = new Point(96, 155);
+            lblPrompt.Size = new Size(420, 24);
+            lblPrompt.Text = "Bạn có muốn tiếp tục nhập không?";
+            lblPrompt.ForeColor = Color.FromArgb(35, 35, 35);
+            lblPrompt.BackColor = Color.Transparent;
+            lblPrompt.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+            lblPrompt.TextAlign = ContentAlignment.MiddleLeft;
+
+            buttonPanel.Name = "pnlExcelImportConfirmButtons";
+            buttonPanel.Location = new Point(0, 222);
+            buttonPanel.Size = new Size(540, 68);
+            buttonPanel.BackColor = Color.FromArgb(248, 248, 248);
+
+            btnYes.Name = "btnExcelImportConfirmYes";
+            btnYes.Text = "✓  Có";
+            btnYes.Size = new Size(130, 43);
+            btnYes.Location = new Point(132, 11);
+            btnYes.BackColor = Color.FromArgb(0, 105, 235);
+            btnYes.ForeColor = Color.White;
+            btnYes.FlatStyle = FlatStyle.Flat;
+            btnYes.FlatAppearance.BorderSize = 0;
+            btnYes.FlatAppearance.MouseOverBackColor = Color.FromArgb(20, 119, 245);
+            btnYes.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 85, 205);
+            btnYes.Font = new Font("Segoe UI", 10F, FontStyle.Regular);
+            btnYes.Cursor = Cursors.Hand;
+            btnYes.DialogResult = DialogResult.Yes;
+            btnYes.UseVisualStyleBackColor = false;
+
+            btnNo.Name = "btnExcelImportConfirmNo";
+            btnNo.Text = "Không";
+            btnNo.Size = new Size(130, 43);
+            btnNo.Location = new Point(277, 11);
+            btnNo.BackColor = Color.White;
+            btnNo.ForeColor = Color.FromArgb(35, 35, 35);
+            btnNo.FlatStyle = FlatStyle.Flat;
+            btnNo.FlatAppearance.BorderColor = Color.FromArgb(210, 210, 210);
+            btnNo.FlatAppearance.BorderSize = 1;
+            btnNo.FlatAppearance.MouseOverBackColor = Color.FromArgb(242, 246, 252);
+            btnNo.Font = new Font("Segoe UI", 10F, FontStyle.Regular);
+            btnNo.Cursor = Cursors.Hand;
+            btnNo.DialogResult = DialogResult.No;
+            btnNo.UseVisualStyleBackColor = false;
+
+            void ApplyRoundedButton(Button button, int radius)
+            {
+                if (button.Width <= 0 || button.Height <= 0)
+                    return;
+
+                using var path = new System.Drawing.Drawing2D.GraphicsPath();
+                int diameter = radius * 2;
+                Rectangle rect = new Rectangle(0, 0, button.Width, button.Height);
+                path.AddArc(rect.X, rect.Y, diameter, diameter, 180, 90);
+                path.AddArc(rect.Right - diameter, rect.Y, diameter, diameter, 270, 90);
+                path.AddArc(rect.Right - diameter, rect.Bottom - diameter, diameter, diameter, 0, 90);
+                path.AddArc(rect.X, rect.Bottom - diameter, diameter, diameter, 90, 90);
+                path.CloseFigure();
+                button.Region?.Dispose();
+                button.Region = new Region(path);
+            }
+
+            btnYes.Resize += (_, _) => ApplyRoundedButton(btnYes, 7);
+            btnNo.Resize += (_, _) => ApplyRoundedButton(btnNo, 7);
+            ApplyRoundedButton(btnYes, 7);
+            ApplyRoundedButton(btnNo, 7);
+
+            contentPanel.Controls.AddRange(new Control[]
+            {
+                lblQuestionIcon, lblFile, lblRecordCount,
+                lblNote1, lblNote2, lblPrompt
+            });
+            buttonPanel.Controls.AddRange(new Control[] { btnYes, btnNo });
+            dialog.Controls.Add(contentPanel);
+            dialog.Controls.Add(buttonPanel);
+            dialog.AcceptButton = btnYes;
+            dialog.CancelButton = btnNo;
+
+            dialog.FormClosing += (_, _) =>
+            {
+                if (dialog.DialogResult == DialogResult.None)
+                    dialog.DialogResult = DialogResult.No;
+            };
+
+            dialog.ResumeLayout(true);
+            return dialog.ShowDialog(this);
+        }
+
+        /// <summary>
+        /// Hộp thoại kết quả nhập Excel theo thiết kế của ứng dụng.
+        /// Chỉ thay đổi phần trình bày; kết quả và danh sách hồ sơ bị bỏ qua
+        /// vẫn lấy trực tiếp từ ImportManyAsync.
+        /// </summary>
+        private void ShowExcelImportResultDialog(
+            int importedCount,
+            IReadOnlyList<string> skipped)
+        {
+            using Form dialog = new Form();
+            dialog.SuspendLayout();
+            dialog.Text = "Kết quả nhập Excel";
+            dialog.StartPosition = FormStartPosition.CenterParent;
+            dialog.FormBorderStyle = FormBorderStyle.FixedDialog;
+            dialog.ClientSize = new Size(448, 440);
+            dialog.MaximizeBox = false;
+            dialog.MinimizeBox = false;
+            dialog.ShowInTaskbar = false;
+            dialog.BackColor = Color.White;
+            dialog.Font = new Font("Segoe UI", 9.5F, FontStyle.Regular);
+            dialog.AutoScaleMode = AutoScaleMode.Dpi;
+            dialog.KeyPreview = true;
+
+            // Biểu tượng thông tin màu xanh.
+            Label lblInfoIcon = new Label
+            {
+                Name = "lblExcelResultInfoIcon",
+                Location = new Point(28, 55),
+                Size = new Size(54, 54),
+                Text = "i",
+                TextAlign = ContentAlignment.MiddleCenter,
+                BackColor = Color.FromArgb(18, 157, 222),
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 31F, FontStyle.Regular),
+                UseCompatibleTextRendering = true
+            };
+            ApplyRoundedRegion(lblInfoIcon, 27);
+
+            Label lblTitle = new Label
+            {
+                Name = "lblExcelResultTitle",
+                Location = new Point(104, 64),
+                Size = new Size(315, 36),
+                Text = "Nhập Excel hoàn tất!",
+                ForeColor = Color.FromArgb(15, 39, 105),
+                Font = new Font("Segoe UI", 14F, FontStyle.Bold),
+                TextAlign = ContentAlignment.MiddleLeft,
+                BackColor = Color.Transparent
+            };
+
+            // Thẻ thống kê hồ sơ đã thêm.
+            Panel pnlImported = new Panel
+            {
+                Name = "pnlExcelImported",
+                Location = new Point(18, 124),
+                Size = new Size(199, 116),
+                BackColor = Color.FromArgb(234, 250, 239)
+            };
+            ApplyRoundedRegion(pnlImported, 8);
+
+            Label lblImportedIcon = new Label
+            {
+                Location = new Point(48, 12),
+                Size = new Size(28, 28),
+                Text = "✓",
+                TextAlign = ContentAlignment.MiddleCenter,
+                BackColor = Color.FromArgb(0, 145, 67),
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 16F, FontStyle.Bold),
+                UseCompatibleTextRendering = true
+            };
+            ApplyRoundedRegion(lblImportedIcon, 14);
+
+            Label lblImportedCaption = new Label
+            {
+                Location = new Point(84, 13),
+                Size = new Size(103, 26),
+                Text = "Đã thêm",
+                ForeColor = Color.FromArgb(0, 125, 49),
+                Font = new Font("Segoe UI", 10F, FontStyle.Bold),
+                TextAlign = ContentAlignment.MiddleLeft,
+                BackColor = Color.Transparent
+            };
+
+            Label lblImportedCount = new Label
+            {
+                Location = new Point(12, 42),
+                Size = new Size(175, 38),
+                Text = importedCount.ToString(),
+                ForeColor = Color.FromArgb(0, 145, 48),
+                Font = new Font("Segoe UI", 25F, FontStyle.Bold),
+                TextAlign = ContentAlignment.MiddleCenter,
+                BackColor = Color.Transparent
+            };
+
+            Label lblImportedUnit = new Label
+            {
+                Location = new Point(12, 82),
+                Size = new Size(175, 22),
+                Text = "hồ sơ",
+                ForeColor = Color.FromArgb(35, 92, 55),
+                Font = new Font("Segoe UI", 9.5F, FontStyle.Regular),
+                TextAlign = ContentAlignment.MiddleCenter,
+                BackColor = Color.Transparent
+            };
+
+            pnlImported.Controls.AddRange(new Control[]
+            {
+                lblImportedIcon, lblImportedCaption,
+                lblImportedCount, lblImportedUnit
+            });
+
+            // Thẻ thống kê hồ sơ bị bỏ qua do trùng.
+            Panel pnlSkippedSummary = new Panel
+            {
+                Name = "pnlExcelSkippedSummary",
+                Location = new Point(231, 124),
+                Size = new Size(199, 116),
+                BackColor = Color.FromArgb(255, 239, 239)
+            };
+            ApplyRoundedRegion(pnlSkippedSummary, 8);
+
+            Label lblSkippedIcon = new Label
+            {
+                Location = new Point(28, 12),
+                Size = new Size(28, 28),
+                Text = "×",
+                TextAlign = ContentAlignment.MiddleCenter,
+                BackColor = Color.FromArgb(235, 55, 55),
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 18F, FontStyle.Bold),
+                UseCompatibleTextRendering = true
+            };
+            ApplyRoundedRegion(lblSkippedIcon, 14);
+
+            Label lblSkippedCaption = new Label
+            {
+                Location = new Point(62, 12),
+                Size = new Size(128, 28),
+                Text = "Bỏ qua do trùng",
+                ForeColor = Color.FromArgb(200, 37, 37),
+                Font = new Font("Segoe UI", 9.5F, FontStyle.Bold),
+                TextAlign = ContentAlignment.MiddleLeft,
+                BackColor = Color.Transparent
+            };
+
+            Label lblSkippedCount = new Label
+            {
+                Location = new Point(12, 42),
+                Size = new Size(175, 38),
+                Text = skipped.Count.ToString(),
+                ForeColor = Color.FromArgb(220, 48, 48),
+                Font = new Font("Segoe UI", 25F, FontStyle.Bold),
+                TextAlign = ContentAlignment.MiddleCenter,
+                BackColor = Color.Transparent
+            };
+
+            Label lblSkippedUnit = new Label
+            {
+                Location = new Point(12, 82),
+                Size = new Size(175, 22),
+                Text = "hồ sơ",
+                ForeColor = Color.FromArgb(100, 54, 54),
+                Font = new Font("Segoe UI", 9.5F, FontStyle.Regular),
+                TextAlign = ContentAlignment.MiddleCenter,
+                BackColor = Color.Transparent
+            };
+
+            pnlSkippedSummary.Controls.AddRange(new Control[]
+            {
+                lblSkippedIcon, lblSkippedCaption,
+                lblSkippedCount, lblSkippedUnit
+            });
+
+            // Khung danh sách bị bỏ qua; cuộn được nếu có nhiều hồ sơ.
+            Panel pnlSkippedList = new Panel
+            {
+                Name = "pnlExcelSkippedList",
+                Location = new Point(18, 254),
+                Size = new Size(412, 105),
+                BackColor = Color.FromArgb(246, 246, 250),
+                AutoScroll = true
+            };
+            ApplyRoundedRegion(pnlSkippedList, 7);
+
+            Label lblSkippedListTitle = new Label
+            {
+                Location = new Point(13, 9),
+                Size = new Size(380, 23),
+                Text = skipped.Count > 0 ? "Danh sách bị bỏ qua:" : "Danh sách bị bỏ qua: Không có",
+                ForeColor = Color.FromArgb(35, 35, 45),
+                Font = new Font("Segoe UI", 9.5F, FontStyle.Bold),
+                TextAlign = ContentAlignment.MiddleLeft,
+                BackColor = Color.Transparent
+            };
+            pnlSkippedList.Controls.Add(lblSkippedListTitle);
+
+            int visibleCount = Math.Min(skipped.Count, 12);
+            for (int i = 0; i < visibleCount; i++)
+            {
+                Label lblSkippedItem = new Label
+                {
+                    Name = "lblSkippedItem" + i,
+                    Location = new Point(14, 34 + (i * 22)),
+                    Size = new Size(375, 22),
+                    Text = "●  " + skipped[i],
+                    ForeColor = Color.FromArgb(35, 35, 45),
+                    Font = new Font("Segoe UI", 9F, FontStyle.Regular),
+                    TextAlign = ContentAlignment.MiddleLeft,
+                    AutoEllipsis = true,
+                    BackColor = Color.Transparent
+                };
+                pnlSkippedList.Controls.Add(lblSkippedItem);
+            }
+
+            if (skipped.Count > visibleCount)
+            {
+                Label lblMoreSkipped = new Label
+                {
+                    Location = new Point(14, 34 + (visibleCount * 22)),
+                    Size = new Size(375, 22),
+                    Text = $"… và {skipped.Count - visibleCount} hồ sơ khác.",
+                    ForeColor = Color.FromArgb(90, 90, 100),
+                    Font = new Font("Segoe UI", 9F, FontStyle.Italic),
+                    TextAlign = ContentAlignment.MiddleLeft,
+                    BackColor = Color.Transparent
+                };
+                pnlSkippedList.Controls.Add(lblMoreSkipped);
+            }
+
+            Panel pnlFooterLine = new Panel
+            {
+                Location = new Point(18, 374),
+                Size = new Size(412, 1),
+                BackColor = Color.FromArgb(220, 223, 228)
+            };
+
+            Button btnOK = new Button
+            {
+                Name = "btnExcelResultOK",
+                Text = "OK",
+                Location = new Point(320, 389),
+                Size = new Size(109, 40),
+                BackColor = Color.FromArgb(0, 105, 235),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 10F, FontStyle.Regular),
+                Cursor = Cursors.Hand,
+                DialogResult = DialogResult.OK,
+                UseVisualStyleBackColor = false
+            };
+            btnOK.FlatAppearance.BorderSize = 0;
+            btnOK.FlatAppearance.MouseOverBackColor = Color.FromArgb(20, 119, 245);
+            btnOK.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 85, 205);
+            ApplyRoundedRegion(btnOK, 7);
+
+            dialog.Controls.AddRange(new Control[]
+            {
+                lblInfoIcon, lblTitle,
+                pnlImported, pnlSkippedSummary,
+                pnlSkippedList, pnlFooterLine, btnOK
+            });
+            dialog.AcceptButton = btnOK;
+            dialog.CancelButton = btnOK;
+            dialog.ResumeLayout(true);
+            dialog.ShowDialog(this);
+        }
+
+
         private async Task ImportExcelFileAsync(string filePath)
         {
             try
@@ -1797,15 +3172,9 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 List<Personnel> personnelList =
                     importService.ReadPersonnel(filePath);
 
-                DialogResult confirm = MessageBox.Show(
-                    $"File: {Path.GetFileName(filePath)}\n\n" +
-                    $"Số hồ sơ đọc được: {personnelList.Count}\n\n" +
-                    "Hệ thống sẽ bỏ qua hồ sơ có Số hiệu hoặc CCCD " +
-                    "đã tồn tại. Hồ sơ hiện có sẽ không bị sửa.\n\n" +
-                    "Bạn có muốn tiếp tục nhập không?",
-                    "Xác nhận nhập Excel",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
+                DialogResult confirm = ShowCustomExcelImportConfirmDialog(
+                    Path.GetFileName(filePath),
+                    personnelList.Count);
 
                 if (confirm != DialogResult.Yes)
                     return;
@@ -1825,36 +3194,9 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
                     _selectedPersonnelId = 0;
 
-                    string message =
-                        "Nhập Excel hoàn tất!\n\n" +
-                        $"Đã thêm: {importResult.ImportedCount} hồ sơ\n" +
-                        $"Bỏ qua do trùng: {importResult.Skipped.Count} hồ sơ";
-
-                    if (importResult.Skipped.Count > 0)
-                    {
-                        message += "\n\nDanh sách bị bỏ qua:";
-
-                        int displayCount =
-                            Math.Min(importResult.Skipped.Count, 15);
-
-                        for (int i = 0; i < displayCount; i++)
-                        {
-                            message += "\n• " + importResult.Skipped[i];
-                        }
-
-                        if (importResult.Skipped.Count > displayCount)
-                        {
-                            message +=
-                                $"\n... và " +
-                                $"{importResult.Skipped.Count - displayCount} hồ sơ khác.";
-                        }
-                    }
-
-                    MessageBox.Show(
-                        message,
-                        "Kết quả nhập Excel",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
+                    ShowExcelImportResultDialog(
+                        importResult.ImportedCount,
+                        importResult.Skipped);
                 }
                 finally
                 {

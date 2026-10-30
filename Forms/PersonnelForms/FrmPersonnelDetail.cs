@@ -25,6 +25,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
         // the approved UI no longer creates email or gender radio controls.
         private TextBox? _txtBasicEmail;
         private Panel? _headerIconPanel;
+        private Panel? _otherTabCanvas;
         private readonly Dictionary<Control, RoundedInputBorderWindow> _roundedInputBorderWindows = new Dictionary<Control, RoundedInputBorderWindow>();
         private readonly Dictionary<Control, Label> _validationLabels = new Dictionary<Control, Label>();
         private readonly Dictionary<Control, string> _validationMessages = new Dictionary<Control, string>();
@@ -39,6 +40,9 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             ApplyBasicTabDesign();
             ApplyAddressTabDesign();
             ApplyWorkTabDesign();
+            ApplyEducationTabDesign();
+            ApplyPartyTabDesign();
+            ApplyOtherTabDesign();
 
             // Keep the form at a practical dialog size; the maximize button is disabled.
             AutoSize = false;
@@ -50,10 +54,13 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 UpdateTabLayout();
                 UpdateAddressTabLayout();
                 UpdateWorkTabLayout();
+                UpdateEducationTabLayout();
+                UpdatePartyTabLayout();
+                UpdateOtherTabLayout();
                 ApplyRoundedInputs();
                 btnResetBasicTabInvalidate();
             };
-            Resize += (_, _) => { UpdateTabLayout(); UpdateAddressTabLayout(); UpdateWorkTabLayout(); };
+            Resize += (_, _) => { UpdateTabLayout(); UpdateAddressTabLayout(); UpdateWorkTabLayout(); UpdateEducationTabLayout(); UpdatePartyTabLayout(); UpdateOtherTabLayout(); };
 
             epValidation.BlinkStyle = ErrorBlinkStyle.NeverBlink;
 
@@ -703,6 +710,459 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             PlaceRow("pnlWorkIconSalary", rightX, rowTop + rowStep * 3, lblHeSoLuong, txtHeSoLuong, inputWidthRight);
         }
 
+        // Education tab: reproduce the approved single-column design while reusing
+        // the existing data-bound controls and preserving all save/load behavior.
+        private void ApplyEducationTabDesign()
+        {
+            if (tabPage4 == null) return;
+            tabPage4.BackColor = BackColor;
+            tabPage4.Padding = new Padding(0);
+
+            var card = tabPage4.Controls.Find("pnlEducationCard", false).FirstOrDefault() as Panel;
+            if (card == null)
+            {
+                card = new Panel { Name = "pnlEducationCard", BackColor = Color.FromArgb(247, 251, 255) };
+                tabPage4.Controls.Add(card);
+            }
+            card.BorderStyle = BorderStyle.None;
+            card.Paint -= AddressCard_Paint;
+            card.Paint += AddressCard_Paint;
+            card.SendToBack();
+
+            void StyleEducationLabel(Label label, string text)
+            {
+                label.Text = text;
+                label.AutoSize = false;
+                label.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+                label.ForeColor = Color.FromArgb(20, 45, 105);
+                label.BackColor = Color.Transparent;
+                label.TextAlign = ContentAlignment.MiddleLeft;
+            }
+
+            StyleEducationLabel(lblTrinhDoTinHoc, "Trình độ tin học");
+            StyleEducationLabel(lblTrinhDoNgoaiNgu, "Trình độ ngoại ngữ");
+            StyleEducationLabel(lblTrinhDoVanHoa, "Trình độ văn hoá");
+            StyleEducationLabel(lblTrinhDoChuyenMon, "Chuyên môn");
+            StyleEducationLabel(lblChuyenNganhDaoTao, "Chuyên ngành đào tạo");
+            StyleEducationLabel(lblThangNamTotNghiep, "Tháng năm tốt nghiệp");
+            StyleEducationLabel(lblTrinhDoLyLuanChinhTri, "Lý luận chính trị");
+
+            void StyleEducationTextBox(TextBox textBox, string placeholder)
+            {
+                textBox.Font = new Font("Segoe UI", 12F, FontStyle.Regular);
+                textBox.BackColor = Color.White;
+                textBox.ForeColor = Color.FromArgb(35, 45, 60);
+                textBox.BorderStyle = BorderStyle.FixedSingle;
+                textBox.PlaceholderText = placeholder;
+                textBox.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            }
+            StyleEducationTextBox(txtTrinhDoTinHoc, "Nhập trình độ tin học hiện có của CBCS");
+            StyleEducationTextBox(txtTrinhDoNgoaiNgu, "Nhập trình độ ngoại ngữ hiện có của CBCS");
+            StyleEducationTextBox(txtTrinhDoVanHoa, "Ví dụ: 12/12, Trung cấp, Cao đẳng, Đại học...");
+            StyleEducationTextBox(txtTrinhDoChuyenMon, "Nhập chuyên môn được đào tạo");
+            StyleEducationTextBox(txtChuyenNganhDaoTao, "Nhập chuyên ngành đào tạo cụ thể");
+            StyleEducationTextBox(txtTrinhDoLyLuanChinhTri, "Ví dụ: Sơ cấp, Trung cấp, Cao cấp, Cử nhân...");
+
+            dtThangNamTotNghiep.Font = new Font("Segoe UI", 12F, FontStyle.Regular);
+            dtThangNamTotNghiep.Format = DateTimePickerFormat.Custom;
+            dtThangNamTotNghiep.CustomFormat = "MM/yyyy";
+            dtThangNamTotNghiep.ShowUpDown = false;
+
+            AddAddressIcon("pnlEducationIconComputer", "education:book", tabPage4);
+            AddAddressIcon("pnlEducationIconLanguage", "education:globe", tabPage4);
+            AddAddressIcon("pnlEducationIconCulture", "education:university", tabPage4);
+            AddAddressIcon("pnlEducationIconSpecialty", "education:document", tabPage4);
+            AddAddressIcon("pnlEducationIconMajor", "work:gear", tabPage4);
+            AddAddressIcon("pnlEducationIconGraduation", "education:edu-calendar", tabPage4);
+            AddAddressIcon("pnlEducationIconPolitics", "education:chart", tabPage4);
+
+            UpdateEducationTabLayout();
+        }
+
+        private void UpdateEducationTabLayout()
+        {
+            if (IsDisposed || tabPage4 == null || tabPage4.IsDisposed || tabPage4.ClientSize.Width < 100)
+                return;
+
+            int w = tabPage4.ClientSize.Width;
+            int h = tabPage4.ClientSize.Height;
+            var card = tabPage4.Controls.Find("pnlEducationCard", false).FirstOrDefault() as Panel;
+            if (card != null)
+            {
+                card.Location = Point.Empty;
+                card.Size = new Size(w, h);
+                card.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+                card.SendToBack();
+                card.Invalidate();
+            }
+
+            int marginLeft = Math.Max(28, (int)(w * 0.023));
+            int iconSize = Math.Max(52, Math.Min(64, (int)(h * 0.105)));
+            int labelX = marginLeft + iconSize + Math.Max(28, (int)(w * 0.024));
+            int labelWidth = Math.Max(220, Math.Min(250, (int)(w * 0.17)));
+            int inputX = labelX + labelWidth + Math.Max(22, (int)(w * 0.025));
+            int inputWidth = Math.Max(260, w - inputX - marginLeft - 20);
+            int top = Math.Max(16, (int)(h * 0.025));
+            int rowStep = Math.Max(58, Math.Min(70, (h - top * 2 - iconSize) / 6));
+            int inputHeight = Math.Max(42, Math.Min(50, iconSize - 4));
+
+            void PositionLabel(Label label, int y)
+            {
+                label.Location = new Point(labelX, y);
+                label.Size = new Size(labelWidth, iconSize);
+                label.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+                label.BringToFront();
+            }
+            void PositionControl(Control control, int y)
+            {
+                control.Location = new Point(inputX, y + (iconSize - inputHeight) / 2);
+                control.Size = new Size(inputWidth, inputHeight);
+                control.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+                control.BringToFront();
+            }
+            void PositionIcon(string name, int y)
+            {
+                var icon = tabPage4.Controls.Find(name, false).FirstOrDefault() as Panel;
+                if (icon == null) return;
+                icon.Location = new Point(marginLeft, y);
+                icon.Size = new Size(iconSize, iconSize);
+                ApplyAddressIconRegion(icon);
+                icon.Invalidate();
+                icon.BringToFront();
+            }
+            void PlaceRow(string iconName, int row, Label label, Control control)
+            {
+                int y = top + row * rowStep;
+                PositionIcon(iconName, y);
+                PositionLabel(label, y);
+                PositionControl(control, y);
+            }
+
+            PlaceRow("pnlEducationIconComputer", 0, lblTrinhDoTinHoc, txtTrinhDoTinHoc);
+            PlaceRow("pnlEducationIconLanguage", 1, lblTrinhDoNgoaiNgu, txtTrinhDoNgoaiNgu);
+            PlaceRow("pnlEducationIconCulture", 2, lblTrinhDoVanHoa, txtTrinhDoVanHoa);
+            PlaceRow("pnlEducationIconSpecialty", 3, lblTrinhDoChuyenMon, txtTrinhDoChuyenMon);
+            PlaceRow("pnlEducationIconMajor", 4, lblChuyenNganhDaoTao, txtChuyenNganhDaoTao);
+            PlaceRow("pnlEducationIconGraduation", 5, lblThangNamTotNghiep, dtThangNamTotNghiep);
+            PlaceRow("pnlEducationIconPolitics", 6, lblTrinhDoLyLuanChinhTri, txtTrinhDoLyLuanChinhTri);
+        }
+
+        // Party tab: match the approved three-row design while retaining the existing
+        // checkbox/date controls and all original persistence/event handlers.
+        // The approved "Khác" tab is a coming-soon placeholder. It is drawn on a
+        // dedicated canvas so the existing form controls and data handlers are not
+        // deleted or renamed; the canvas only changes what is visible on this tab.
+        private void ApplyOtherTabDesign()
+        {
+            if (tabPage6 == null) return;
+            tabPage6.BackColor = Color.FromArgb(244, 249, 255);
+            tabPage6.Padding = new Padding(0);
+
+            if (_otherTabCanvas == null || _otherTabCanvas.IsDisposed)
+            {
+                _otherTabCanvas = new Panel
+                {
+                    Name = "pnlOtherComingSoonCanvas",
+                    BackColor = Color.FromArgb(244, 249, 255),
+                    BorderStyle = BorderStyle.None,
+                    Dock = DockStyle.Fill,
+                    Margin = Padding.Empty,
+                    TabStop = false
+                };
+                _otherTabCanvas.Paint += OtherTabCanvas_Paint;
+                tabPage6.Controls.Add(_otherTabCanvas);
+            }
+            _otherTabCanvas.Dock = DockStyle.Fill;
+            _otherTabCanvas.BringToFront();
+            UpdateOtherTabLayout();
+        }
+
+        private void UpdateOtherTabLayout()
+        {
+            if (IsDisposed || tabPage6 == null || tabPage6.IsDisposed) return;
+            if (_otherTabCanvas == null || _otherTabCanvas.IsDisposed) return;
+            _otherTabCanvas.Bounds = tabPage6.ClientRectangle;
+            _otherTabCanvas.Invalidate();
+        }
+
+        private void OtherTabCanvas_Paint(object? sender, PaintEventArgs e)
+        {
+            if (sender is not Panel canvas || canvas.Width < 100 || canvas.Height < 100) return;
+            Graphics g = e.Graphics;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+            int w = canvas.ClientSize.Width;
+            int h = canvas.ClientSize.Height;
+
+            // Pale blue surface and the fine rounded outline from the design.
+            using (var background = new LinearGradientBrush(new Rectangle(0, 0, w, h),
+                Color.FromArgb(248, 252, 255), Color.FromArgb(239, 247, 255), 90F))
+                g.FillRectangle(background, 0, 0, w, h);
+            using (var borderPath = RoundedRectangle(new Rectangle(1, 1, w - 3, h - 3), 12))
+            using (var borderPen = new Pen(Color.FromArgb(190, 216, 250), 1.4F))
+                g.DrawPath(borderPen, borderPath);
+
+            // Scale the illustration as a single centered composition.
+            float scale = Math.Min(1F, Math.Min(w / 1120F, h / 560F));
+            scale = Math.Max(0.58F, scale);
+            float cx = w / 2F;
+            float illustrationTop = h * 0.19F;
+            float iconW = 440F * scale;
+            float iconH = 220F * scale;
+            float left = cx - iconW / 2F;
+            float top = illustrationTop;
+            GraphicsState state = g.Save();
+            g.TranslateTransform(left, top);
+            g.ScaleTransform(scale, scale);
+            DrawComingSoonIllustration(g);
+            g.Restore(state);
+
+            // Blue pill banner with clock and exact label.
+            float pillW = 480F * scale;
+            float pillH = 82F * scale;
+            float pillX = cx - pillW / 2F;
+            float pillY = top + iconH + 18F * scale;
+            using (var pillPath = RoundedRectangle(new Rectangle((int)pillX, (int)pillY, (int)pillW, (int)pillH), (int)(pillH / 2F)))
+            using (var pillFill = new LinearGradientBrush(new Rectangle((int)pillX, (int)pillY, (int)pillW, (int)pillH),
+                Color.FromArgb(222, 237, 255), Color.FromArgb(209, 229, 255), 0F))
+            using (var pillPen = new Pen(Color.FromArgb(190, 208, 241), 1.4F))
+            {
+                g.FillPath(pillFill, pillPath);
+                g.DrawPath(pillPen, pillPath);
+            }
+
+            float clockD = 43F * scale;
+            float clockX = pillX + 52F * scale;
+            float clockY = pillY + (pillH - clockD) / 2F;
+            using (var clockPen = new Pen(Color.FromArgb(0, 57, 169), 3.5F * scale))
+            {
+                g.DrawEllipse(clockPen, clockX, clockY, clockD, clockD);
+                g.DrawLine(clockPen, clockX + clockD * .5F, clockY + clockD * .22F,
+                    clockX + clockD * .5F, clockY + clockD * .52F);
+                g.DrawLine(clockPen, clockX + clockD * .5F, clockY + clockD * .52F,
+                    clockX + clockD * .72F, clockY + clockD * .52F);
+            }
+            using (var textFont = new Font("Segoe UI", 25F * scale, FontStyle.Bold, GraphicsUnit.Pixel))
+            using (var textBrush = new SolidBrush(Color.FromArgb(13, 47, 151)))
+            {
+                var textRect = new RectangleF(clockX + clockD + 18F * scale, pillY, pillX + pillW - (clockX + clockD + 28F * scale), pillH);
+                using var format = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center, FormatFlags = StringFormatFlags.NoWrap };
+                g.DrawString("Sẽ cập nhật sớm", textFont, textBrush, textRect, format);
+            }
+
+            // Small blue emphasis strokes at both sides of the banner.
+            using (var rayPen = new Pen(Color.FromArgb(13, 47, 170), 3.2F * scale))
+            {
+                rayPen.StartCap = LineCap.Round; rayPen.EndCap = LineCap.Round;
+                float yMid = pillY + pillH * .46F;
+                g.DrawLine(rayPen, pillX - 24F * scale, yMid - 22F * scale, pillX - 42F * scale, yMid - 36F * scale);
+                g.DrawLine(rayPen, pillX - 30F * scale, yMid, pillX - 52F * scale, yMid - 4F * scale);
+                g.DrawLine(rayPen, pillX - 24F * scale, yMid + 20F * scale, pillX - 43F * scale, yMid + 30F * scale);
+                g.DrawLine(rayPen, pillX + pillW + 24F * scale, yMid - 22F * scale, pillX + pillW + 42F * scale, yMid - 36F * scale);
+                g.DrawLine(rayPen, pillX + pillW + 30F * scale, yMid, pillX + pillW + 52F * scale, yMid - 4F * scale);
+                g.DrawLine(rayPen, pillX + pillW + 24F * scale, yMid + 20F * scale, pillX + pillW + 43F * scale, yMid + 30F * scale);
+            }
+        }
+
+        private static void DrawComingSoonIllustration(Graphics g)
+        {
+            // Soft blue cloud behind the clipboard.
+            using (var cloud = new SolidBrush(Color.FromArgb(218, 235, 255)))
+            {
+                g.FillEllipse(cloud, 28, 100, 145, 105);
+                g.FillEllipse(cloud, 90, 48, 170, 150);
+                g.FillEllipse(cloud, 225, 75, 145, 130);
+                g.FillEllipse(cloud, 300, 112, 100, 88);
+                g.FillRectangle(cloud, 75, 120, 275, 78);
+            }
+
+            // Decorative gear on the right.
+            using (var gearBrush = new SolidBrush(Color.FromArgb(137, 187, 246)))
+            using (var gearHole = new SolidBrush(Color.FromArgb(222, 238, 255)))
+            {
+                float gx = 310, gy = 98, r = 47;
+                for (int i = 0; i < 8; i++)
+                {
+                    GraphicsState gearState = g.Save();
+                    g.TranslateTransform(gx, gy);
+                    g.RotateTransform(i * 45F);
+                    FillRoundedRectangleCompat(g, gearBrush, new RectangleF(-10, -r - 9, 20, 28), 4);
+                    g.Restore(gearState);
+                }
+                g.FillEllipse(gearBrush, gx - r + 4, gy - r + 4, (r - 4) * 2, (r - 4) * 2);
+                g.FillEllipse(gearHole, gx - 17, gy - 17, 34, 34);
+            }
+
+            // Clipboard body and blue outline.
+            using (var boardPath = RoundedRectangle(new Rectangle(120, 22, 128, 164), 13))
+            using (var boardFill = new SolidBrush(Color.FromArgb(249, 252, 255)))
+            using (var boardPen = new Pen(Color.FromArgb(71, 139, 225), 8F))
+            {
+                g.FillPath(boardFill, boardPath);
+                g.DrawPath(boardPen, boardPath);
+            }
+            using (var clipPath = RoundedRectangle(new Rectangle(157, 11, 58, 25), 6))
+            using (var clipFill = new SolidBrush(Color.FromArgb(43, 103, 181)))
+                g.FillPath(clipFill, clipPath);
+            using (var clipHole = new SolidBrush(Color.FromArgb(245, 250, 255)))
+                g.FillEllipse(clipHole, 179, 3, 13, 13);
+
+            // Three checked rows.
+            using (var checkFill = new SolidBrush(Color.FromArgb(173, 208, 250)))
+            using (var lineFill = new SolidBrush(Color.FromArgb(115, 169, 237)))
+            using (var checkPen = new Pen(Color.FromArgb(248, 252, 255), 3.2F))
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    float y = 65 + i * 35;
+                    FillRoundedRectangleCompat(g, checkFill, new RectangleF(139, y, 21, 21), 4);
+                    g.DrawLine(checkPen, 144, y + 10, 149, y + 15);
+                    g.DrawLine(checkPen, 149, y + 15, 157, y + 5);
+                    FillRoundedRectangleCompat(g, lineFill, new RectangleF(170, y + 2, 55, 5), 2);
+                    FillRoundedRectangleCompat(g, lineFill, new RectangleF(170, y + 12, 42, 4), 2);
+                }
+            }
+
+            // Golden hard hat in front of the clipboard.
+            using (var gold = new SolidBrush(Color.FromArgb(255, 174, 20)))
+            using (var goldLight = new SolidBrush(Color.FromArgb(255, 195, 51)))
+            {
+                g.FillEllipse(goldLight, 190, 98, 100, 86);
+                g.FillRectangle(goldLight, 195, 130, 90, 38);
+                g.FillEllipse(gold, 190, 145, 102, 22);
+                FillRoundedRectangleCompat(g, gold, new RectangleF(173, 162, 136, 22), 9);
+                g.FillPolygon(gold, new[] { new PointF(224, 100), new PointF(239, 105), new PointF(239, 158), new PointF(224, 158) });
+                g.FillPolygon(gold, new[] { new PointF(203, 111), new PointF(215, 119), new PointF(215, 158), new PointF(203, 158) });
+                g.FillPolygon(gold, new[] { new PointF(250, 111), new PointF(262, 119), new PointF(262, 158), new PointF(250, 158) });
+            }
+
+            // Tiny sparkle accents.
+            using (var sparkle = new SolidBrush(Color.FromArgb(255, 192, 54)))
+            {
+                g.FillPolygon(sparkle, new[] { new PointF(35, 95), new PointF(41, 108), new PointF(54, 114), new PointF(41, 120), new PointF(35, 133), new PointF(29, 120), new PointF(16, 114), new PointF(29, 108) });
+            }
+            using (var paleSparkle = new SolidBrush(Color.FromArgb(194, 220, 252)))
+                g.FillPolygon(paleSparkle, new[] { new PointF(72, 77), new PointF(80, 86), new PointF(72, 95), new PointF(64, 86) });
+        }
+
+        private void ApplyPartyTabDesign()
+        {
+            if (tabPage5 == null) return;
+            tabPage5.BackColor = BackColor;
+            tabPage5.Padding = new Padding(0);
+
+            var card = tabPage5.Controls.Find("pnlPartyCard", false).FirstOrDefault() as Panel;
+            if (card == null)
+            {
+                card = new Panel { Name = "pnlPartyCard", BackColor = Color.FromArgb(247, 251, 255) };
+                tabPage5.Controls.Add(card);
+            }
+            card.BorderStyle = BorderStyle.None;
+            card.Paint -= AddressCard_Paint;
+            card.Paint += AddressCard_Paint;
+            card.SendToBack();
+
+            StylePartyLabel(lblDangDuBi, "Đảng viên dự bị");
+            StylePartyLabel(lblDangChinhThuc, "Đảng viên chính thức");
+            chkDangVien.Text = "Đảng viên";
+            chkDangVien.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
+            chkDangVien.ForeColor = Color.FromArgb(20, 45, 105);
+            chkDangVien.BackColor = Color.Transparent;
+            chkDangVien.AutoSize = true;
+            chkDangVien.UseVisualStyleBackColor = false;
+
+            foreach (DateTimePicker picker in new[] { dtDangDuBi, dtDangChinhThuc })
+            {
+                picker.Font = new Font("Segoe UI", 12F, FontStyle.Regular);
+                picker.Format = DateTimePickerFormat.Custom;
+                picker.CustomFormat = "dd/MM/yyyy";
+                picker.CalendarForeColor = Color.FromArgb(35, 45, 60);
+                picker.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            }
+
+            AddAddressIcon("pnlPartyIconMember", "party:people", tabPage5);
+            AddAddressIcon("pnlPartyIconProvisional", "party:calendar-provisional", tabPage5);
+            AddAddressIcon("pnlPartyIconOfficial", "party:calendar-check", tabPage5);
+            UpdatePartyTabLayout();
+        }
+
+        private static void StylePartyLabel(Label label, string text)
+        {
+            label.Text = text;
+            label.AutoSize = false;
+            label.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
+            label.ForeColor = Color.FromArgb(20, 45, 105);
+            label.BackColor = Color.Transparent;
+            label.TextAlign = ContentAlignment.MiddleLeft;
+        }
+
+        private void UpdatePartyTabLayout()
+        {
+            if (IsDisposed || tabPage5 == null || tabPage5.IsDisposed || tabPage5.ClientSize.Width < 100)
+                return;
+
+            int w = tabPage5.ClientSize.Width;
+            int h = tabPage5.ClientSize.Height;
+            var card = tabPage5.Controls.Find("pnlPartyCard", false).FirstOrDefault() as Panel;
+            if (card != null)
+            {
+                card.Location = Point.Empty;
+                card.Size = new Size(w, h);
+                card.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+                card.SendToBack();
+                card.Invalidate();
+            }
+
+            int marginLeft = Math.Max(30, (int)(w * 0.023));
+            int iconSize = Math.Max(62, Math.Min(76, (int)(h * 0.145)));
+            int top = Math.Max(34, (int)(h * 0.125));
+            int rowStep = Math.Max(86, Math.Min(106, (int)(h * 0.20)));
+            int labelX = marginLeft + iconSize + Math.Max(34, (int)(w * 0.034));
+            int labelWidth = Math.Max(245, Math.Min(285, (int)(w * 0.18)));
+            int inputX = labelX + labelWidth + Math.Max(22, (int)(w * 0.018));
+            int inputWidth = Math.Max(270, Math.Min(326, w - inputX - marginLeft - 20));
+            int inputHeight = Math.Max(42, Math.Min(58, iconSize - 12));
+
+            void PlaceIcon(string name, int y)
+            {
+                var icon = tabPage5.Controls.Find(name, false).FirstOrDefault() as Panel;
+                if (icon == null) return;
+                icon.Location = new Point(marginLeft, y);
+                icon.Size = new Size(iconSize, iconSize);
+                ApplyAddressIconRegion(icon);
+                icon.Invalidate();
+                icon.BringToFront();
+            }
+            void PlaceLabel(Label label, int y)
+            {
+                label.Location = new Point(labelX, y);
+                label.Size = new Size(labelWidth, iconSize);
+                label.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+                label.BringToFront();
+            }
+            void PlaceDate(DateTimePicker picker, int y)
+            {
+                picker.Location = new Point(inputX, y + (iconSize - inputHeight) / 2);
+                picker.Size = new Size(inputWidth, inputHeight);
+                picker.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+                picker.BringToFront();
+            }
+
+            PlaceIcon("pnlPartyIconMember", top);
+            chkDangVien.Location = new Point(labelX, top + (iconSize - chkDangVien.PreferredSize.Height) / 2);
+            chkDangVien.BringToFront();
+
+            int provisionalY = top + rowStep;
+            PlaceIcon("pnlPartyIconProvisional", provisionalY);
+            PlaceLabel(lblDangDuBi, provisionalY);
+            PlaceDate(dtDangDuBi, provisionalY);
+
+            int officialY = top + rowStep * 2;
+            PlaceIcon("pnlPartyIconOfficial", officialY);
+            PlaceLabel(lblDangChinhThuc, officialY);
+            PlaceDate(dtDangChinhThuc, officialY);
+        }
+
         private void AddAddressIcon(string name, string glyph, Control parent)
         {
             var iconPanel = parent.Controls.Find(name, false).FirstOrDefault() as Panel;
@@ -848,6 +1308,16 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 DrawWorkTabIcon(e.Graphics, glyph.Substring(5), panel.ClientRectangle);
                 return;
             }
+            if (glyph.StartsWith("education:", StringComparison.Ordinal))
+            {
+                DrawWorkTabIcon(e.Graphics, glyph.Substring(10), panel.ClientRectangle);
+                return;
+            }
+            if (glyph.StartsWith("party:", StringComparison.Ordinal))
+            {
+                DrawWorkTabIcon(e.Graphics, glyph.Substring(6), panel.ClientRectangle);
+                return;
+            }
 
             using var font = new Font("Segoe MDL2 Assets", 22F, FontStyle.Regular);
             using var brush = new SolidBrush(Color.FromArgb(0, 75, 170));
@@ -872,6 +1342,52 @@ namespace QuanLyCBCS.Forms.PersonnelForms
 
             switch (kind)
             {
+                case "book":
+                    using (var bookPen = new Pen(blue, 2.6F) { LineJoin = LineJoin.Round })
+                    {
+                        g.DrawRectangle(bookPen, -15, -17, 13, 31);
+                        g.DrawRectangle(bookPen, 2, -17, 13, 31);
+                        g.DrawLine(bookPen, 0, -14, 0, 15);
+                        g.DrawLine(bookPen, -11, -9, -6, -9);
+                        g.DrawLine(bookPen, 6, -9, 11, -9);
+                    }
+                    break;
+                case "globe":
+                    g.DrawEllipse(bluePen, -19, -19, 38, 38);
+                    g.DrawEllipse(bluePen, -9, -19, 18, 38);
+                    g.DrawEllipse(bluePen, -18, -8, 36, 16);
+                    g.DrawLine(bluePen, -18, 0, 18, 0);
+                    break;
+                case "university":
+                    g.FillPolygon(blueBrush, new[] { new PointF(0, -21), new PointF(20, -10), new PointF(-20, -10) });
+                    g.DrawLine(bluePen, -20, -7, 20, -7);
+                    for (int x = -14; x <= 14; x += 9) g.DrawLine(bluePen, x, -5, x, 13);
+                    g.DrawLine(bluePen, -21, 15, 21, 15);
+                    g.DrawLine(bluePen, -23, 20, 23, 20);
+                    break;
+                case "document":
+                    using (var docPath = new GraphicsPath())
+                    {
+                        docPath.AddRectangle(new Rectangle(-15, -20, 30, 40));
+                        g.DrawPath(bluePen, docPath);
+                    }
+                    g.DrawLine(bluePen, -8, -9, 8, -9);
+                    g.DrawLine(bluePen, -8, -1, 8, -1);
+                    g.DrawLine(bluePen, -8, 7, 4, 7);
+                    break;
+                case "edu-calendar":
+                    g.DrawRectangle(bluePen, -17, -15, 34, 32);
+                    g.DrawLine(bluePen, -17, -7, 17, -7);
+                    g.DrawLine(bluePen, -9, -20, -9, -11);
+                    g.DrawLine(bluePen, 9, -20, 9, -11);
+                    break;
+                case "chart":
+                    g.DrawLine(bluePen, -18, 18, -18, -17);
+                    g.DrawLine(bluePen, -18, 18, 20, 18);
+                    g.DrawLines(bluePen, new[] { new Point(-13, 9), new Point(-4, 1), new Point(3, 6), new Point(14, -9) });
+                    g.DrawLine(bluePen, 7, -9, 14, -9);
+                    g.DrawLine(bluePen, 14, -9, 14, -2);
+                    break;
                 case "building":
                     // Solid office building with a stepped roof and white windows.
                     g.FillRectangle(blueBrush, -13, -17, 26, 34);
@@ -938,6 +1454,32 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                     using (var body = RoundedRectangle(new Rectangle(-13, -4, 26, 18), 5)) g.FillPath(blueBrush, body);
                     using (var leftBody = RoundedRectangle(new Rectangle(-23, -2, 13, 14), 4)) g.FillPath(blueBrush, leftBody);
                     using (var rightBody = RoundedRectangle(new Rectangle(10, -2, 13, 14), 4)) g.FillPath(blueBrush, rightBody);
+                    break;
+                case "people":
+                    // Three-person Party member symbol, matching the reference icon.
+                    g.FillEllipse(blueBrush, -6, -17, 12, 12);
+                    g.FillEllipse(blueBrush, -19, -11, 10, 10);
+                    g.FillEllipse(blueBrush, 9, -11, 10, 10);
+                    using (var centerBody = RoundedRectangle(new Rectangle(-13, -3, 26, 17), 5)) g.FillPath(blueBrush, centerBody);
+                    using (var leftBody = RoundedRectangle(new Rectangle(-24, 0, 14, 12), 4)) g.FillPath(blueBrush, leftBody);
+                    using (var rightBody = RoundedRectangle(new Rectangle(10, 0, 14, 12), 4)) g.FillPath(blueBrush, rightBody);
+                    break;
+                case "calendar-provisional":
+                case "calendar-check":
+                    g.DrawRectangle(bluePen, -17, -14, 34, 31);
+                    g.DrawLine(bluePen, -17, -6, 17, -6);
+                    g.DrawLine(bluePen, -9, -20, -9, -11);
+                    g.DrawLine(bluePen, 9, -20, 9, -11);
+                    if (kind == "calendar-check")
+                    {
+                        g.DrawLines(bluePen, new[] { new Point(-9, 4), new Point(-3, 10), new Point(10, -3) });
+                    }
+                    else
+                    {
+                        g.DrawRectangle(bluePen, -7, -2, 14, 12);
+                        g.DrawLine(bluePen, -4, 4, -1, 7);
+                        g.DrawLine(bluePen, -1, 7, 4, 1);
+                    }
                     break;
             }
             g.ResetTransform();
@@ -1062,6 +1604,18 @@ namespace QuanLyCBCS.Forms.PersonnelForms
             float y = r.Y + (r.Height - 24) / 2;
             e.Graphics.DrawString(icons[e.Index], iconFont, brush, startX, y);
             e.Graphics.DrawString(names[e.Index], textFont, brush, startX + iconSize.Width + 6, y + 3);
+        }
+
+        private static void FillRoundedRectangleCompat(Graphics g, Brush brush, RectangleF bounds, float radius)
+        {
+            float d = radius * 2F;
+            using var path = new GraphicsPath();
+            path.AddArc(bounds.X, bounds.Y, d, d, 180, 90);
+            path.AddArc(bounds.Right - d, bounds.Y, d, d, 270, 90);
+            path.AddArc(bounds.Right - d, bounds.Bottom - d, d, d, 0, 90);
+            path.AddArc(bounds.X, bounds.Bottom - d, d, d, 90, 90);
+            path.CloseFigure();
+            g.FillPath(brush, path);
         }
 
         private static System.Drawing.Drawing2D.GraphicsPath RoundedRectangle(Rectangle bounds, int radius)
@@ -1342,6 +1896,171 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                 txtSoDienThoai.Text.Trim();
         }
 
+        // Hộp thoại thành công theo bản thiết kế: gọn, cân đối, biểu tượng check
+        // xanh có các tia nhấn hai bên, tiêu đề xanh đậm và nút OK bo góc.
+        private void ShowSuccessDialog(string message)
+        {
+            using (Form dialog = new Form())
+            {
+                dialog.Name = "dlgSuccess";
+                dialog.Text = string.Empty;
+                dialog.FormBorderStyle = FormBorderStyle.None;
+                dialog.StartPosition = FormStartPosition.CenterParent;
+                dialog.ClientSize = new Size(210, 174);
+                dialog.BackColor = Color.White;
+                dialog.ShowInTaskbar = false;
+                dialog.MinimizeBox = false;
+                dialog.MaximizeBox = false;
+                dialog.ControlBox = false;
+                dialog.KeyPreview = true;
+                dialog.Padding = Padding.Empty;
+
+                dialog.Region = new Region(CreateRoundedRectangle(
+                    new Rectangle(0, 0, dialog.ClientSize.Width, dialog.ClientSize.Height), 11));
+                dialog.Paint += (sender, e) =>
+                {
+                    e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                    using (Pen borderPen = new Pen(Color.FromArgb(222, 228, 237), 1F))
+                    using (GraphicsPath borderPath = CreateRoundedRectangle(
+                        new Rectangle(0, 0, dialog.ClientSize.Width - 1, dialog.ClientSize.Height - 1), 11))
+                    {
+                        e.Graphics.DrawPath(borderPen, borderPath);
+                    }
+                };
+
+                // Nút đóng tự vẽ để dấu X luôn hiển thị đầy đủ ở các mức DPI.
+                Button btnClose = new Button
+                {
+                    Name = "btnCloseSuccess",
+                    Text = string.Empty,
+                    ForeColor = Color.FromArgb(55, 55, 55),
+                    BackColor = Color.White,
+                    FlatStyle = FlatStyle.Flat,
+                    Size = new Size(27, 27),
+                    Location = new Point(dialog.ClientSize.Width - 32, 3),
+                    Cursor = Cursors.Hand,
+                    TabStop = false,
+                    UseVisualStyleBackColor = false
+                };
+                btnClose.FlatAppearance.BorderSize = 0;
+                btnClose.FlatAppearance.MouseOverBackColor = Color.FromArgb(245, 247, 250);
+                btnClose.Paint += (sender, e) =>
+                {
+                    e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                    using (Pen xPen = new Pen(Color.FromArgb(55, 55, 55), 1.6F))
+                    {
+                        xPen.StartCap = LineCap.Round;
+                        xPen.EndCap = LineCap.Round;
+                        e.Graphics.DrawLine(xPen, 9, 9, 17, 17);
+                        e.Graphics.DrawLine(xPen, 17, 9, 9, 17);
+                    }
+                };
+                btnClose.Click += (sender, e) => dialog.Close();
+                dialog.Controls.Add(btnClose);
+
+                // Biểu tượng check và các tia xanh hai bên giống bản thiết kế.
+                Panel pnlCheck = new Panel
+                {
+                    Name = "pnlSuccessIcon",
+                    Size = new Size(70, 58),
+                    Location = new Point(70, 20),
+                    BackColor = Color.White
+                };
+                pnlCheck.Paint += (sender, e) =>
+                {
+                    e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                    Color green = Color.FromArgb(39, 174, 78);
+                    using (Pen rayPen = new Pen(green, 2.2F))
+                    {
+                        rayPen.StartCap = LineCap.Round;
+                        rayPen.EndCap = LineCap.Round;
+                        e.Graphics.DrawLine(rayPen, 7, 20, 13, 24);
+                        e.Graphics.DrawLine(rayPen, 4, 29, 11, 29);
+                        e.Graphics.DrawLine(rayPen, 7, 38, 13, 34);
+                        e.Graphics.DrawLine(rayPen, 57, 24, 63, 20);
+                        e.Graphics.DrawLine(rayPen, 59, 29, 66, 29);
+                        e.Graphics.DrawLine(rayPen, 57, 34, 63, 38);
+                    }
+
+                    using (SolidBrush haloBrush = new SolidBrush(Color.FromArgb(225, 246, 231)))
+                        e.Graphics.FillEllipse(haloBrush, 15, 2, 40, 40);
+                    using (SolidBrush greenBrush = new SolidBrush(green))
+                        e.Graphics.FillEllipse(greenBrush, 19, 6, 32, 32);
+                    using (Pen checkPen = new Pen(Color.White, 3.4F))
+                    {
+                        checkPen.StartCap = LineCap.Round;
+                        checkPen.EndCap = LineCap.Round;
+                        e.Graphics.DrawLines(checkPen, new[]
+                        {
+                            new Point(27, 22), new Point(32, 27), new Point(43, 15)
+                        });
+                    }
+                };
+                dialog.Controls.Add(pnlCheck);
+
+                Label lblMessage = new Label
+                {
+                    Name = "lblSuccessMessage",
+                    Text = message,
+                    Font = new Font("Segoe UI", 10.5F, FontStyle.Bold),
+                    ForeColor = Color.FromArgb(17, 48, 111),
+                    TextAlign = ContentAlignment.MiddleCenter,
+                    AutoSize = false,
+                    Size = new Size(194, 27),
+                    Location = new Point(8, 83),
+                    BackColor = Color.Transparent,
+                    AutoEllipsis = false
+                };
+                dialog.Controls.Add(lblMessage);
+
+                Button btnOk = new Button
+                {
+                    Name = "btnSuccessOK",
+                    Text = "OK",
+                    Font = new Font("Segoe UI", 10F, FontStyle.Bold),
+                    ForeColor = Color.White,
+                    BackColor = Color.FromArgb(0, 105, 238),
+                    FlatStyle = FlatStyle.Flat,
+                    Size = new Size(108, 37),
+                    Location = new Point(51, 127),
+                    Cursor = Cursors.Hand,
+                    DialogResult = DialogResult.OK,
+                    UseVisualStyleBackColor = false
+                };
+                btnOk.FlatAppearance.BorderSize = 0;
+                btnOk.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 91, 214);
+                btnOk.Region = new Region(CreateRoundedRectangle(
+                    new Rectangle(0, 0, btnOk.Width, btnOk.Height), 7));
+                btnOk.Click += (sender, e) => dialog.Close();
+                dialog.Controls.Add(btnOk);
+
+                dialog.AcceptButton = btnOk;
+                dialog.CancelButton = btnClose;
+                dialog.KeyDown += (sender, e) =>
+                {
+                    if (e.KeyCode == Keys.Escape)
+                    {
+                        dialog.Close();
+                        e.Handled = true;
+                    }
+                };
+
+                dialog.ShowDialog(this);
+            }
+        }
+
+        private static GraphicsPath CreateRoundedRectangle(Rectangle bounds, int radius)
+        {
+            int diameter = radius * 2;
+            GraphicsPath path = new GraphicsPath();
+            path.AddArc(bounds.X, bounds.Y, diameter, diameter, 180, 90);
+            path.AddArc(bounds.Right - diameter, bounds.Y, diameter, diameter, 270, 90);
+            path.AddArc(bounds.Right - diameter, bounds.Bottom - diameter, diameter, diameter, 0, 90);
+            path.AddArc(bounds.X, bounds.Bottom - diameter, diameter, diameter, 90, 90);
+            path.CloseFigure();
+            return path;
+        }
+
         private async Task SaveAddAsync()
         {
             bool isValid =
@@ -1368,8 +2087,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                     "CREATE_PERSONNEL",
                     $"Thêm mới CBCS '{p.HoTen}'");
 
-            MessageBox.Show(
-                "Thêm CBCS thành công");
+            ShowSuccessDialog("Thêm CBCS thành công");
 
             DialogResult =
                 DialogResult.OK;
@@ -1594,8 +2312,7 @@ namespace QuanLyCBCS.Forms.PersonnelForms
                     "UPDATE_PERSONNEL",
                     $"Cập nhật hồ sơ CBCS '{p.HoTen}'");
 
-            MessageBox.Show(
-                "Cập nhật thành công");
+            ShowSuccessDialog("Cập nhật thành công");
 
             DialogResult =
                 DialogResult.OK;
