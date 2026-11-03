@@ -6,6 +6,7 @@ using QuanLyCBCS.Services;
 using QuanLyCBCS.Forms.PersonnelForms;
 using QuanLyCBCS.Forms.CommonForms;
 using QuanLyCBCS.Forms.MissionForms;
+using QuanLyCBCS.Forms.SystemForms;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -36,6 +37,9 @@ namespace QuanLyCBCS.Forms.Home
 
         // Giữ một phiên FrmMissionList để hiển thị trực tiếp trong mục Công tác của FrmHome.
         private FrmMissionList? _missionListForm;
+
+        // Giữ một phiên FrmAuditLogList để nhúng trực tiếp vào tab Nhật ký.
+        private FrmAuditLogList? _auditLogListForm;
 
         // Trung tâm thông báo được nhúng vào một panel dropdown, không mở bằng ShowDialog.
         private Button? _btnNotifications;
@@ -601,8 +605,15 @@ namespace QuanLyCBCS.Forms.Home
                 return;
             }
 
+            if (pageName == "Nhật ký")
+            {
+                ShowAuditLogListInContent();
+                return;
+            }
+
             DetachPersonnelListFromContent();
             DetachMissionListFromContent();
+            DetachAuditLogListFromContent();
             pnlContent.Controls.Clear();
             Label lblTitle = new Label
             {
@@ -635,6 +646,7 @@ namespace QuanLyCBCS.Forms.Home
 
             DetachPersonnelListFromContent();
             DetachMissionListFromContent();
+            DetachAuditLogListFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -706,6 +718,7 @@ namespace QuanLyCBCS.Forms.Home
 
             DetachPersonnelListFromContent();
             DetachMissionListFromContent();
+            DetachAuditLogListFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -774,6 +787,104 @@ namespace QuanLyCBCS.Forms.Home
             }
         }
 
+        // Hiển thị FrmAuditLogList như form con trong pnlContent của tab Nhật ký.
+        // Giữ nguyên instance để bảo toàn trạng thái lọc/tìm kiếm khi chuyển tab.
+        private void ShowAuditLogListInContent()
+        {
+            if (pnlContent == null)
+                return;
+
+            if (!PermissionHelper.IsAdmin)
+            {
+                MessageBox.Show(
+                    this,
+                    "Bạn không có quyền truy cập chức năng Nhật ký.",
+                    "Từ chối truy cập",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (_auditLogListForm != null &&
+                !_auditLogListForm.IsDisposed &&
+                ReferenceEquals(_auditLogListForm.Parent, pnlContent))
+            {
+                _auditLogListForm.Visible = true;
+                _auditLogListForm.BringToFront();
+                return;
+            }
+
+            DetachPersonnelListFromContent();
+            DetachMissionListFromContent();
+            DetachAuditLogListFromContent();
+            pnlContent.Controls.Clear();
+
+            try
+            {
+                if (_auditLogListForm == null || _auditLogListForm.IsDisposed)
+                {
+                    _auditLogListForm = new FrmAuditLogList
+                    {
+                        TopLevel = false,
+                        FormBorderStyle = FormBorderStyle.None,
+                        ShowInTaskbar = false,
+                        StartPosition = FormStartPosition.Manual,
+                        WindowState = FormWindowState.Normal,
+                        MinimumSize = Size.Empty,
+                        MaximumSize = Size.Empty,
+                        Dock = DockStyle.Fill,
+                        Location = Point.Empty,
+                        Margin = Padding.Empty
+                    };
+                }
+
+                pnlContent.Controls.Add(_auditLogListForm);
+                _auditLogListForm.Show();
+                _auditLogListForm.Visible = true;
+                _auditLogListForm.BringToFront();
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                if (_auditLogListForm != null && !_auditLogListForm.IsDisposed)
+                {
+                    _auditLogListForm.Dispose();
+                    _auditLogListForm = null;
+                }
+
+                MessageBox.Show(this, ex.Message, "Không có quyền",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            catch (Exception ex)
+            {
+                if (_auditLogListForm != null && !_auditLogListForm.IsDisposed)
+                {
+                    _auditLogListForm.Dispose();
+                    _auditLogListForm = null;
+                }
+
+                MessageBox.Show(
+                    this,
+                    "Không thể hiển thị màn hình Nhật ký trong FrmHome. Chi tiết: " + ex.Message,
+                    "Lỗi hiển thị",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
+        // Tạm tháo form Nhật ký khi chuyển tab, không Dispose để giữ trạng thái bộ lọc.
+        private void DetachAuditLogListFromContent()
+        {
+            if (_auditLogListForm == null || _auditLogListForm.IsDisposed)
+                return;
+
+            if (pnlContent != null &&
+                ReferenceEquals(_auditLogListForm.Parent, pnlContent))
+            {
+                _auditLogListForm.Visible = false;
+                pnlContent.Controls.Remove(_auditLogListForm);
+            }
+        }
+
         // ========================= TRANG CHỦ =========================
         private async Task ShowHomeDashboardAsync()
         {
@@ -782,6 +893,7 @@ namespace QuanLyCBCS.Forms.Home
 
             DetachPersonnelListFromContent();
             DetachMissionListFromContent();
+            DetachAuditLogListFromContent();
             pnlContent.SuspendLayout();
             pnlContent.Controls.Clear();
             pnlContent.ResumeLayout(true);
