@@ -2,286 +2,249 @@
 {
     partial class FrmMissionDetail
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
+            if (disposing && components != null) components.Dispose();
             base.Dispose(disposing);
         }
 
         #region Windows Form Designer generated code
-
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMissionDetail));
             pnlHeader = new Panel();
+            lblHeaderIcon = new Label();
             lblTitle = new Label();
-            txtMissionName = new TextBox();
-            cboMissionType = new ComboBox();
-            dtpStartTime = new DateTimePicker();
-            dtpEndTime = new DateTimePicker();
-            txtLocation = new TextBox();
-            rtbDescription = new RichTextBox();
-            chkIsActive = new CheckBox();
+            btnClose = new Button();
+            pnlBody = new Panel();
             lblMissionName = new Label();
+            txtMissionName = new TextBox();
             lblMissionType = new Label();
-            lblStart = new Label();
-            lblEnd = new Label();
+            cboMissionType = new ComboBox();
             lblLocation = new Label();
-            lblDescription = new Label();
-            btnCancel = new Button();
-            btnSave = new Button();
-            toolTipMain = new ToolTip(components);
-            label1 = new Label();
+            txtLocation = new TextBox();
+            lblStart = new Label();
+            dtpStartTime = new MissionDateTimePicker();
+            lblEnd = new Label();
+            dtpEndTime = new MissionDateTimePicker();
+            lblPriority = new Label();
             cboPriority = new ComboBox();
+            chkIsActive = new CheckBox();
+            lblDescription = new Label();
+            rtbDescription = new RichTextBox();
+            pnlFooter = new Panel();
+            btnSave = new Button();
+            btnCancel = new Button();
+            toolTipMain = new ToolTip(components);
             pnlHeader.SuspendLayout();
+            pnlBody.SuspendLayout();
+            pnlFooter.SuspendLayout();
             SuspendLayout();
-            // 
             // pnlHeader
-            // 
-            pnlHeader.BackColor = Color.FromArgb(47, 69, 92);
+            pnlHeader.BackColor = Color.FromArgb(0, 83, 174);
+            pnlHeader.Controls.Add(lblHeaderIcon);
             pnlHeader.Controls.Add(lblTitle);
+            pnlHeader.Controls.Add(btnClose);
             pnlHeader.Dock = DockStyle.Top;
             pnlHeader.Location = new Point(0, 0);
             pnlHeader.Name = "pnlHeader";
-            pnlHeader.Size = new Size(882, 80);
+            pnlHeader.Size = new Size(920, 68);
             pnlHeader.TabIndex = 0;
-            // 
+            // lblHeaderIcon
+            lblHeaderIcon.Location = new Point(24, 10);
+            lblHeaderIcon.Name = "lblHeaderIcon";
+            lblHeaderIcon.Size = new Size(48, 48);
+            lblHeaderIcon.TabIndex = 0;
             // lblTitle
-            // 
-            lblTitle.AutoSize = true;
-            lblTitle.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
+            lblTitle.AutoSize = false;
+            lblTitle.Font = new Font("Segoe UI", 20F, FontStyle.Bold, GraphicsUnit.Point);
             lblTitle.ForeColor = Color.White;
-            lblTitle.Location = new Point(254, 18);
+            lblTitle.Location = new Point(95, 10);
             lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(345, 41);
-            lblTitle.TabIndex = 0;
+            lblTitle.Size = new Size(650, 48);
+            lblTitle.TabIndex = 1;
             lblTitle.Text = "THÔNG TIN CÔNG TÁC";
-            // 
-            // txtMissionName
-            // 
-            txtMissionName.Location = new Point(153, 139);
-            txtMissionName.Name = "txtMissionName";
-            txtMissionName.Size = new Size(280, 27);
-            txtMissionName.TabIndex = 1;
-            // 
-            // cboMissionType
-            // 
-            cboMissionType.FormattingEnabled = true;
-            cboMissionType.Items.AddRange(new object[] { "Bảo vệ mục tiêu", "Trưng dụng", "Tăng cường", "Huấn luyện", "Học tập", "Thi đấu", "Diễn tập", "Khác" });
-            cboMissionType.Location = new Point(153, 199);
-            cboMissionType.Name = "cboMissionType";
-            cboMissionType.Size = new Size(202, 28);
-            cboMissionType.TabIndex = 2;
-            // 
-            // dtpStartTime
-            // 
-            dtpStartTime.CustomFormat = "dd/MM/yyy HH:mm";
-            dtpStartTime.Format = DateTimePickerFormat.Custom;
-            dtpStartTime.Location = new Point(594, 142);
-            dtpStartTime.Name = "dtpStartTime";
-            dtpStartTime.Size = new Size(180, 27);
-            dtpStartTime.TabIndex = 3;
-            // 
-            // dtpEndTime
-            // 
-            dtpEndTime.CustomFormat = "dd/MM/yyy HH:mm";
-            dtpEndTime.Format = DateTimePickerFormat.Custom;
-            dtpEndTime.Location = new Point(594, 200);
-            dtpEndTime.Name = "dtpEndTime";
-            dtpEndTime.Size = new Size(180, 27);
-            dtpEndTime.TabIndex = 4;
-            // 
-            // txtLocation
-            // 
-            txtLocation.Location = new Point(153, 262);
-            txtLocation.Name = "txtLocation";
-            txtLocation.Size = new Size(202, 27);
-            txtLocation.TabIndex = 5;
-            // 
-            // rtbDescription
-            // 
-            rtbDescription.Location = new Point(153, 360);
-            rtbDescription.Name = "rtbDescription";
-            rtbDescription.Size = new Size(566, 140);
-            rtbDescription.TabIndex = 6;
-            rtbDescription.Text = "";
-            // 
-            // chkIsActive
-            // 
-            chkIsActive.AutoSize = true;
-            chkIsActive.Location = new Point(579, 330);
-            chkIsActive.Name = "chkIsActive";
-            chkIsActive.Size = new Size(140, 24);
-            chkIsActive.TabIndex = 7;
-            chkIsActive.Text = "Đang hoạt động";
-            chkIsActive.UseVisualStyleBackColor = true;
-            // 
-            // lblMissionName
-            // 
-            lblMissionName.AutoSize = true;
-            lblMissionName.Location = new Point(54, 142);
+            lblTitle.TextAlign = ContentAlignment.MiddleLeft;
+            // btnClose
+            btnClose.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnClose.BackColor = Color.Transparent;
+            btnClose.FlatAppearance.BorderSize = 0;
+            btnClose.FlatStyle = FlatStyle.Flat;
+            btnClose.ForeColor = Color.White;
+            btnClose.Location = new Point(860, 8);
+            btnClose.Name = "btnClose";
+            btnClose.Size = new Size(48, 48);
+            btnClose.TabIndex = 20;
+            btnClose.Text = "×";
+            btnClose.UseVisualStyleBackColor = false;
+            btnClose.Click += btnCancel_Click;
+            // pnlBody
+            pnlBody.BackColor = Color.FromArgb(247, 250, 255);
+            pnlBody.Controls.Add(lblMissionName);
+            pnlBody.Controls.Add(txtMissionName);
+            pnlBody.Controls.Add(lblMissionType);
+            pnlBody.Controls.Add(cboMissionType);
+            pnlBody.Controls.Add(lblLocation);
+            pnlBody.Controls.Add(txtLocation);
+            pnlBody.Controls.Add(lblStart);
+            pnlBody.Controls.Add(dtpStartTime);
+            pnlBody.Controls.Add(lblEnd);
+            pnlBody.Controls.Add(dtpEndTime);
+            pnlBody.Controls.Add(lblPriority);
+            pnlBody.Controls.Add(cboPriority);
+            pnlBody.Controls.Add(chkIsActive);
+            pnlBody.Controls.Add(lblDescription);
+            pnlBody.Controls.Add(rtbDescription);
+            pnlBody.Dock = DockStyle.Fill;
+            pnlBody.Location = new Point(0, 68);
+            pnlBody.Name = "pnlBody";
+            pnlBody.Size = new Size(920, 432);
+            pnlBody.TabIndex = 1;
+            // labels and fields - positions follow the supplied reference
+            lblMissionName.Location = new Point(30, 28);
             lblMissionName.Name = "lblMissionName";
-            lblMissionName.Size = new Size(93, 20);
-            lblMissionName.TabIndex = 8;
+            lblMissionName.Size = new Size(140, 28);
+            lblMissionName.TabIndex = 0;
             lblMissionName.Text = "Tên công tác";
-            // 
-            // lblMissionType
-            // 
-            lblMissionType.AutoSize = true;
-            lblMissionType.Location = new Point(54, 204);
+            txtMissionName.Location = new Point(175, 24);
+            txtMissionName.Name = "txtMissionName";
+            txtMissionName.Size = new Size(210, 28);
+            txtMissionName.TabIndex = 1;
+            lblMissionType.Location = new Point(30, 84);
             lblMissionType.Name = "lblMissionType";
-            lblMissionType.Size = new Size(98, 20);
-            lblMissionType.TabIndex = 9;
+            lblMissionType.Size = new Size(140, 28);
+            lblMissionType.TabIndex = 2;
             lblMissionType.Text = "Loại công tác";
-            // 
-            // lblStart
-            // 
-            lblStart.AutoSize = true;
-            lblStart.Location = new Point(528, 147);
-            lblStart.Name = "lblStart";
-            lblStart.Size = new Size(60, 20);
-            lblStart.TabIndex = 10;
-            lblStart.Text = "Bắt đầu";
-            // 
-            // lblEnd
-            // 
-            lblEnd.AutoSize = true;
-            lblEnd.Location = new Point(525, 202);
-            lblEnd.Name = "lblEnd";
-            lblEnd.Size = new Size(63, 20);
-            lblEnd.TabIndex = 11;
-            lblEnd.Text = "Kết thúc";
-            // 
-            // lblLocation
-            // 
-            lblLocation.AutoSize = true;
-            lblLocation.Location = new Point(77, 265);
+            cboMissionType.DropDownStyle = ComboBoxStyle.DropDownList;
+            cboMissionType.FormattingEnabled = true;
+            cboMissionType.Location = new Point(175, 80);
+            cboMissionType.Name = "cboMissionType";
+            cboMissionType.Size = new Size(210, 28);
+            cboMissionType.TabIndex = 3;
+            lblLocation.Location = new Point(30, 140);
             lblLocation.Name = "lblLocation";
-            lblLocation.Size = new Size(70, 20);
-            lblLocation.TabIndex = 12;
+            lblLocation.Size = new Size(140, 28);
+            lblLocation.TabIndex = 4;
             lblLocation.Text = "Địa điểm";
-            // 
-            // lblDescription
-            // 
-            lblDescription.AutoSize = true;
-            lblDescription.Location = new Point(99, 363);
-            lblDescription.Name = "lblDescription";
-            lblDescription.Size = new Size(48, 20);
-            lblDescription.TabIndex = 13;
-            lblDescription.Text = "Mô tả";
-            // 
-            // btnCancel
-            // 
-            btnCancel.BackColor = Color.FromArgb(231, 76, 60);
-            btnCancel.FlatAppearance.BorderSize = 0;
-            btnCancel.FlatStyle = FlatStyle.Flat;
-            btnCancel.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            btnCancel.ForeColor = Color.White;
-            btnCancel.Location = new Point(440, 532);
-            btnCancel.Name = "btnCancel";
-            btnCancel.Size = new Size(130, 40);
-            btnCancel.TabIndex = 17;
-            btnCancel.Text = "❌ Huỷ";
-            btnCancel.UseVisualStyleBackColor = false;
-            btnCancel.Click += btnCancel_Click;
-            // 
-            // btnSave
-            // 
-            btnSave.BackColor = Color.FromArgb(39, 174, 96);
-            btnSave.FlatAppearance.BorderSize = 0;
-            btnSave.FlatStyle = FlatStyle.Flat;
-            btnSave.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            btnSave.ForeColor = Color.White;
-            btnSave.Location = new Point(275, 532);
-            btnSave.Name = "btnSave";
-            btnSave.Size = new Size(130, 40);
-            btnSave.TabIndex = 16;
-            btnSave.Text = "💾 Lưu";
-            btnSave.UseVisualStyleBackColor = false;
-            btnSave.Click += btnSave_Click;
-            // 
-            // toolTipMain
-            // 
-            toolTipMain.AutoPopDelay = 5000;
-            toolTipMain.InitialDelay = 300;
-            toolTipMain.ReshowDelay = 100;
-            toolTipMain.ShowAlways = true;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(478, 265);
-            label1.Name = "label1";
-            label1.Size = new Size(110, 20);
-            label1.TabIndex = 18;
-            label1.Text = "Mức độ ưu tiên";
-            // 
-            // cboPriority
-            // 
+            txtLocation.Location = new Point(175, 136);
+            txtLocation.Name = "txtLocation";
+            txtLocation.Size = new Size(210, 28);
+            txtLocation.TabIndex = 5;
+            lblStart.Location = new Point(420, 28);
+            lblStart.Name = "lblStart";
+            lblStart.Size = new Size(150, 28);
+            lblStart.TabIndex = 6;
+            lblStart.Text = "Bắt đầu*";
+            dtpStartTime.CustomFormat = "dd/MM/yyyy HH:mm";
+            dtpStartTime.Format = DateTimePickerFormat.Custom;
+            dtpStartTime.Location = new Point(580, 22);
+            dtpStartTime.Name = "dtpStartTime";
+            dtpStartTime.Size = new Size(210, 36);
+            dtpStartTime.TabIndex = 7;
+            lblEnd.Location = new Point(420, 84);
+            lblEnd.Name = "lblEnd";
+            lblEnd.Size = new Size(150, 28);
+            lblEnd.TabIndex = 8;
+            lblEnd.Text = "Kết thúc*";
+            dtpEndTime.CustomFormat = "dd/MM/yyyy HH:mm";
+            dtpEndTime.Format = DateTimePickerFormat.Custom;
+            dtpEndTime.Location = new Point(580, 78);
+            dtpEndTime.Name = "dtpEndTime";
+            dtpEndTime.Size = new Size(210, 36);
+            dtpEndTime.TabIndex = 9;
+            lblPriority.Location = new Point(420, 140);
+            lblPriority.Name = "lblPriority";
+            lblPriority.Size = new Size(155, 28);
+            lblPriority.TabIndex = 10;
+            lblPriority.Text = "Mức độ ưu tiên";
             cboPriority.DropDownStyle = ComboBoxStyle.DropDownList;
             cboPriority.FormattingEnabled = true;
-            cboPriority.Location = new Point(594, 261);
+            cboPriority.Location = new Point(580, 136);
             cboPriority.Name = "cboPriority";
-            cboPriority.Size = new Size(180, 28);
-            cboPriority.TabIndex = 19;
-            // 
-            // FrmMissionDetail
-            // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(882, 603);
-            Controls.Add(cboPriority);
-            Controls.Add(label1);
-            Controls.Add(btnCancel);
-            Controls.Add(btnSave);
-            Controls.Add(lblDescription);
-            Controls.Add(lblLocation);
-            Controls.Add(lblEnd);
-            Controls.Add(lblStart);
-            Controls.Add(lblMissionType);
-            Controls.Add(lblMissionName);
-            Controls.Add(chkIsActive);
-            Controls.Add(rtbDescription);
-            Controls.Add(txtLocation);
-            Controls.Add(dtpEndTime);
-            Controls.Add(dtpStartTime);
-            Controls.Add(cboMissionType);
-            Controls.Add(txtMissionName);
+            cboPriority.Size = new Size(210, 28);
+            cboPriority.TabIndex = 11;
+            chkIsActive.AutoSize = true;
+            chkIsActive.Location = new Point(580, 194);
+            chkIsActive.Name = "chkIsActive";
+            chkIsActive.Size = new Size(160, 24);
+            chkIsActive.TabIndex = 12;
+            chkIsActive.Text = "Đang hoạt động";
+            chkIsActive.UseVisualStyleBackColor = true;
+            lblDescription.Location = new Point(30, 252);
+            lblDescription.Name = "lblDescription";
+            lblDescription.Size = new Size(140, 28);
+            lblDescription.TabIndex = 13;
+            lblDescription.Text = "Mô tả";
+            rtbDescription.Location = new Point(175, 238);
+            rtbDescription.Name = "rtbDescription";
+            rtbDescription.Size = new Size(685, 132);
+            rtbDescription.TabIndex = 14;
+            rtbDescription.Text = "";
+            // pnlFooter
+            pnlFooter.BackColor = Color.FromArgb(230, 242, 255);
+            pnlFooter.Controls.Add(btnSave);
+            pnlFooter.Controls.Add(btnCancel);
+            pnlFooter.Dock = DockStyle.Bottom;
+            pnlFooter.Location = new Point(0, 500);
+            pnlFooter.Name = "pnlFooter";
+            pnlFooter.Size = new Size(920, 70);
+            pnlFooter.TabIndex = 2;
+            // btnSave
+            btnSave.BackColor = Color.FromArgb(0, 166, 91);
+            btnSave.FlatAppearance.BorderSize = 0;
+            btnSave.FlatStyle = FlatStyle.Flat;
+            btnSave.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            btnSave.ForeColor = Color.White;
+            btnSave.Location = new Point(305, 15);
+            btnSave.Name = "btnSave";
+            btnSave.Size = new Size(142, 40);
+            btnSave.TabIndex = 15;
+            btnSave.Text = "";
+            btnSave.UseVisualStyleBackColor = false;
+            btnSave.Click += btnSave_Click;
+            // btnCancel
+            btnCancel.BackColor = Color.White;
+            btnCancel.FlatAppearance.BorderSize = 0;
+            btnCancel.FlatStyle = FlatStyle.Flat;
+            btnCancel.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            btnCancel.ForeColor = Color.FromArgb(225, 35, 48);
+            btnCancel.Location = new Point(463, 15);
+            btnCancel.Name = "btnCancel";
+            btnCancel.Size = new Size(142, 40);
+            btnCancel.TabIndex = 16;
+            btnCancel.Text = "✕  Hủy";
+            btnCancel.UseVisualStyleBackColor = false;
+            btnCancel.Click += btnCancel_Click;
+            // Form
+            AutoScaleMode = AutoScaleMode.None;
+            BackColor = Color.FromArgb(247, 250, 255);
+            ClientSize = new Size(920, 570);
+            Controls.Add(pnlBody);
+            Controls.Add(pnlFooter);
             Controls.Add(pnlHeader);
-            Icon = (Icon)resources.GetObject("$this.Icon");
+            Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
             Name = "FrmMissionDetail";
+            StartPosition = FormStartPosition.CenterParent;
             Text = "THÔNG TIN CÔNG TÁC";
             pnlHeader.ResumeLayout(false);
-            pnlHeader.PerformLayout();
+            pnlBody.ResumeLayout(false);
+            pnlBody.PerformLayout();
+            pnlFooter.ResumeLayout(false);
             ResumeLayout(false);
-            PerformLayout();
         }
-
         #endregion
 
         private Panel pnlHeader;
+        private Label lblHeaderIcon;
         private Label lblTitle;
+        private Button btnClose;
+        private Panel pnlBody;
         public TextBox txtMissionName;
         public ComboBox cboMissionType;
-        public DateTimePicker dtpStartTime;
-        public DateTimePicker dtpEndTime;
+        public MissionDateTimePicker dtpStartTime;
+        public MissionDateTimePicker dtpEndTime;
         public TextBox txtLocation;
         public RichTextBox rtbDescription;
         public CheckBox chkIsActive;
@@ -291,10 +254,11 @@
         private Label lblEnd;
         private Label lblLocation;
         private Label lblDescription;
+        private Label lblPriority;
+        public ComboBox cboPriority;
+        private Panel pnlFooter;
         public Button btnCancel;
         public Button btnSave;
         public ToolTip toolTipMain;
-        private Label label1;
-        private ComboBox cboPriority;
     }
 }

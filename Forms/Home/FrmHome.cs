@@ -5,6 +5,7 @@ using QuanLyCBCS.Models;
 using QuanLyCBCS.Services;
 using QuanLyCBCS.Forms.PersonnelForms;
 using QuanLyCBCS.Forms.CommonForms;
+using QuanLyCBCS.Forms.MissionForms;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,9 @@ namespace QuanLyCBCS.Forms.Home
 
         // Giữ một phiên FrmPersonnelList để hiển thị trực tiếp trong vùng nội dung của FrmHome.
         private FrmPersonnelList? _personnelListForm;
+
+        // Giữ một phiên FrmMissionList để hiển thị trực tiếp trong mục Công tác của FrmHome.
+        private FrmMissionList? _missionListForm;
 
         // Trung tâm thông báo được nhúng vào một panel dropdown, không mở bằng ShowDialog.
         private Button? _btnNotifications;
@@ -591,7 +595,14 @@ namespace QuanLyCBCS.Forms.Home
                 return;
             }
 
+            if (pageName == "Công tác")
+            {
+                ShowMissionListInContent();
+                return;
+            }
+
             DetachPersonnelListFromContent();
+            DetachMissionListFromContent();
             pnlContent.Controls.Clear();
             Label lblTitle = new Label
             {
@@ -623,6 +634,7 @@ namespace QuanLyCBCS.Forms.Home
             }
 
             DetachPersonnelListFromContent();
+            DetachMissionListFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -676,6 +688,92 @@ namespace QuanLyCBCS.Forms.Home
             }
         }
 
+        // Hiển thị FrmMissionList như một form con trong pnlContent, không mở cửa sổ riêng.
+        private void ShowMissionListInContent()
+        {
+            if (pnlContent == null)
+                return;
+
+            // Giữ nguyên instance hiện tại khi người dùng quay lại mục Công tác.
+            if (_missionListForm != null &&
+                !_missionListForm.IsDisposed &&
+                ReferenceEquals(_missionListForm.Parent, pnlContent))
+            {
+                _missionListForm.Visible = true;
+                _missionListForm.BringToFront();
+                return;
+            }
+
+            DetachPersonnelListFromContent();
+            DetachMissionListFromContent();
+            pnlContent.Controls.Clear();
+
+            try
+            {
+                if (_missionListForm == null || _missionListForm.IsDisposed)
+                {
+                    _missionListForm = new FrmMissionList();
+                    _missionListForm.TopLevel = false;
+                    _missionListForm.FormBorderStyle = FormBorderStyle.None;
+                    _missionListForm.ShowInTaskbar = false;
+                    _missionListForm.MinimumSize = Size.Empty;
+                    _missionListForm.Dock = DockStyle.Fill;
+                    _missionListForm.StartPosition = FormStartPosition.Manual;
+                    _missionListForm.Location = Point.Empty;
+                    _missionListForm.Margin = Padding.Empty;
+                }
+
+                pnlContent.Controls.Add(_missionListForm);
+                _missionListForm.Show();
+                _missionListForm.Visible = true;
+                _missionListForm.BringToFront();
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                if (_missionListForm != null && !_missionListForm.IsDisposed)
+                {
+                    _missionListForm.Dispose();
+                    _missionListForm = null;
+                }
+
+                MessageBox.Show(
+                    this,
+                    ex.Message,
+                    "Không có quyền",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
+            catch (Exception ex)
+            {
+                if (_missionListForm != null && !_missionListForm.IsDisposed)
+                {
+                    _missionListForm.Dispose();
+                    _missionListForm = null;
+                }
+
+                MessageBox.Show(
+                    this,
+                    "Không thể hiển thị màn hình Công tác trong FrmHome. Chi tiết: " + ex.Message,
+                    "Lỗi hiển thị",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
+        // Tạm tháo FrmMissionList khi chuyển mục, không Dispose để giữ trạng thái màn hình.
+        private void DetachMissionListFromContent()
+        {
+            if (_missionListForm == null || _missionListForm.IsDisposed)
+                return;
+
+            if (pnlContent != null &&
+                ReferenceEquals(_missionListForm.Parent, pnlContent))
+            {
+                _missionListForm.Visible = false;
+                pnlContent.Controls.Remove(_missionListForm);
+            }
+        }
+
         // ========================= TRANG CHỦ =========================
         private async Task ShowHomeDashboardAsync()
         {
@@ -683,6 +781,7 @@ namespace QuanLyCBCS.Forms.Home
                 return;
 
             DetachPersonnelListFromContent();
+            DetachMissionListFromContent();
             pnlContent.SuspendLayout();
             pnlContent.Controls.Clear();
             pnlContent.ResumeLayout(true);

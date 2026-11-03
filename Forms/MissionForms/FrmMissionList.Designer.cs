@@ -72,7 +72,7 @@
             pnlHeader.Dock = DockStyle.Top;
             pnlHeader.Location = new Point(0, 0);
             pnlHeader.Name = "pnlHeader";
-            pnlHeader.Size = new Size(1282, 80);
+            pnlHeader.Size = new Size(1282, 92);
             pnlHeader.TabIndex = 0;
             // 
             // lblSubTitle
@@ -110,7 +110,7 @@
             pnlToolbar.Controls.Add(btnEditMission);
             pnlToolbar.Controls.Add(btnAddMission);
             pnlToolbar.Dock = DockStyle.Top;
-            pnlToolbar.Location = new Point(0, 80);
+            pnlToolbar.Location = new Point(0, 92);
             pnlToolbar.Name = "pnlToolbar";
             pnlToolbar.Size = new Size(1282, 126);
             pnlToolbar.TabIndex = 1;
@@ -285,10 +285,10 @@
             // 
             dgvMission.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvMission.Dock = DockStyle.Fill;
-            dgvMission.Location = new Point(0, 206);
+            dgvMission.Location = new Point(0, 218);
             dgvMission.Name = "dgvMission";
             dgvMission.RowHeadersWidth = 51;
-            dgvMission.Size = new Size(1282, 497);
+            dgvMission.Size = new Size(1282, 485);
             dgvMission.TabIndex = 2;
             dgvMission.CellContentDoubleClick += dgvMission_CellDoubleClick;
             // 
@@ -318,7 +318,7 @@
             Controls.Add(pnlToolbar);
             Controls.Add(pnlHeader);
             Icon = (Icon)resources.GetObject("$this.Icon");
-            MinimumSize = new Size(1300, 750);
+            MinimumSize = new Size(1100, 650);
             Name = "FrmMissionList";
             StartPosition = FormStartPosition.CenterParent;
             Text = "Quản lý công tác";
@@ -344,7 +344,7 @@
 
         #endregion
 
-        private Panel pnlHeader;    
+        private Panel pnlHeader;
         private Label lblTitle;
         private Label lblSubTitle;
         private Panel pnlToolbar;
