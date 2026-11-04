@@ -10,55 +10,58 @@ namespace QuanLyCBCS.Services
     public class PersonnelReportService
     {
         private readonly PersonnelReportBuilderService _reportBuilder = new();
+
+        private readonly MissionResolverService _resolver = new();
+
+        private readonly MissionGroupBuilderService _groupBuilder = new();
+
         private static ApplicationDbContext CreateContext()
             => new();
 
-        private readonly MissionResolverService _resolver = new();
-        private readonly MissionGroupBuilderService _groupBuilder = new();
-
-        private async Task<List<MissionAssignmentDto>>
-            GetMissionAssignmentsAsync(DateTime reportDate)
+        /// <summary>
+        /// Kiểm tra nhiệm vụ có phải nhiệm vụ trực tại đơn vị hay không.
+        /// Các nhiệm vụ này không làm CBCS bị tính là vắng mặt.
+        /// </summary>
+        private static bool IsDutyAtUnit(Mission mission)
         {
-            DateTime day = reportDate.Date;
+            return mission.MissionType == MissionTypes.DutyCommander
+                || mission.MissionType == MissionTypes.DutyOfficer;
+        }
+
+        /// <summary>
+        /// Lấy các nhiệm vụ bên ngoài đơn vị có thời gian giao với ngày báo cáo.
+        /// Không lọc IsActive vì IsActive là trạng thái hiện tại của nhiệm vụ,
+        /// không phản ánh trạng thái nhiệm vụ tại một ngày báo cáo trong quá khứ.
+        /// </summary>
+        private async Task<List<MissionAssignmentDto>> GetMissionAssignmentsAsync(
+            DateTime reportDate)
+        {
+            DateTime dayStart = reportDate.Date;
+            DateTime nextDay = dayStart.AddDays(1);
 
             using var db = CreateContext();
 
-            var result =
-                await db.MissionPersonnel
-                    .Include(mp => mp.Personnel)
-                    .Where(mp =>
-
-                        mp.Mission != null
-
-                        && mp.Mission.IsActive
-
-                        // Chỉ lấy nhiệm vụ trong ngày báo cáo
-                        && mp.Mission.StartTime.Date <= day
-                        && mp.Mission.EndTime.Date >= day
-
-                        // Không tính trực tại đơn vị là vắng mặt
-                        && mp.Mission.MissionType != MissionTypes.DutyCommander
-                        && mp.Mission.MissionType != MissionTypes.DutyOfficer)
-
-                    .Select(mp =>
-                        new MissionAssignmentDto
-                        {
-                            PersonnelId = mp.PersonnelId,
-
-                            PersonnelName = mp.Personnel != null
-                                ? mp.Personnel.HoTen
-                                : "",
-
-                            MissionName = mp.Mission!.MissionName ?? "",
-
-                            Location = mp.Mission.Location ?? "",
-
-                            Reason = mp.Mission.MissionType ?? "Khác"
-                        })
-
-                    .ToListAsync();
-
-            return result;
+            return await db.MissionPersonnel
+                .AsNoTracking()
+                .Include(mp => mp.Personnel)
+                .Include(mp => mp.Mission)
+                .Where(mp =>
+                    mp.Mission != null
+                    && mp.Mission.StartTime < nextDay
+                    && mp.Mission.EndTime >= dayStart
+                    && mp.Mission.MissionType != MissionTypes.DutyCommander
+                    && mp.Mission.MissionType != MissionTypes.DutyOfficer)
+                .Select(mp => new MissionAssignmentDto
+                {
+                    PersonnelId = mp.PersonnelId,
+                    PersonnelName = mp.Personnel != null
+                        ? mp.Personnel.HoTen
+                        : string.Empty,
+                    MissionName = mp.Mission!.MissionName ?? string.Empty,
+                    Location = mp.Mission.Location ?? string.Empty,
+                    Reason = mp.Mission.MissionType ?? "Khác"
+                })
+                .ToListAsync();
         }
 
         private async Task<ReportHeaderDto> GetReportHeaderAsync(
@@ -68,14 +71,9 @@ namespace QuanLyCBCS.Services
             ReportHeaderDto header = new()
             {
                 ReportDate = reportDate,
-
                 TotalPersonnel = report.Count,
-
-                PresentPersonnel =
-                    report.Count(x => x.IsPresent),
-
-                AbsentPersonnel =
-                    report.Count(x => !x.IsPresent)
+                PresentPersonnel = report.Count(x => x.IsPresent),
+                AbsentPersonnel = report.Count(x => !x.IsPresent)
             };
 
             Personnel? commander =
@@ -84,40 +82,26 @@ namespace QuanLyCBCS.Services
             Personnel? dutyOfficer =
                 await _resolver.GetDutyOfficerAsync(reportDate);
 
-            header.DutyCommander =
-                commander?.HoTen ?? "Chưa phân công";
-
-            header.DutyOfficer =
-                dutyOfficer?.HoTen ?? "Chưa phân công";
+            header.DutyCommander = commander?.HoTen ?? "Chưa phân công";
+            header.DutyOfficer = dutyOfficer?.HoTen ?? "Chưa phân công";
 
             return header;
         }
 
-        private PersonnelReportDto CreatePresentDto(
-            Personnel personnel)
+        private PersonnelReportDto CreatePresentDto(Personnel personnel)
         {
             return new PersonnelReportDto
             {
                 PersonnelId = personnel.PersonnelID,
-
                 SoHieu = personnel.SoHieu,
-
                 HoTen = personnel.HoTen,
-
                 DonVi = personnel.DonVi,
-
                 CapBacHam = personnel.CapBacHam ?? string.Empty,
-
                 Status = "Có mặt",
-
                 Reason = string.Empty,
-
                 MissionName = string.Empty,
-
                 Location = "Đơn vị",
-
                 MissionStart = null,
-
                 MissionEnd = null
             };
         }
@@ -129,27 +113,17 @@ namespace QuanLyCBCS.Services
             return new PersonnelReportDto
             {
                 PersonnelId = personnel.PersonnelID,
-
                 SoHieu = personnel.SoHieu,
-
                 HoTen = personnel.HoTen,
-
                 DonVi = personnel.DonVi,
-
                 CapBacHam = personnel.CapBacHam ?? string.Empty,
-
                 Status = "Vắng mặt",
-
                 Reason = string.IsNullOrWhiteSpace(mission.MissionType)
                     ? mission.MissionName
                     : mission.MissionType,
-
                 MissionName = mission.MissionName,
-
                 Location = mission.Location ?? string.Empty,
-
                 MissionStart = mission.StartTime,
-
                 MissionEnd = mission.EndTime
             };
         }
@@ -159,93 +133,71 @@ namespace QuanLyCBCS.Services
         {
             using var context = CreateContext();
 
-            //-------------------------------------------------
-            // 1. Lấy toàn bộ CBCS
-            //-------------------------------------------------
+            DateTime dayStart = reportDate.Date;
+            DateTime nextDay = dayStart.AddDays(1);
 
-            List<Personnel> personnels =
-                await context.Personnel
-                    .AsNoTracking()
-                    .OrderBy(x => x.HoTen)
-                    .ToListAsync();
+            // 1. Lấy toàn bộ CBCS.
+            List<Personnel> personnels = await context.Personnel
+                .AsNoTracking()
+                .OrderBy(x => x.HoTen)
+                .ToListAsync();
 
-            //-------------------------------------------------
-            // 2. Lấy toàn bộ Mission đang hiệu lực
-            //-------------------------------------------------
-
+            // 2. Lấy các phân công có thời gian giao với ngày báo cáo.
+            // Không dùng Mission.IsActive vì báo cáo có thể xem lại ngày quá khứ.
             List<MissionPersonnel> missionPersonnelList =
                 await context.MissionPersonnel
-
-                    .Include(x => x.Mission)
-
-                    .Where(x =>
-
-                        x.Mission != null
-
-                        && x.Mission.IsActive
-
-                        && x.Mission.StartTime <= reportDate
-
-                        && x.Mission.EndTime >= reportDate)
-
                     .AsNoTracking()
-
+                    .Include(x => x.Mission)
+                    .Where(x =>
+                        x.Mission != null
+                        && x.Mission.StartTime < nextDay
+                        && x.Mission.EndTime >= dayStart)
                     .ToListAsync();
 
-            //-------------------------------------------------
-            // 3. Dictionary:
-            // PersonnelId -> Mission
-            //-------------------------------------------------
-
-            Dictionary<int, Mission> missionLookup =
+            // 3. Gom tất cả nhiệm vụ theo CBCS để không phụ thuộc vào
+            // bản ghi đầu tiên được database trả về.
+            Dictionary<int, List<Mission>> missionsByPersonnel =
                 missionPersonnelList
-
                     .Where(x => x.Mission != null)
-
                     .GroupBy(x => x.PersonnelId)
-
                     .ToDictionary(
+                        group => group.Key,
+                        group => group
+                            .Select(x => x.Mission!)
+                            .OrderBy(x => x.StartTime)
+                            .ThenBy(x => x.EndTime)
+                            .ToList());
 
-                        g => g.Key,
-
-                        g => g.First().Mission!);
-
-            //-------------------------------------------------
-            // 4. Tạo báo cáo
-            //-------------------------------------------------
-
+            // 4. Tạo báo cáo cho từng CBCS.
             List<PersonnelReportDto> result = new();
 
             foreach (Personnel personnel in personnels)
             {
-                if (missionLookup.TryGetValue(
-                        personnel.PersonnelID,
-                        out Mission? mission))
+                if (!missionsByPersonnel.TryGetValue(
+                    personnel.PersonnelID,
+                    out List<Mission>? missions))
                 {
-                    bool isDutyAtUnit =
-                        mission.MissionType == MissionTypes.DutyCommander
-                        ||
-                        mission.MissionType == MissionTypes.DutyOfficer;
+                    result.Add(CreatePresentDto(personnel));
+                    continue;
+                }
 
-                    if (isDutyAtUnit)
-                    {
-                        result.Add(
-                            CreatePresentDto(
-                                personnel));
-                    }
-                    else
-                    {
-                        result.Add(
-                            CreateAbsentDto(
-                                personnel,
-                                mission));
-                    }
+                // Nếu CBCS có ít nhất một nhiệm vụ bên ngoài đơn vị
+                // giao với ngày báo cáo thì ghi nhận vắng mặt.
+                // Nhiệm vụ trực chỉ huy/trực ban tại đơn vị không được
+                // dùng để ghi đè một nhiệm vụ bên ngoài.
+                Mission? externalMission = missions
+                    .Where(mission => !IsDutyAtUnit(mission))
+                    .OrderBy(mission => mission.StartTime)
+                    .ThenBy(mission => mission.EndTime)
+                    .FirstOrDefault();
+
+                if (externalMission != null)
+                {
+                    result.Add(CreateAbsentDto(personnel, externalMission));
                 }
                 else
                 {
-                    result.Add(
-                        CreatePresentDto(
-                            personnel));
+                    result.Add(CreatePresentDto(personnel));
                 }
             }
 
@@ -258,73 +210,52 @@ namespace QuanLyCBCS.Services
             return await context.Personnel.CountAsync();
         }
 
-        public async Task<int> GetPresentCountAsync(
-            DateTime reportDate)
+        public async Task<int> GetPresentCountAsync(DateTime reportDate)
         {
-            List<PersonnelReportDto> report =
-                await GetReportAsync(reportDate);
-
-            return report.Count(x =>
-                x.Status == "Có mặt");
+            List<PersonnelReportDto> report = await GetReportAsync(reportDate);
+            return report.Count(x => x.Status == "Có mặt");
         }
 
-        public async Task<int> GetAbsentCountAsync(
-            DateTime reportDate)
+        public async Task<int> GetAbsentCountAsync(DateTime reportDate)
         {
-            List<PersonnelReportDto> report =
-                await GetReportAsync(reportDate);
-
-            return report.Count(x =>
-                x.Status == "Vắng mặt");
+            List<PersonnelReportDto> report = await GetReportAsync(reportDate);
+            return report.Count(x => x.Status == "Vắng mặt");
         }
 
-        public async Task<List<PersonnelReportDto>>
-            GetPresentPersonnelAsync(
-                DateTime reportDate)    
+        public async Task<List<PersonnelReportDto>> GetPresentPersonnelAsync(
+            DateTime reportDate)
         {
-            List<PersonnelReportDto> report =
-                await GetReportAsync(reportDate);
+            List<PersonnelReportDto> report = await GetReportAsync(reportDate);
 
             return report
-
                 .Where(x => x.Status == "Có mặt")
-
                 .OrderBy(x => x.HoTen)
-
                 .ToList();
         }
 
-        public async Task<List<PersonnelReportDto>>
-            GetAbsentPersonnelAsync(
-                DateTime reportDate)
+        public async Task<List<PersonnelReportDto>> GetAbsentPersonnelAsync(
+            DateTime reportDate)
         {
-            List<PersonnelReportDto> report =
-                await GetReportAsync(reportDate);
+            List<PersonnelReportDto> report = await GetReportAsync(reportDate);
 
             return report
-
                 .Where(x => x.Status == "Vắng mặt")
-
                 .OrderBy(x => x.HoTen)
-
                 .ToList();
         }
 
         public async Task<string> BuildReportTextAsync(DateTime reportDate)
         {
-            List<PersonnelReportDto> report =
-                await GetReportAsync(reportDate);
+            List<PersonnelReportDto> report = await GetReportAsync(reportDate);
 
-            ReportHeaderDto header =
-                await GetReportHeaderAsync(
-                    reportDate,
-                    report);
+            ReportHeaderDto header = await GetReportHeaderAsync(
+                reportDate,
+                report);
 
-            var assignments =
+            List<MissionAssignmentDto> assignments =
                 await GetMissionAssignmentsAsync(reportDate);
 
-            var groups =
-                _groupBuilder.Build(assignments);
+            var groups = _groupBuilder.Build(assignments);
 
             return _reportBuilder.Build(
                 reportDate,

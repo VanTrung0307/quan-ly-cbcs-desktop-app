@@ -131,7 +131,6 @@ E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.MissionForms.FrmPersonne
 E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.MissionForms.FrmPersonnelMissionStatistics.resources
 E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.PersonnelForms.FrmPersonnelDetail.resources
 E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.PersonnelForms.FrmPersonnelList.resources
-E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.PersonnelForms.FrmPersonnelReport.resources
 E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.SystemForms.FrmAuditLogList.resources
 E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.SystemForms.FrmPermissionManagement.resources
 E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.UserForms.FrmChangePassword.resources
@@ -150,3 +149,4 @@ E:\QuanLyCBCS\obj\Debug\net8.0-windows\refint\QuanLyCBCS.dll
 E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.pdb
 E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.genruntimeconfig.cache
 E:\QuanLyCBCS\obj\Debug\net8.0-windows\ref\QuanLyCBCS.dll
+E:\QuanLyCBCS\obj\Debug\net8.0-windows\QuanLyCBCS.Forms.PersonnelForms.BorderlessDateTimePicker.resources

@@ -1,138 +1,150 @@
-﻿namespace QuanLyCBCS.Forms.CommonForms
+﻿using System.Drawing;
+using System.Windows.Forms;
+
+namespace QuanLyCBCS.Forms.CommonForms
 {
     partial class FrmReportPreview
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
+            if (disposing && (components != null)) components.Dispose();
             base.Dispose(disposing);
         }
 
-        #region Windows Form Designer generated code
-
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmReportPreview));
+            pnlHeader = new Panel();
             label1 = new Label();
+            btnHeaderClose = new Button();
+            pnlReportContainer = new Panel();
             rtbReport = new RichTextBox();
             panel1 = new Panel();
             btnClose = new Button();
             btnCopy = new Button();
+
+            pnlHeader.SuspendLayout();
+            pnlReportContainer.SuspendLayout();
             panel1.SuspendLayout();
             SuspendLayout();
-            // 
-            // label1
-            // 
-            label1.Dock = DockStyle.Top;
-            label1.Font = new Font("Segoe UI Semibold", 22F, FontStyle.Bold);
-            label1.ForeColor = Color.Black;
-            label1.Location = new Point(0, 0);
+
+            pnlHeader.BackColor = Color.FromArgb(0, 91, 174);
+            pnlHeader.Controls.Add(label1);
+            pnlHeader.Controls.Add(btnHeaderClose);
+            pnlHeader.Dock = DockStyle.Top;
+            pnlHeader.Name = "pnlHeader";
+            pnlHeader.Size = new Size(1280, 78);
+            pnlHeader.TabIndex = 0;
+            pnlHeader.Paint += pnlHeader_Paint;
+
+            label1.BackColor = Color.Transparent;
+            label1.Dock = DockStyle.Fill;
+            label1.Font = new Font("Segoe UI", 21F, FontStyle.Bold, GraphicsUnit.Point);
+            label1.ForeColor = Color.White;
+            label1.Padding = new Padding(102, 0, 0, 0);
             label1.Name = "label1";
-            label1.Size = new Size(962, 70);
-            label1.TabIndex = 0;
-            label1.Text = "XEM BÁO CÁO";
-            label1.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // rtbReport
-            // 
+            label1.Text = "Xem báo cáo";
+            label1.TextAlign = ContentAlignment.MiddleLeft;
+
+            btnHeaderClose.BackColor = Color.Transparent;
+            btnHeaderClose.Dock = DockStyle.Right;
+            btnHeaderClose.FlatAppearance.BorderSize = 0;
+            btnHeaderClose.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 65, 135);
+            btnHeaderClose.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 82, 160);
+            btnHeaderClose.FlatStyle = FlatStyle.Flat;
+            btnHeaderClose.Font = new Font("Segoe UI Light", 30F, FontStyle.Regular, GraphicsUnit.Point);
+            btnHeaderClose.ForeColor = Color.White;
+            btnHeaderClose.Name = "btnHeaderClose";
+            btnHeaderClose.Size = new Size(82, 78);
+            btnHeaderClose.Text = "×";
+            btnHeaderClose.UseVisualStyleBackColor = false;
+            btnHeaderClose.Click += btnClose_Click;
+
+            pnlReportContainer.BackColor = Color.White;
+            pnlReportContainer.Controls.Add(rtbReport);
+            pnlReportContainer.Dock = DockStyle.Fill;
+            pnlReportContainer.Name = "pnlReportContainer";
+            pnlReportContainer.Padding = new Padding(60, 20, 60, 20);
+            pnlReportContainer.TabIndex = 1;
+
             rtbReport.BackColor = Color.White;
             rtbReport.BorderStyle = BorderStyle.None;
-            rtbReport.DetectUrls = false;
             rtbReport.Dock = DockStyle.Fill;
-            rtbReport.Font = new Font("Consolas", 11F);
-            rtbReport.HideSelection = false;
-            rtbReport.Location = new Point(0, 70);
-            rtbReport.Margin = new Padding(10);
+            rtbReport.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
+            rtbReport.ForeColor = Color.FromArgb(20, 37, 68);
             rtbReport.Name = "rtbReport";
             rtbReport.ReadOnly = true;
             rtbReport.ScrollBars = RichTextBoxScrollBars.Vertical;
-            rtbReport.Size = new Size(962, 583);
-            rtbReport.TabIndex = 1;
-            rtbReport.Text = "";
-            rtbReport.WordWrap = false;
-            // 
-            // panel1
-            // 
+            rtbReport.TabStop = false;
+            rtbReport.Visible = false;
+
+            panel1.BackColor = Color.FromArgb(239, 245, 254);
             panel1.Controls.Add(btnClose);
             panel1.Controls.Add(btnCopy);
             panel1.Dock = DockStyle.Bottom;
-            panel1.Location = new Point(0, 593);
             panel1.Name = "panel1";
-            panel1.Size = new Size(962, 60);
+            panel1.Size = new Size(1280, 100);
             panel1.TabIndex = 2;
-            // 
-            // btnClose
-            // 
-            btnClose.BackColor = Color.FromArgb(231, 76, 60);
-            btnClose.FlatAppearance.BorderSize = 0;
-            btnClose.FlatStyle = FlatStyle.Flat;
-            btnClose.Font = new Font("Segoe UI Semibold", 9F);
-            btnClose.ForeColor = Color.White;
-            btnClose.Location = new Point(600, 12);
-            btnClose.Name = "btnClose";
-            btnClose.Size = new Size(120, 36);
-            btnClose.TabIndex = 2;
-            btnClose.Text = "Đóng";
-            btnClose.UseVisualStyleBackColor = false;
-            btnClose.Click += btnClose_Click;
-            // 
-            // btnCopy
-            // 
-            btnCopy.BackColor = Color.FromArgb(52, 152, 219);
-            btnCopy.FlatAppearance.BorderSize = 0;
+            panel1.Resize += panel1_Resize;
+            panel1.Paint += panel1_Paint;
+
+            btnCopy.BackColor = Color.FromArgb(0, 105, 220);
+            btnCopy.FlatAppearance.BorderColor = Color.FromArgb(0, 105, 220);
+            btnCopy.FlatAppearance.BorderSize = 1;
+            btnCopy.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 78, 180);
+            btnCopy.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 91, 200);
             btnCopy.FlatStyle = FlatStyle.Flat;
-            btnCopy.Font = new Font("Segoe UI Semibold", 9F);
+            btnCopy.Font = new Font("Segoe UI", 14F, FontStyle.Bold, GraphicsUnit.Point);
             btnCopy.ForeColor = Color.White;
-            btnCopy.Location = new Point(250, 12);
             btnCopy.Name = "btnCopy";
-            btnCopy.Size = new Size(120, 36);
-            btnCopy.TabIndex = 0;
-            btnCopy.Text = "📋 Sao chép";
+            btnCopy.Size = new Size(224, 58);
+            btnCopy.Text = "Sao chép";
+            btnCopy.AccessibleName = "Sao chép báo cáo";
             btnCopy.UseVisualStyleBackColor = false;
             btnCopy.Click += btnCopy_Click;
-            // 
-            // FrmReportPreview
-            // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
-            AutoScaleMode = AutoScaleMode.Font;
+
+            btnClose.BackColor = Color.White;
+            btnClose.FlatAppearance.BorderColor = Color.FromArgb(220, 35, 35);
+            btnClose.FlatAppearance.BorderSize = 1;
+            btnClose.FlatAppearance.MouseDownBackColor = Color.FromArgb(255, 235, 235);
+            btnClose.FlatAppearance.MouseOverBackColor = Color.FromArgb(255, 244, 244);
+            btnClose.FlatStyle = FlatStyle.Flat;
+            btnClose.Font = new Font("Segoe UI", 14F, FontStyle.Bold, GraphicsUnit.Point);
+            btnClose.ForeColor = Color.FromArgb(205, 38, 38);
+            btnClose.Name = "btnClose";
+            btnClose.Size = new Size(202, 58);
+            btnClose.Text = "Đóng";
+            btnClose.AccessibleName = "Đóng cửa sổ xem báo cáo";
+            btnClose.UseVisualStyleBackColor = false;
+            btnClose.Click += btnClose_Click;
+
+            AutoScaleMode = AutoScaleMode.None;
             BackColor = Color.White;
-            ClientSize = new Size(962, 653);
+            ClientSize = new Size(1280, 840);
+            Controls.Add(pnlReportContainer);
             Controls.Add(panel1);
-            Controls.Add(rtbReport);
-            Controls.Add(label1);
-            FormBorderStyle = FormBorderStyle.FixedDialog;
-            Icon = (Icon)resources.GetObject("$this.Icon");
+            Controls.Add(pnlHeader);
+            FormBorderStyle = FormBorderStyle.None;
             MaximizeBox = false;
             MinimizeBox = false;
-            MinimumSize = new Size(900, 650);
+            MinimumSize = new Size(1100, 700);
             Name = "FrmReportPreview";
             ShowIcon = false;
             ShowInTaskbar = false;
             StartPosition = FormStartPosition.CenterParent;
             Text = "Xem báo cáo";
+
+            pnlHeader.ResumeLayout(false);
+            pnlReportContainer.ResumeLayout(false);
             panel1.ResumeLayout(false);
             ResumeLayout(false);
         }
 
-        #endregion
-
+        private Panel pnlHeader;
         private Label label1;
+        private Button btnHeaderClose;
+        private Panel pnlReportContainer;
         private RichTextBox rtbReport;
         private Panel panel1;
         private Button btnClose;

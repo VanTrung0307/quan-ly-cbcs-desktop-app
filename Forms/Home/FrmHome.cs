@@ -41,6 +41,9 @@ namespace QuanLyCBCS.Forms.Home
         // Giữ một phiên FrmAuditLogList để nhúng trực tiếp vào tab Nhật ký.
         private FrmAuditLogList? _auditLogListForm;
 
+        // Giữ một phiên FrmPersonnelReport để nhúng trực tiếp vào tab Báo cáo.
+        private FrmPersonnelReport? _personnelReportForm;
+
         // Trung tâm thông báo được nhúng vào một panel dropdown, không mở bằng ShowDialog.
         private Button? _btnNotifications;
         private Label? _lblNotificationBadge;
@@ -611,9 +614,16 @@ namespace QuanLyCBCS.Forms.Home
                 return;
             }
 
+            if (pageName == "Báo cáo")
+            {
+                ShowPersonnelReportInContent();
+                return;
+            }
+
             DetachPersonnelListFromContent();
             DetachMissionListFromContent();
             DetachAuditLogListFromContent();
+            DetachPersonnelReportFromContent();
             pnlContent.Controls.Clear();
             Label lblTitle = new Label
             {
@@ -647,6 +657,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachPersonnelListFromContent();
             DetachMissionListFromContent();
             DetachAuditLogListFromContent();
+            DetachPersonnelReportFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -719,6 +730,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachPersonnelListFromContent();
             DetachMissionListFromContent();
             DetachAuditLogListFromContent();
+            DetachPersonnelReportFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -817,6 +829,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachPersonnelListFromContent();
             DetachMissionListFromContent();
             DetachAuditLogListFromContent();
+            DetachPersonnelReportFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -885,6 +898,83 @@ namespace QuanLyCBCS.Forms.Home
             }
         }
 
+        // Hiển thị FrmPersonnelReport trực tiếp trong pnlContent của FrmHome.
+        // Giữ nguyên instance khi chuyển tab để không phải khởi tạo lại báo cáo.
+        private void ShowPersonnelReportInContent()
+        {
+            if (pnlContent == null)
+                return;
+
+            if (_personnelReportForm != null &&
+                !_personnelReportForm.IsDisposed &&
+                ReferenceEquals(_personnelReportForm.Parent, pnlContent))
+            {
+                _personnelReportForm.Visible = true;
+                _personnelReportForm.BringToFront();
+                return;
+            }
+
+            DetachPersonnelListFromContent();
+            DetachMissionListFromContent();
+            DetachAuditLogListFromContent();
+            DetachPersonnelReportFromContent();
+            pnlContent.Controls.Clear();
+
+            try
+            {
+                if (_personnelReportForm == null || _personnelReportForm.IsDisposed)
+                {
+                    _personnelReportForm = new FrmPersonnelReport
+                    {
+                        TopLevel = false,
+                        FormBorderStyle = FormBorderStyle.None,
+                        ShowInTaskbar = false,
+                        StartPosition = FormStartPosition.Manual,
+                        WindowState = FormWindowState.Normal,
+                        MinimumSize = Size.Empty,
+                        MaximumSize = Size.Empty,
+                        Dock = DockStyle.Fill,
+                        Location = Point.Empty,
+                        Margin = Padding.Empty
+                    };
+                }
+
+                pnlContent.Controls.Add(_personnelReportForm);
+                _personnelReportForm.Show();
+                _personnelReportForm.Visible = true;
+                _personnelReportForm.BringToFront();
+            }
+            catch (Exception ex)
+            {
+                if (_personnelReportForm != null && !_personnelReportForm.IsDisposed)
+                {
+                    _personnelReportForm.Dispose();
+                    _personnelReportForm = null;
+                }
+
+                MessageBox.Show(
+                    this,
+                    "Không thể hiển thị màn hình Báo cáo trong FrmHome. Chi tiết: " + ex.Message,
+                    "Lỗi hiển thị",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
+        // Tạm tháo FrmPersonnelReport khi chuyển tab, không Dispose để giữ trạng thái báo cáo.
+        private void DetachPersonnelReportFromContent()
+        {
+            if (_personnelReportForm == null || _personnelReportForm.IsDisposed)
+                return;
+
+            if (pnlContent != null &&
+                ReferenceEquals(_personnelReportForm.Parent, pnlContent))
+            {
+                _personnelReportForm.Visible = false;
+                pnlContent.Controls.Remove(_personnelReportForm);
+            }
+        }
+
         // ========================= TRANG CHỦ =========================
         private async Task ShowHomeDashboardAsync()
         {
@@ -894,6 +984,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachPersonnelListFromContent();
             DetachMissionListFromContent();
             DetachAuditLogListFromContent();
+            DetachPersonnelReportFromContent();
             pnlContent.SuspendLayout();
             pnlContent.Controls.Clear();
             pnlContent.ResumeLayout(true);
