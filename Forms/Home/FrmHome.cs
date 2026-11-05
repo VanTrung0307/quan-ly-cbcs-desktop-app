@@ -51,6 +51,9 @@ namespace QuanLyCBCS.Forms.Home
         // Giữ một phiên FrmUserList để nhúng trực tiếp vào tab Tài khoản.
         private FrmUserList? _userListForm;
 
+        // Giữ một phiên FrmChangePassword để nhúng trực tiếp vào tab Đổi mật khẩu.
+        private FrmChangePassword? _changePasswordForm;
+
         // Trung tâm thông báo được nhúng vào một panel dropdown, không mở bằng ShowDialog.
         private Button? _btnNotifications;
         private Label? _lblNotificationBadge;
@@ -652,12 +655,19 @@ namespace QuanLyCBCS.Forms.Home
                 return;
             }
 
+            if (pageName == "Đổi mật khẩu")
+            {
+                ShowChangePasswordInContent();
+                return;
+            }
+
             DetachPersonnelListFromContent();
             DetachMissionListFromContent();
             DetachAuditLogListFromContent();
             DetachPersonnelReportFromContent();
             DetachPersonnelMissionStatisticsFromContent();
             DetachUserListFromContent();
+            DetachChangePasswordFromContent();
             pnlContent.Controls.Clear();
             Label lblTitle = new Label
             {
@@ -694,6 +704,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachPersonnelReportFromContent();
             DetachPersonnelMissionStatisticsFromContent();
             DetachUserListFromContent();
+            DetachChangePasswordFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -769,6 +780,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachPersonnelReportFromContent();
             DetachPersonnelMissionStatisticsFromContent();
             DetachUserListFromContent();
+            DetachChangePasswordFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -870,6 +882,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachPersonnelReportFromContent();
             DetachPersonnelMissionStatisticsFromContent();
             DetachUserListFromContent();
+            DetachChangePasswordFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -960,6 +973,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachPersonnelReportFromContent();
             DetachPersonnelMissionStatisticsFromContent();
             DetachUserListFromContent();
+            DetachChangePasswordFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -1039,6 +1053,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachPersonnelReportFromContent();
             DetachPersonnelMissionStatisticsFromContent();
             DetachUserListFromContent();
+            DetachChangePasswordFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -1144,6 +1159,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachPersonnelReportFromContent();
             DetachPersonnelMissionStatisticsFromContent();
             DetachUserListFromContent();
+            DetachChangePasswordFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -1216,6 +1232,93 @@ namespace QuanLyCBCS.Forms.Home
             }
         }
 
+        // Hiển thị FrmChangePassword trực tiếp trong pnlContent của tab Đổi mật khẩu.
+        // Giữ instance khi chuyển tab; nếu người dùng đóng form sau khi đổi mật khẩu,
+        // FormClosed sẽ giải phóng tham chiếu để lần mở tiếp theo tạo form mới.
+        private void ShowChangePasswordInContent()
+        {
+            if (pnlContent == null)
+                return;
+
+            if (_changePasswordForm != null &&
+                !_changePasswordForm.IsDisposed &&
+                ReferenceEquals(_changePasswordForm.Parent, pnlContent))
+            {
+                _changePasswordForm.Visible = true;
+                _changePasswordForm.BringToFront();
+                return;
+            }
+
+            DetachPersonnelListFromContent();
+            DetachMissionListFromContent();
+            DetachAuditLogListFromContent();
+            DetachPersonnelReportFromContent();
+            DetachPersonnelMissionStatisticsFromContent();
+            DetachUserListFromContent();
+            DetachChangePasswordFromContent();
+            pnlContent.Controls.Clear();
+
+            try
+            {
+                if (_changePasswordForm == null || _changePasswordForm.IsDisposed)
+                {
+                    _changePasswordForm = new FrmChangePassword
+                    {
+                        TopLevel = false,
+                        FormBorderStyle = FormBorderStyle.None,
+                        ShowInTaskbar = false,
+                        StartPosition = FormStartPosition.Manual,
+                        WindowState = FormWindowState.Normal,
+                        MinimumSize = Size.Empty,
+                        MaximumSize = Size.Empty,
+                        Dock = DockStyle.Fill,
+                        Location = Point.Empty,
+                        Margin = Padding.Empty
+                    };
+
+                    _changePasswordForm.FormClosed += (sender, e) =>
+                    {
+                        if (sender == _changePasswordForm)
+                            _changePasswordForm = null;
+                    };
+                }
+
+                pnlContent.Controls.Add(_changePasswordForm);
+                _changePasswordForm.Show();
+                _changePasswordForm.Visible = true;
+                _changePasswordForm.BringToFront();
+            }
+            catch (Exception ex)
+            {
+                if (_changePasswordForm != null && !_changePasswordForm.IsDisposed)
+                {
+                    _changePasswordForm.Dispose();
+                    _changePasswordForm = null;
+                }
+
+                MessageBox.Show(
+                    this,
+                    "Không thể hiển thị màn hình Đổi mật khẩu trong FrmHome. Chi tiết: " + ex.Message,
+                    "Lỗi hiển thị",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
+        // Tạm tháo FrmChangePassword khi chuyển tab, không Dispose để giữ nội dung đang nhập.
+        private void DetachChangePasswordFromContent()
+        {
+            if (_changePasswordForm == null || _changePasswordForm.IsDisposed)
+                return;
+
+            if (pnlContent != null &&
+                ReferenceEquals(_changePasswordForm.Parent, pnlContent))
+            {
+                _changePasswordForm.Visible = false;
+                pnlContent.Controls.Remove(_changePasswordForm);
+            }
+        }
+
         // ========================= TRANG CHỦ =========================
         private async Task ShowHomeDashboardAsync()
         {
@@ -1228,6 +1331,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachPersonnelReportFromContent();
             DetachPersonnelMissionStatisticsFromContent();
             DetachUserListFromContent();
+            DetachChangePasswordFromContent();
             pnlContent.SuspendLayout();
             pnlContent.Controls.Clear();
             pnlContent.ResumeLayout(true);
