@@ -44,6 +44,9 @@ namespace QuanLyCBCS.Forms.Home
         // Giữ một phiên FrmPersonnelReport để nhúng trực tiếp vào tab Báo cáo.
         private FrmPersonnelReport? _personnelReportForm;
 
+        // Giữ một phiên FrmPersonnelMissionStatistics để nhúng trực tiếp vào tab Thống kê.
+        private FrmPersonnelMissionStatistics? _personnelMissionStatisticsForm;
+
         // Trung tâm thông báo được nhúng vào một panel dropdown, không mở bằng ShowDialog.
         private Button? _btnNotifications;
         private Label? _lblNotificationBadge;
@@ -479,7 +482,7 @@ namespace QuanLyCBCS.Forms.Home
             string[] menuItems =
             {
                 "Trang chủ", "Quản lý CBCS", "Công tác", "Nhật ký",
-                "Báo cáo", "Thống kê", "Tài khoản", "Đổi mật khẩu",
+                "Báo cáo quân số", "Thống kê công tác", "Tài khoản", "Đổi mật khẩu",
                 "Phân quyền", "Sao lưu / Phục hồi", "Danh mục", "Hướng dẫn"
             };
 
@@ -614,9 +617,15 @@ namespace QuanLyCBCS.Forms.Home
                 return;
             }
 
-            if (pageName == "Báo cáo")
+            if (pageName == "Báo cáo quân số")
             {
                 ShowPersonnelReportInContent();
+                return;
+            }
+
+            if (pageName == "Thống kê công tác")
+            {
+                ShowPersonnelMissionStatisticsInContent();
                 return;
             }
 
@@ -624,6 +633,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachMissionListFromContent();
             DetachAuditLogListFromContent();
             DetachPersonnelReportFromContent();
+            DetachPersonnelMissionStatisticsFromContent();
             pnlContent.Controls.Clear();
             Label lblTitle = new Label
             {
@@ -658,6 +668,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachMissionListFromContent();
             DetachAuditLogListFromContent();
             DetachPersonnelReportFromContent();
+            DetachPersonnelMissionStatisticsFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -731,6 +742,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachMissionListFromContent();
             DetachAuditLogListFromContent();
             DetachPersonnelReportFromContent();
+            DetachPersonnelMissionStatisticsFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -830,6 +842,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachMissionListFromContent();
             DetachAuditLogListFromContent();
             DetachPersonnelReportFromContent();
+            DetachPersonnelMissionStatisticsFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -918,6 +931,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachMissionListFromContent();
             DetachAuditLogListFromContent();
             DetachPersonnelReportFromContent();
+            DetachPersonnelMissionStatisticsFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -975,6 +989,99 @@ namespace QuanLyCBCS.Forms.Home
             }
         }
 
+        // Hiển thị FrmPersonnelMissionStatistics trực tiếp trong pnlContent của tab Thống kê.
+        // Giữ nguyên instance khi chuyển tab để bảo toàn dữ liệu và trạng thái tìm kiếm/lọc.
+        private void ShowPersonnelMissionStatisticsInContent()
+        {
+            if (pnlContent == null)
+                return;
+
+            if (_personnelMissionStatisticsForm != null &&
+                !_personnelMissionStatisticsForm.IsDisposed &&
+                ReferenceEquals(_personnelMissionStatisticsForm.Parent, pnlContent))
+            {
+                _personnelMissionStatisticsForm.Visible = true;
+                _personnelMissionStatisticsForm.BringToFront();
+                return;
+            }
+
+            DetachPersonnelListFromContent();
+            DetachMissionListFromContent();
+            DetachAuditLogListFromContent();
+            DetachPersonnelReportFromContent();
+            DetachPersonnelMissionStatisticsFromContent();
+            pnlContent.Controls.Clear();
+
+            try
+            {
+                if (_personnelMissionStatisticsForm == null ||
+                    _personnelMissionStatisticsForm.IsDisposed)
+                {
+                    _personnelMissionStatisticsForm = new FrmPersonnelMissionStatistics
+                    {
+                        TopLevel = false,
+                        FormBorderStyle = FormBorderStyle.None,
+                        ShowInTaskbar = false,
+                        StartPosition = FormStartPosition.Manual,
+                        WindowState = FormWindowState.Normal,
+                        MinimumSize = Size.Empty,
+                        MaximumSize = Size.Empty,
+                        Dock = DockStyle.Fill,
+                        Location = Point.Empty,
+                        Margin = Padding.Empty
+                    };
+                }
+
+                pnlContent.Controls.Add(_personnelMissionStatisticsForm);
+                _personnelMissionStatisticsForm.Show();
+                _personnelMissionStatisticsForm.Visible = true;
+                _personnelMissionStatisticsForm.BringToFront();
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                if (_personnelMissionStatisticsForm != null &&
+                    !_personnelMissionStatisticsForm.IsDisposed)
+                {
+                    _personnelMissionStatisticsForm.Dispose();
+                    _personnelMissionStatisticsForm = null;
+                }
+
+                MessageBox.Show(this, ex.Message, "Không có quyền",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            catch (Exception ex)
+            {
+                if (_personnelMissionStatisticsForm != null &&
+                    !_personnelMissionStatisticsForm.IsDisposed)
+                {
+                    _personnelMissionStatisticsForm.Dispose();
+                    _personnelMissionStatisticsForm = null;
+                }
+
+                MessageBox.Show(
+                    this,
+                    "Không thể hiển thị màn hình Thống kê trong FrmHome. Chi tiết: " + ex.Message,
+                    "Lỗi hiển thị",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
+        // Tạm tháo form Thống kê khi chuyển tab, không Dispose để giữ trạng thái màn hình.
+        private void DetachPersonnelMissionStatisticsFromContent()
+        {
+            if (_personnelMissionStatisticsForm == null ||
+                _personnelMissionStatisticsForm.IsDisposed)
+                return;
+
+            if (pnlContent != null &&
+                ReferenceEquals(_personnelMissionStatisticsForm.Parent, pnlContent))
+            {
+                _personnelMissionStatisticsForm.Visible = false;
+                pnlContent.Controls.Remove(_personnelMissionStatisticsForm);
+            }
+        }
+
         // ========================= TRANG CHỦ =========================
         private async Task ShowHomeDashboardAsync()
         {
@@ -985,6 +1092,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachMissionListFromContent();
             DetachAuditLogListFromContent();
             DetachPersonnelReportFromContent();
+            DetachPersonnelMissionStatisticsFromContent();
             pnlContent.SuspendLayout();
             pnlContent.Controls.Clear();
             pnlContent.ResumeLayout(true);

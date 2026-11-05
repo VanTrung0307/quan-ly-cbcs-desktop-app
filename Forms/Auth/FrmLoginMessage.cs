@@ -47,9 +47,9 @@ namespace QuanLyCBCS.Forms.Auth
             FormBorderStyle = FormBorderStyle.None;
             StartPosition = FormStartPosition.CenterParent;
             ShowInTaskbar = false;
-            ClientSize = new Size(560, 230);
-            MinimumSize = new Size(560, 230);
-            MaximumSize = new Size(560, 230);
+            ClientSize = new Size(500, 210);
+            MinimumSize = new Size(500, 210);
+            MaximumSize = new Size(500, 210);
             BackColor = Color.White;
             Font = new Font("Segoe UI", 9.5F, FontStyle.Regular);
             KeyPreview = true;
@@ -59,7 +59,7 @@ namespace QuanLyCBCS.Forms.Auth
             pnlHeader = new Panel
             {
                 Location = new Point(0, 0),
-                Size = new Size(560, 64),
+                Size = new Size(500, 56),
                 BackColor = _blue
             };
             pnlHeader.Paint += PnlHeader_Paint;
@@ -67,10 +67,10 @@ namespace QuanLyCBCS.Forms.Auth
 
             lblTitle = new Label
             {
-                Location = new Point(78, 0),
-                Size = new Size(390, 64),
+                Location = new Point(70, 0),
+                Size = new Size(350, 56),
                 Text = string.IsNullOrWhiteSpace(title) ? "Thông báo" : title,
-                Font = new Font("Segoe UI", 19F, FontStyle.Bold),
+                Font = new Font("Segoe UI", 16F, FontStyle.Bold),
                 ForeColor = Color.White,
                 TextAlign = ContentAlignment.MiddleLeft,
                 AutoSize = false,
@@ -81,8 +81,8 @@ namespace QuanLyCBCS.Forms.Auth
             // Biểu tượng thông tin nhỏ ở đầu thanh tiêu đề.
             Panel headerIcon = new Panel
             {
-                Location = new Point(27, 15),
-                Size = new Size(34, 34),
+                Location = new Point(22, 13),
+                Size = new Size(30, 30),
                 BackColor = Color.Transparent
             };
             headerIcon.Paint += (s, e) =>
@@ -90,8 +90,8 @@ namespace QuanLyCBCS.Forms.Auth
                 Graphics g = e.Graphics;
                 g.SmoothingMode = SmoothingMode.AntiAlias;
                 using (SolidBrush b = new SolidBrush(Color.White))
-                    g.FillEllipse(b, 0, 0, 33, 33);
-                using (Font f = new Font("Segoe UI", 20F, FontStyle.Bold))
+                    g.FillEllipse(b, 0, 0, 29, 29);
+                using (Font f = new Font("Segoe UI", 18F, FontStyle.Bold))
                 using (SolidBrush b = new SolidBrush(_blue))
                 {
                     StringFormat sf = new StringFormat
@@ -99,7 +99,7 @@ namespace QuanLyCBCS.Forms.Auth
                         Alignment = StringAlignment.Center,
                         LineAlignment = StringAlignment.Center
                     };
-                    g.DrawString("i", f, b, new RectangleF(0, -1, 33, 34), sf);
+                    g.DrawString("i", f, b, new RectangleF(0, -1, 29, 30), sf);
                 }
             };
             pnlHeader.Controls.Add(headerIcon);
@@ -108,8 +108,8 @@ namespace QuanLyCBCS.Forms.Auth
             // Nút đóng trên thanh tiêu đề.
             btnClose = new Button
             {
-                Location = new Point(510, 12),
-                Size = new Size(36, 36),
+                Location = new Point(452, 10),
+                Size = new Size(34, 34),
                 Text = string.Empty,
                 FlatStyle = FlatStyle.Flat,
                 BackColor = Color.Transparent,
@@ -139,8 +139,8 @@ namespace QuanLyCBCS.Forms.Auth
             // Vùng nội dung trắng.
             pnlIcon = new Panel
             {
-                Location = new Point(36, 86),
-                Size = new Size(66, 66),
+                Location = new Point(30, 78),
+                Size = new Size(58, 58),
                 BackColor = Color.Transparent
             };
             pnlIcon.Paint += PnlIcon_Paint;
@@ -148,18 +148,18 @@ namespace QuanLyCBCS.Forms.Auth
 
             pnlDivider = new Panel
             {
-                Location = new Point(126, 82),
-                Size = new Size(3, 78),
+                Location = new Point(108, 76),
+                Size = new Size(2, 68),
                 BackColor = _blue
             };
             Controls.Add(pnlDivider);
 
             lblDescription = new Label
             {
-                Location = new Point(153, 78),
-                Size = new Size(375, 88),
+                Location = new Point(130, 70),
+                Size = new Size(340, 78),
                 Text = description ?? string.Empty,
-                Font = new Font("Segoe UI", 15F, FontStyle.Bold),
+                Font = new Font("Segoe UI", 13F, FontStyle.Bold),
                 ForeColor = _navy,
                 TextAlign = ContentAlignment.MiddleLeft,
                 AutoSize = false,
@@ -170,8 +170,8 @@ namespace QuanLyCBCS.Forms.Auth
             // Chân hộp thoại.
             pnlFooter = new Panel
             {
-                Location = new Point(0, 174),
-                Size = new Size(560, 56),
+                Location = new Point(0, 158),
+                Size = new Size(500, 52),
                 BackColor = _footerColor
             };
             pnlFooter.Paint += (s, e) =>
@@ -183,10 +183,10 @@ namespace QuanLyCBCS.Forms.Auth
 
             btnOK = new Button
             {
-                Location = new Point(426, 8),
-                Size = new Size(112, 40),
+                Location = new Point(378, 6),
+                Size = new Size(106, 40),
                 Text = "✓  OK",
-                Font = new Font("Segoe UI", 12F, FontStyle.Bold),
+                Font = new Font("Segoe UI", 11F, FontStyle.Bold),
                 ForeColor = Color.White,
                 BackColor = _blue,
                 FlatStyle = FlatStyle.Flat,
@@ -240,12 +240,12 @@ namespace QuanLyCBCS.Forms.Auth
             Color accent = GetAccentColor();
             Color pale = GetPaleColor();
             using (SolidBrush paleBrush = new SolidBrush(pale))
-                g.FillEllipse(paleBrush, 0, 0, 66, 66);
+                g.FillEllipse(paleBrush, 0, 0, 58, 58);
             using (SolidBrush accentBrush = new SolidBrush(accent))
-                g.FillEllipse(accentBrush, 7, 7, 52, 52);
+                g.FillEllipse(accentBrush, 6, 6, 46, 46);
 
             using (SolidBrush whiteBrush = new SolidBrush(Color.White))
-            using (Pen whitePen = new Pen(Color.White, 4F))
+            using (Pen whitePen = new Pen(Color.White, 3.5F))
             {
                 whitePen.StartCap = LineCap.Round;
                 whitePen.EndCap = LineCap.Round;
@@ -254,22 +254,22 @@ namespace QuanLyCBCS.Forms.Auth
                 switch (_messageType)
                 {
                     case LoginMessageType.Success:
-                        g.DrawLine(whitePen, 19, 34, 28, 43);
-                        g.DrawLine(whitePen, 28, 43, 47, 23);
+                        g.DrawLine(whitePen, 17, 30, 25, 38);
+                        g.DrawLine(whitePen, 25, 38, 42, 20);
                         break;
                     case LoginMessageType.InvalidCredentials:
                     case LoginMessageType.AccountLocked:
-                        g.DrawLine(whitePen, 23, 23, 43, 43);
-                        g.DrawLine(whitePen, 43, 23, 23, 43);
+                        g.DrawLine(whitePen, 20, 20, 38, 38);
+                        g.DrawLine(whitePen, 38, 20, 20, 38);
                         break;
                     default:
-                        using (Font f = new Font("Segoe UI", 35F, FontStyle.Bold))
+                        using (Font f = new Font("Segoe UI", 30F, FontStyle.Bold))
                         using (StringFormat sf = new StringFormat
                         {
                             Alignment = StringAlignment.Center,
                             LineAlignment = StringAlignment.Center
                         })
-                            g.DrawString("i", f, whiteBrush, new RectangleF(7, 2, 52, 58), sf);
+                            g.DrawString("i", f, whiteBrush, new RectangleF(6, 2, 46, 52), sf);
                         break;
                 }
             }

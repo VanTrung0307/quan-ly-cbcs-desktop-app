@@ -147,7 +147,7 @@
             btnExportExcel.Name = "btnExportExcel";
             btnExportExcel.Size = new Size(120, 36);
             btnExportExcel.TabIndex = 7;
-            btnExportExcel.Text = "📊 Excel";
+            btnExportExcel.Text = "Excel";
             btnExportExcel.UseVisualStyleBackColor = false;
             btnExportExcel.Click += btnExportExcel_Click;
             // 
@@ -175,7 +175,7 @@
             btnRefresh.Name = "btnRefresh";
             btnRefresh.Size = new Size(120, 36);
             btnRefresh.TabIndex = 8;
-            btnRefresh.Text = "⟳ Làm mới";
+            btnRefresh.Text = "Làm mới";
             btnRefresh.UseVisualStyleBackColor = false;
             btnRefresh.Click += btnRefresh_Click;
             // 
@@ -201,8 +201,8 @@
             // 
             txtSearch.Location = new Point(247, 101);
             txtSearch.Name = "txtSearch";
-            txtSearch.PlaceholderText = "Tìm theo họ tên, số hiệu...";
-            txtSearch.Size = new Size(300, 27);
+            txtSearch.PlaceholderText = "Tìm theo họ tên, số hiệu, đơn vị...";
+            txtSearch.Size = new Size(260, 24);
             txtSearch.TabIndex = 14;
             txtSearch.TextChanged += txtSearch_TextChanged;
             // 
@@ -212,7 +212,7 @@
             btnTop10.Name = "btnTop10";
             btnTop10.Size = new Size(94, 29);
             btnTop10.TabIndex = 15;
-            btnTop10.Text = "🏆 Top 10";
+            btnTop10.Text = "Top 10";
             btnTop10.UseVisualStyleBackColor = true;
             btnTop10.Click += btnTop10_Click;
             // 
@@ -222,7 +222,7 @@
             btnHistory.Name = "btnHistory";
             btnHistory.Size = new Size(94, 29);
             btnHistory.TabIndex = 16;
-            btnHistory.Text = "📜 Lịch sử";
+            btnHistory.Text = "Lịch sử";
             btnHistory.UseVisualStyleBackColor = true;
             btnHistory.Click += btnHistory_Click;
             // 
