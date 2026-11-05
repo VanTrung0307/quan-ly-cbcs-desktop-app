@@ -155,24 +155,34 @@ namespace QuanLyCBCS.Forms.Auth
                 {
                     ShowLoginMessage(
                         LoginMessageType.Information,
-                        "Thông báo",
-                        "Bạn phải đổi mật khẩu trước khi sử dụng hệ thống.");
+                        "Yêu cầu đổi mật khẩu",
+                        "Đây là lần đăng nhập đầu tiên. Bạn cần đổi mật khẩu trước khi sử dụng hệ thống.");
 
+                    // Hiển thị dưới dạng hộp thoại modal có thanh tiêu đề và nút X.
+                    // Nếu người dùng đóng hộp thoại hoặc chọn Hủy, không cho vào hệ thống.
                     using FrmChangePassword frmChange =
-                        new FrmChangePassword();
+                        new FrmChangePassword(isMandatoryChange: true);
 
-                    if (frmChange.ShowDialog() != DialogResult.OK)
+                    DialogResult changeResult = frmChange.ShowDialog(this);
+                    if (changeResult != DialogResult.OK)
                     {
+                        txtPassword.Clear();
+                        txtPassword.Focus();
                         return;
                     }
 
-                    user =
-                        await db.Users
-                            .FirstOrDefaultAsync(
-                                x => x.UserId == user.UserId);
+                    // Đọc lại trạng thái từ DB để bảo đảm cờ bắt buộc đổi mật khẩu
+                    // đã được cập nhật trước khi cấp quyền truy cập hệ thống.
+                    // Reload entity đang được DbContext theo dõi (truy vấn lại
+                    // FirstOrDefaultAsync có thể trả về entity cũ trong Change Tracker).
+                    await db.Entry(user).ReloadAsync();
 
-                    if (user == null)
+                    if (user.MustChangePassword)
                     {
+                        ShowLoginMessage(
+                            LoginMessageType.Information,
+                            "Chưa thể đăng nhập",
+                            "Mật khẩu chưa được cập nhật hoàn tất. Vui lòng thực hiện đổi mật khẩu lại.");
                         return;
                     }
                 }

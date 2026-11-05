@@ -13,11 +13,36 @@ namespace QuanLyCBCS.Forms.UserForms
     public partial class FrmChangePassword : Form
     {
         private readonly UserService _service;
+        private readonly bool _isMandatoryChange;
 
-        public FrmChangePassword()
+        /// <summary>
+        /// Mặc định dùng như một màn hình đổi mật khẩu thông thường.
+        /// Khi isMandatoryChange = true, form hoạt động như hộp thoại modal
+        /// và chỉ trả về OK sau khi đổi mật khẩu thành công.
+        /// </summary>
+        public FrmChangePassword() : this(false)
+        {
+        }
+
+        public FrmChangePassword(bool isMandatoryChange)
         {
             InitializeComponent();
             _service = new UserService();
+            _isMandatoryChange = isMandatoryChange;
+
+            if (_isMandatoryChange)
+            {
+                FormBorderStyle = FormBorderStyle.FixedDialog;
+                ControlBox = true;
+                MinimizeBox = false;
+                MaximizeBox = false;
+                ShowInTaskbar = false;
+                StartPosition = FormStartPosition.CenterParent;
+                WindowState = FormWindowState.Normal;
+                ClientSize = new Size(1200, 760);
+                MinimumSize = new Size(1100, 700);
+                Text = "Đổi mật khẩu bắt buộc";
+            }
 
             toolTipMain.SetToolTip(txtOldPassword, "Mật khẩu hiện tại");
             toolTipMain.SetToolTip(txtNewPassword, "Mật khẩu mới");
@@ -246,6 +271,15 @@ namespace QuanLyCBCS.Forms.UserForms
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
+            // Ở chế độ bắt buộc đổi mật khẩu, Hủy phải đóng hộp thoại.
+            // FrmLogin sẽ nhận DialogResult.Cancel và không mở FrmHome.
+            if (_isMandatoryChange)
+            {
+                DialogResult = DialogResult.Cancel;
+                Close();
+                return;
+            }
+
             txtOldPassword.Clear();
             txtNewPassword.Clear();
             txtConfirmPassword.Clear();
@@ -342,6 +376,14 @@ namespace QuanLyCBCS.Forms.UserForms
             return path;
         }
 
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            if (_isMandatoryChange && DialogResult == DialogResult.None)
+                DialogResult = DialogResult.Cancel;
+
+            base.OnFormClosing(e);
+        }
+
         private async void btnSave_Click(object sender, EventArgs e)
         {
             try
@@ -387,6 +429,14 @@ namespace QuanLyCBCS.Forms.UserForms
 
                 FrmLoginMessage.ShowMessage(this, LoginMessageType.Success,
                     "Thành công", "Đổi mật khẩu thành công.");
+
+                if (_isMandatoryChange)
+                {
+                    // Chỉ trả về OK sau khi dịch vụ đổi mật khẩu hoàn tất thành công.
+                    DialogResult = DialogResult.OK;
+                    Close();
+                    return;
+                }
 
                 btnCancel_Click(sender, e);
             }
