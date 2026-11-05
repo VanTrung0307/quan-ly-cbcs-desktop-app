@@ -7,6 +7,7 @@ using QuanLyCBCS.Forms.PersonnelForms;
 using QuanLyCBCS.Forms.CommonForms;
 using QuanLyCBCS.Forms.MissionForms;
 using QuanLyCBCS.Forms.SystemForms;
+using QuanLyCBCS.Forms.UserForms;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -46,6 +47,9 @@ namespace QuanLyCBCS.Forms.Home
 
         // Giữ một phiên FrmPersonnelMissionStatistics để nhúng trực tiếp vào tab Thống kê.
         private FrmPersonnelMissionStatistics? _personnelMissionStatisticsForm;
+
+        // Giữ một phiên FrmUserList để nhúng trực tiếp vào tab Tài khoản.
+        private FrmUserList? _userListForm;
 
         // Trung tâm thông báo được nhúng vào một panel dropdown, không mở bằng ShowDialog.
         private Button? _btnNotifications;
@@ -588,6 +592,19 @@ namespace QuanLyCBCS.Forms.Home
                 return;
 
             string pageName = btn.Tag.ToString()!;
+
+            // Kiểm tra quyền trước khi đổi trạng thái tab để không làm sai mục đang chọn.
+            if (pageName == "Tài khoản" && !PermissionHelper.CanManageUsers)
+            {
+                MessageBox.Show(
+                    this,
+                    "Bạn không có quyền quản lý tài khoản.",
+                    "Từ chối truy cập",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+
             UpdateNavigationHighlight(pageName);
 
             if (pnlContent == null)
@@ -629,11 +646,18 @@ namespace QuanLyCBCS.Forms.Home
                 return;
             }
 
+            if (pageName == "Tài khoản")
+            {
+                ShowUserListInContent();
+                return;
+            }
+
             DetachPersonnelListFromContent();
             DetachMissionListFromContent();
             DetachAuditLogListFromContent();
             DetachPersonnelReportFromContent();
             DetachPersonnelMissionStatisticsFromContent();
+            DetachUserListFromContent();
             pnlContent.Controls.Clear();
             Label lblTitle = new Label
             {
@@ -669,6 +693,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachAuditLogListFromContent();
             DetachPersonnelReportFromContent();
             DetachPersonnelMissionStatisticsFromContent();
+            DetachUserListFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -743,6 +768,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachAuditLogListFromContent();
             DetachPersonnelReportFromContent();
             DetachPersonnelMissionStatisticsFromContent();
+            DetachUserListFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -843,6 +869,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachAuditLogListFromContent();
             DetachPersonnelReportFromContent();
             DetachPersonnelMissionStatisticsFromContent();
+            DetachUserListFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -932,6 +959,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachAuditLogListFromContent();
             DetachPersonnelReportFromContent();
             DetachPersonnelMissionStatisticsFromContent();
+            DetachUserListFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -1010,6 +1038,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachAuditLogListFromContent();
             DetachPersonnelReportFromContent();
             DetachPersonnelMissionStatisticsFromContent();
+            DetachUserListFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -1082,6 +1111,111 @@ namespace QuanLyCBCS.Forms.Home
             }
         }
 
+        // Hiển thị FrmUserList trực tiếp trong pnlContent của tab Tài khoản.
+        // Giữ nguyên instance khi chuyển tab để bảo toàn trạng thái danh sách.
+        private void ShowUserListInContent()
+        {
+            if (pnlContent == null)
+                return;
+
+            if (!PermissionHelper.CanManageUsers)
+            {
+                MessageBox.Show(
+                    this,
+                    "Bạn không có quyền quản lý tài khoản.",
+                    "Từ chối truy cập",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (_userListForm != null &&
+                !_userListForm.IsDisposed &&
+                ReferenceEquals(_userListForm.Parent, pnlContent))
+            {
+                _userListForm.Visible = true;
+                _userListForm.BringToFront();
+                return;
+            }
+
+            DetachPersonnelListFromContent();
+            DetachMissionListFromContent();
+            DetachAuditLogListFromContent();
+            DetachPersonnelReportFromContent();
+            DetachPersonnelMissionStatisticsFromContent();
+            DetachUserListFromContent();
+            pnlContent.Controls.Clear();
+
+            try
+            {
+                if (_userListForm == null || _userListForm.IsDisposed)
+                {
+                    _userListForm = new FrmUserList
+                    {
+                        TopLevel = false,
+                        FormBorderStyle = FormBorderStyle.None,
+                        ShowInTaskbar = false,
+                        StartPosition = FormStartPosition.Manual,
+                        WindowState = FormWindowState.Normal,
+                        MinimumSize = Size.Empty,
+                        MaximumSize = Size.Empty,
+                        Dock = DockStyle.Fill,
+                        Location = Point.Empty,
+                        Margin = Padding.Empty
+                    };
+                }
+
+                pnlContent.Controls.Add(_userListForm);
+                _userListForm.Show();
+                _userListForm.Visible = true;
+                _userListForm.BringToFront();
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                if (_userListForm != null && !_userListForm.IsDisposed)
+                {
+                    _userListForm.Dispose();
+                    _userListForm = null;
+                }
+
+                MessageBox.Show(
+                    this,
+                    ex.Message,
+                    "Không có quyền",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
+            catch (Exception ex)
+            {
+                if (_userListForm != null && !_userListForm.IsDisposed)
+                {
+                    _userListForm.Dispose();
+                    _userListForm = null;
+                }
+
+                MessageBox.Show(
+                    this,
+                    "Không thể hiển thị màn hình Tài khoản trong FrmHome. Chi tiết: " + ex.Message,
+                    "Lỗi hiển thị",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
+        // Tạm tháo FrmUserList khi chuyển tab, không Dispose để giữ trạng thái màn hình.
+        private void DetachUserListFromContent()
+        {
+            if (_userListForm == null || _userListForm.IsDisposed)
+                return;
+
+            if (pnlContent != null &&
+                ReferenceEquals(_userListForm.Parent, pnlContent))
+            {
+                _userListForm.Visible = false;
+                pnlContent.Controls.Remove(_userListForm);
+            }
+        }
+
         // ========================= TRANG CHỦ =========================
         private async Task ShowHomeDashboardAsync()
         {
@@ -1093,6 +1227,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachAuditLogListFromContent();
             DetachPersonnelReportFromContent();
             DetachPersonnelMissionStatisticsFromContent();
+            DetachUserListFromContent();
             pnlContent.SuspendLayout();
             pnlContent.Controls.Clear();
             pnlContent.ResumeLayout(true);

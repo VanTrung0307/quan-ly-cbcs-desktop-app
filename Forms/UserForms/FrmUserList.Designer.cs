@@ -2,234 +2,289 @@
 {
     partial class FrmUserList
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
-            {
                 components.Dispose();
-            }
             base.Dispose(disposing);
         }
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmUserList));
+            pnlMain = new Panel();
+            pnlBody = new Panel();
+            pnlGridSurface = new Panel();
+            pnlToolbarSpacer = new Panel();
+            pnlStatusSpacer = new Panel();
             dgvUsers = new DataGridView();
             pnlHeader = new Panel();
-            label2 = new Label();
-            label1 = new Label();
+            pnlHeaderAccent = new Panel();
+            lblHeaderIcon = new Label();
+            lblHeaderTitle = new Label();
+            lblHeaderSubtitle = new Label();
             pnlToolbar = new Panel();
             btnUnlock = new Button();
             btnRefresh = new Button();
             btnResetPassword = new Button();
             btnDeleteUser = new Button();
             btnAddUser = new Button();
-            statusStrip1 = new StatusStrip();
-            lblUserCount = new ToolStripStatusLabel();
+            pnlStatus = new Panel();
+            lblStatusIcon = new Label();
+            lblUserCount = new Label();
             toolTipMain = new ToolTip(components);
+
             ((System.ComponentModel.ISupportInitialize)dgvUsers).BeginInit();
+            pnlMain.SuspendLayout();
+            pnlGridSurface.SuspendLayout();
             pnlHeader.SuspendLayout();
             pnlToolbar.SuspendLayout();
-            statusStrip1.SuspendLayout();
+            pnlStatus.SuspendLayout();
             SuspendLayout();
-            // 
-            // dgvUsers
-            // 
-            dgvUsers.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            dgvUsers.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvUsers.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvUsers.Location = new Point(2, 137);
-            dgvUsers.Name = "dgvUsers";
-            dgvUsers.RowHeadersWidth = 51;
-            dgvUsers.Size = new Size(878, 463);
-            dgvUsers.TabIndex = 2;
-            dgvUsers.CellFormatting += dgvUsers_CellFormatting;
-            // 
+
+            // pnlMain
+            pnlMain.BackColor = Color.FromArgb(242, 247, 253);
+            pnlMain.Dock = DockStyle.Fill;
+            pnlMain.Padding = new Padding(0);
+            pnlMain.Name = "pnlMain";
+            pnlMain.Controls.Add(pnlBody);
+            pnlMain.Controls.Add(pnlHeader);
+
+            // pnlBody: tạo khoảng đệm riêng cho thanh công cụ, bảng và trạng thái.
+            pnlBody.BackColor = Color.FromArgb(242, 247, 253);
+            pnlBody.Dock = DockStyle.Fill;
+            pnlBody.Padding = new Padding(10, 10, 10, 10);
+            pnlBody.Name = "pnlBody";
+            pnlBody.Controls.Add(pnlGridSurface);
+            // DockStyle.Bottom được xử lý theo thứ tự z-order ngược:
+            // thêm spacer trước, status sau để spacer nằm phía trên thẻ tổng.
+            pnlBody.Controls.Add(pnlStatusSpacer);
+            pnlBody.Controls.Add(pnlStatus);
+            pnlBody.Controls.Add(pnlToolbarSpacer);
+            pnlBody.Controls.Add(pnlToolbar);
+
+            // Khoảng cách độc lập giữa thanh công cụ - bảng - thẻ tổng.
+            pnlToolbarSpacer.BackColor = pnlBody.BackColor;
+            pnlToolbarSpacer.Dock = DockStyle.Top;
+            pnlToolbarSpacer.Height = 12;
+            pnlToolbarSpacer.Name = "pnlToolbarSpacer";
+
+            pnlStatusSpacer.BackColor = pnlBody.BackColor;
+            pnlStatusSpacer.Dock = DockStyle.Bottom;
+            pnlStatusSpacer.Height = 14;
+            pnlStatusSpacer.Name = "pnlStatusSpacer";
+
+            // pnlGridSurface: nền trắng của khu vực danh sách, không tạo viền đen.
+            pnlGridSurface.BackColor = Color.White;
+            pnlGridSurface.Dock = DockStyle.Fill;
+            pnlGridSurface.Padding = new Padding(1);
+            pnlGridSurface.Name = "pnlGridSurface";
+            pnlGridSurface.Margin = new Padding(0, 13, 0, 16);
+            pnlGridSurface.Controls.Add(dgvUsers);
+            pnlGridSurface.Paint += pnlGridSurface_Paint;
+
             // pnlHeader
-            // 
-            pnlHeader.BackColor = Color.FromArgb(47, 67, 90);
-            pnlHeader.Controls.Add(label2);
-            pnlHeader.Controls.Add(label1);
+            pnlHeader.BackColor = Color.FromArgb(0, 83, 171);
             pnlHeader.Dock = DockStyle.Top;
-            pnlHeader.Location = new Point(0, 0);
+            pnlHeader.Height = 100;
+            pnlHeader.Margin = new Padding(0, 0, 0, 8);
             pnlHeader.Name = "pnlHeader";
-            pnlHeader.Size = new Size(882, 80);
-            pnlHeader.TabIndex = 7;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.ForeColor = Color.WhiteSmoke;
-            label2.Location = new Point(341, 50);
-            label2.Name = "label2";
-            label2.Size = new Size(206, 20);
-            label2.TabIndex = 1;
-            label2.Text = "Quản trị người dùng hệ thống";
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
-            label1.ForeColor = Color.White;
-            label1.Location = new Point(284, 9);
-            label1.Name = "label1";
-            label1.Size = new Size(321, 41);
-            label1.TabIndex = 0;
-            label1.Text = "QUẢN LÝ TÀI KHOẢN";
-            label1.TextAlign = ContentAlignment.TopCenter;
-            // 
+            pnlHeader.Padding = new Padding(18, 0, 18, 0);
+            pnlHeader.Paint += pnlHeader_Paint;
+            pnlHeader.Controls.Add(lblHeaderSubtitle);
+            pnlHeader.Controls.Add(lblHeaderTitle);
+            pnlHeader.Controls.Add(pnlHeaderAccent);
+            pnlHeader.Controls.Add(lblHeaderIcon);
+
+            // lblHeaderIcon
+            lblHeaderIcon.Dock = DockStyle.Left;
+            lblHeaderIcon.Width = 88;
+            lblHeaderIcon.Text = "\uE716";
+            lblHeaderIcon.Font = new Font("Segoe MDL2 Assets", 39F, FontStyle.Regular);
+            lblHeaderIcon.ForeColor = Color.White;
+            lblHeaderIcon.TextAlign = ContentAlignment.MiddleCenter;
+            lblHeaderIcon.BackColor = Color.Transparent;
+
+            // pnlHeaderAccent
+            pnlHeaderAccent.Dock = DockStyle.Left;
+            pnlHeaderAccent.Width = 1;
+            pnlHeaderAccent.Margin = new Padding(10, 16, 0, 16);
+            pnlHeaderAccent.BackColor = Color.FromArgb(100, 220, 240, 255);
+
+            // lblHeaderTitle
+            lblHeaderTitle.AutoSize = true;
+            lblHeaderTitle.Font = new Font("Segoe UI", 22F, FontStyle.Bold);
+            lblHeaderTitle.ForeColor = Color.White;
+            lblHeaderTitle.BackColor = Color.Transparent;
+            lblHeaderTitle.Location = new Point(126, 12);
+            lblHeaderTitle.Name = "lblHeaderTitle";
+            lblHeaderTitle.Text = "QUẢN LÝ TÀI KHOẢN";
+
+            // lblHeaderSubtitle
+            lblHeaderSubtitle.AutoSize = true;
+            lblHeaderSubtitle.Font = new Font("Segoe UI", 11F, FontStyle.Regular);
+            lblHeaderSubtitle.ForeColor = Color.White;
+            lblHeaderSubtitle.BackColor = Color.Transparent;
+            lblHeaderSubtitle.Location = new Point(127, 60);
+            lblHeaderSubtitle.Name = "lblHeaderSubtitle";
+            lblHeaderSubtitle.Text = "Quản trị người dùng hệ thống";
+
             // pnlToolbar
-            // 
+            pnlToolbar.BackColor = Color.FromArgb(247, 250, 255);
+            pnlToolbar.Dock = DockStyle.Top;
+            pnlToolbar.Height = 76;
+            pnlToolbar.Padding = new Padding(12, 8, 12, 8);
+            pnlToolbar.Name = "pnlToolbar";
             pnlToolbar.Controls.Add(btnUnlock);
             pnlToolbar.Controls.Add(btnRefresh);
             pnlToolbar.Controls.Add(btnResetPassword);
             pnlToolbar.Controls.Add(btnDeleteUser);
             pnlToolbar.Controls.Add(btnAddUser);
-            pnlToolbar.Dock = DockStyle.Top;
-            pnlToolbar.Location = new Point(0, 80);
-            pnlToolbar.Name = "pnlToolbar";
-            pnlToolbar.Size = new Size(882, 55);
-            pnlToolbar.TabIndex = 8;
-            // 
-            // btnUnlock
-            // 
-            btnUnlock.BackColor = Color.MediumVioletRed;
-            btnUnlock.ForeColor = Color.White;
-            btnUnlock.Location = new Point(564, 6);
-            btnUnlock.Name = "btnUnlock";
-            btnUnlock.Size = new Size(101, 36);
-            btnUnlock.TabIndex = 13;
-            btnUnlock.Text = "🔓 Mở khoá";
-            btnUnlock.UseVisualStyleBackColor = false;
-            btnUnlock.Click += btnUnlock_Click;
-            // 
-            // btnRefresh
-            // 
-            btnRefresh.BackColor = Color.FromArgb(52, 152, 219);
-            btnRefresh.ForeColor = Color.White;
-            btnRefresh.Location = new Point(438, 6);
-            btnRefresh.Name = "btnRefresh";
-            btnRefresh.Size = new Size(120, 36);
-            btnRefresh.TabIndex = 9;
-            btnRefresh.Text = "🔁 Làm mới";
-            btnRefresh.UseVisualStyleBackColor = false;
-            btnRefresh.Click += btnRefresh_Click;
-            // 
-            // btnResetPassword
-            // 
-            btnResetPassword.BackColor = Color.FromArgb(243, 156, 18);
-            btnResetPassword.ForeColor = Color.White;
-            btnResetPassword.Location = new Point(297, 6);
-            btnResetPassword.Name = "btnResetPassword";
-            btnResetPassword.Size = new Size(135, 36);
-            btnResetPassword.TabIndex = 10;
-            btnResetPassword.Text = "↺ Reset Password";
-            btnResetPassword.UseVisualStyleBackColor = false;
-            btnResetPassword.Click += btnResetPassword_Click;
-            // 
-            // btnDeleteUser
-            // 
-            btnDeleteUser.BackColor = Color.FromArgb(231, 76, 60);
-            btnDeleteUser.ForeColor = Color.White;
-            btnDeleteUser.Location = new Point(171, 6);
-            btnDeleteUser.Name = "btnDeleteUser";
-            btnDeleteUser.Size = new Size(120, 36);
-            btnDeleteUser.TabIndex = 11;
-            btnDeleteUser.Text = "🗑️ Xoá";
-            btnDeleteUser.UseVisualStyleBackColor = false;
-            btnDeleteUser.Click += btnDeleteUser_Click;
-            // 
+            pnlToolbar.Paint += pnlToolbar_Paint;
+
             // btnAddUser
-            // 
-            btnAddUser.BackColor = Color.FromArgb(39, 174, 96);
-            btnAddUser.ForeColor = Color.White;
-            btnAddUser.Location = new Point(12, 6);
-            btnAddUser.Name = "btnAddUser";
-            btnAddUser.Size = new Size(153, 36);
-            btnAddUser.TabIndex = 12;
-            btnAddUser.Text = "➕ Thêm tài khoản";
-            btnAddUser.UseVisualStyleBackColor = false;
+            ConfigureToolbarButton(btnAddUser, "＋  Thêm tài", new Point(14, 13), new Size(168, 46), Color.FromArgb(28, 181, 99));
             btnAddUser.Click += btnAddUser_Click;
-            // 
-            // statusStrip1
-            // 
-            statusStrip1.ImageScalingSize = new Size(20, 20);
-            statusStrip1.Items.AddRange(new ToolStripItem[] { lblUserCount });
-            statusStrip1.Location = new Point(0, 577);
-            statusStrip1.Name = "statusStrip1";
-            statusStrip1.Size = new Size(882, 26);
-            statusStrip1.TabIndex = 9;
-            statusStrip1.Text = "statusStrip1";
-            // 
+
+            // btnDeleteUser
+            ConfigureToolbarButton(btnDeleteUser, "▤  Xóa", new Point(196, 13), new Size(145, 46), Color.FromArgb(239, 67, 59));
+            btnDeleteUser.Click += btnDeleteUser_Click;
+
+            // btnResetPassword
+            ConfigureToolbarButton(btnResetPassword, "↻  Reset", new Point(356, 13), new Size(153, 46), Color.FromArgb(247, 158, 17));
+            btnResetPassword.Click += btnResetPassword_Click;
+
+            // btnRefresh
+            ConfigureToolbarButton(btnRefresh, "▣  Làm mới", new Point(523, 13), new Size(163, 46), Color.FromArgb(42, 153, 239));
+            btnRefresh.Click += btnRefresh_Click;
+
+            // btnUnlock
+            ConfigureToolbarButton(btnUnlock, "🔓  Mở khóa", new Point(700, 13), new Size(156, 46), Color.FromArgb(190, 27, 157));
+            btnUnlock.Click += btnUnlock_Click;
+
+            // dgvUsers
+            dgvUsers.Dock = DockStyle.Fill;
+            dgvUsers.Name = "dgvUsers";
+            dgvUsers.Margin = new Padding(2, 10, 2, 0);
+            dgvUsers.BackgroundColor = Color.White;
+            dgvUsers.BorderStyle = BorderStyle.None;
+            dgvUsers.CellBorderStyle = DataGridViewCellBorderStyle.Single;
+            dgvUsers.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+            dgvUsers.ColumnHeadersHeight = 51;
+            dgvUsers.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            dgvUsers.RowHeadersWidth = 48;
+            dgvUsers.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            dgvUsers.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvUsers.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+            dgvUsers.AllowUserToAddRows = false;
+            dgvUsers.AllowUserToDeleteRows = false;
+            dgvUsers.AllowUserToResizeRows = false;
+            dgvUsers.MultiSelect = false;
+            dgvUsers.ReadOnly = true;
+            dgvUsers.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvUsers.RowTemplate.Height = 52;
+            dgvUsers.EnableHeadersVisualStyles = false;
+            dgvUsers.CellFormatting += dgvUsers_CellFormatting;
+            dgvUsers.CellPainting += dgvUsers_CellPainting;
+            dgvUsers.CellClick += dgvUsers_CellClick;
+
+            // pnlStatus
+            pnlStatus.BackColor = Color.FromArgb(211, 232, 252);
+            pnlStatus.Dock = DockStyle.Bottom;
+            pnlStatus.Height = 53;
+            pnlStatus.Padding = new Padding(14, 0, 14, 0);
+            pnlStatus.Name = "pnlStatus";
+            pnlStatus.Controls.Add(lblUserCount);
+            pnlStatus.Controls.Add(lblStatusIcon);
+
+            // lblStatusIcon
+            lblStatusIcon.Dock = DockStyle.Left;
+            lblStatusIcon.Width = 28;
+            lblStatusIcon.Text = "\uE946";
+            lblStatusIcon.Font = new Font("Segoe MDL2 Assets", 15F);
+            lblStatusIcon.ForeColor = Color.FromArgb(0, 116, 220);
+            lblStatusIcon.TextAlign = ContentAlignment.MiddleCenter;
+
             // lblUserCount
-            // 
+            lblUserCount.Dock = DockStyle.Fill;
+            lblUserCount.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblUserCount.ForeColor = Color.FromArgb(0, 55, 110);
+            lblUserCount.TextAlign = ContentAlignment.MiddleLeft;
             lblUserCount.Name = "lblUserCount";
-            lblUserCount.Size = new Size(151, 20);
-            lblUserCount.Text = "toolStripStatusLabel1";
-            // 
+            lblUserCount.Text = "Đang hiển thị: 0 tài khoản";
+
             // toolTipMain
-            // 
             toolTipMain.AutoPopDelay = 5000;
             toolTipMain.InitialDelay = 300;
             toolTipMain.ReshowDelay = 100;
             toolTipMain.ShowAlways = true;
-            // 
+
             // FrmUserList
-            // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(882, 603);
-            Controls.Add(statusStrip1);
-            Controls.Add(pnlToolbar);
-            Controls.Add(pnlHeader);
-            Controls.Add(dgvUsers);
-            FormBorderStyle = FormBorderStyle.FixedDialog;
-            Icon = (Icon)resources.GetObject("$this.Icon");
-            MaximizeBox = false;
-            MinimizeBox = false;
+            BackColor = Color.FromArgb(242, 247, 253);
+            ClientSize = new Size(1380, 725);
+            Controls.Add(pnlMain);
+            FormBorderStyle = FormBorderStyle.None;
             Name = "FrmUserList";
-            StartPosition = FormStartPosition.CenterParent;
+            StartPosition = FormStartPosition.Manual;
             Text = "Quản lý tài khoản";
             Load += FrmUserList_Load;
-            ((System.ComponentModel.ISupportInitialize)dgvUsers).EndInit();
+
+            pnlGridSurface.ResumeLayout(false);
+            pnlStatus.ResumeLayout(false);
+            pnlToolbar.ResumeLayout(false);
             pnlHeader.ResumeLayout(false);
             pnlHeader.PerformLayout();
-            pnlToolbar.ResumeLayout(false);
-            statusStrip1.ResumeLayout(false);
-            statusStrip1.PerformLayout();
+            pnlMain.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvUsers).EndInit();
             ResumeLayout(false);
-            PerformLayout();
+        }
+
+        private void ConfigureToolbarButton(Button button, string text, Point location, Size size, Color backColor)
+        {
+            button.BackColor = backColor;
+            button.FlatStyle = FlatStyle.Flat;
+            button.FlatAppearance.BorderSize = 0;
+            button.FlatAppearance.MouseOverBackColor = ControlPaint.Light(backColor, 0.12f);
+            button.FlatAppearance.MouseDownBackColor = ControlPaint.Dark(backColor, 0.08f);
+            button.ForeColor = Color.White;
+            button.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            button.Location = location;
+            button.Size = size;
+            button.Text = text;
+            button.TextAlign = ContentAlignment.MiddleCenter;
+            button.UseVisualStyleBackColor = false;
+            button.Cursor = Cursors.Hand;
+            button.Anchor = AnchorStyles.Top | AnchorStyles.Left;
         }
 
         #endregion
+
+        private Panel pnlMain;
+        private Panel pnlBody;
+        private Panel pnlGridSurface;
+        private Panel pnlToolbarSpacer;
+        private Panel pnlStatusSpacer;
         private DataGridView dgvUsers;
         private Panel pnlHeader;
-        private Label label1;
-        private Label label2;
+        private Panel pnlHeaderAccent;
+        private Label lblHeaderIcon;
+        private Label lblHeaderTitle;
+        private Label lblHeaderSubtitle;
         private Panel pnlToolbar;
         private Button btnAddUser;
         private Button btnRefresh;
         private Button btnResetPassword;
         private Button btnDeleteUser;
-        private StatusStrip statusStrip1;
-        private ToolStripStatusLabel lblUserCount;
-        private ToolTip toolTipMain;
         private Button btnUnlock;
+        private Panel pnlStatus;
+        private Label lblStatusIcon;
+        private Label lblUserCount;
+        private ToolTip toolTipMain;
     }
 }
