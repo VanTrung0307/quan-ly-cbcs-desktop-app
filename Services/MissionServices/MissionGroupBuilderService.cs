@@ -7,10 +7,10 @@ public class MissionGroupBuilderService
     public List<MissionGroupDto> Build(
         IEnumerable<MissionAssignmentDto> source)
     {
+        // Nguồn đầu vào đã được PersonnelReportService lọc theo thời điểm
+        // và loại nhiệm vụ bên ngoài đơn vị. Không lọc IsPresent ở đây vì
+        // MissionAssignmentDto là bản ghi phân công, không phải bản ghi quân số.
         return source
-
-            .Where(x => !x.IsPresent)
-
             .GroupBy(x => new
             {
                 x.MissionType,

@@ -14,12 +14,20 @@ namespace QuanLyCBCS.Forms.MissionForms
             _allMissions =
                 new();
 
+        // Danh sách đang hiển thị sau khi áp dụng từ khóa tìm kiếm.
+        private List<Mission>
+            _displayedMissions =
+                new();
+
         private readonly Font _priorityBoldFont;
 
         public FrmMissionList()
         {
             InitializeComponent();
             ApplyModernDesign();
+
+            // Kích hoạt tìm kiếm ngay khi người dùng nhập hoặc xóa từ khóa.
+            txtSearchMission.TextChanged += txtSearchMission_TextChanged;
 
             dgvMission.KeyDown += dgvMission_KeyDown;
 
@@ -47,6 +55,7 @@ namespace QuanLyCBCS.Forms.MissionForms
         private Panel _headerIcon = null!;
         private Panel _kpiBackPanel = null!;
         private Panel _searchBackPanel = null!;
+        private Panel _gridContainer = null!;
 
         private void ApplyModernDesign()
         {
@@ -59,7 +68,9 @@ namespace QuanLyCBCS.Forms.MissionForms
             // Header: canh trái theo bản thiết kế, không thay đổi cấu trúc FrmHome.
             pnlHeader.BackColor = _navy;
             pnlHeader.Height = 92;
-            pnlHeader.Dock = DockStyle.Top;
+            pnlHeader.Dock = DockStyle.None;
+            pnlHeader.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            pnlHeader.SetBounds(0, 0, ClientSize.Width, 92);
 
             lblTitle.AutoSize = true;
             lblTitle.Text = "QUẢN LÝ CÔNG TÁC";
@@ -82,7 +93,9 @@ namespace QuanLyCBCS.Forms.MissionForms
             // Thanh công cụ.
             pnlToolbar.BackColor = Color.FromArgb(241, 248, 255);
             pnlToolbar.Height = 136;
-            pnlToolbar.Dock = DockStyle.Top;
+            pnlToolbar.Dock = DockStyle.None;
+            pnlToolbar.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            pnlToolbar.SetBounds(0, pnlHeader.Bottom, ClientSize.Width, 136);
 
             StyleActionButton(btnAddMission, Color.FromArgb(0, 103, 230), Color.White);
             StyleActionButton(btnEditMission, Color.White, _blue);
@@ -152,6 +165,10 @@ namespace QuanLyCBCS.Forms.MissionForms
             dgvMission.RowTemplate.Height = 36;
             dgvMission.AllowUserToAddRows = false;
             dgvMission.AllowUserToResizeRows = false;
+            // Luôn bật thanh cuộn dọc để người dùng xem toàn bộ danh sách công tác.
+            // Không cần thanh cuộn ngang vì các cột đang sử dụng chế độ Fill.
+            dgvMission.ScrollBars = ScrollBars.Vertical;
+            dgvMission.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
             dgvMission.RowHeadersVisible = false;
             dgvMission.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvMission.MultiSelect = false;
@@ -159,8 +176,8 @@ namespace QuanLyCBCS.Forms.MissionForms
             dgvMission.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
             dgvMission.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
             dgvMission.BorderStyle = BorderStyle.None;
-            dgvMission.Resize += (s, e) => ApplyRoundedGridRegion();
-            ApplyRoundedGridRegion();
+            // Giữ nguyên vùng hiển thị chữ nhật của DataGridView để không cắt thanh cuộn native.
+            dgvMission.Region = null;
 
             statusStripMain.BackColor = Color.FromArgb(224, 240, 255);
             statusStripMain.ForeColor = _navy;
@@ -172,6 +189,11 @@ namespace QuanLyCBCS.Forms.MissionForms
             ApplyRoundedStatusStripBottom();
             lblRecordCount.ForeColor = _navy;
             lblRecordCount.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+
+            // Đặt DataGridView và thanh trạng thái trong cùng một khung bo góc.
+            // Cách này bảo đảm phần bảng có vùng Fill riêng, không bị Dock trực tiếp
+            // cạnh tranh thứ tự bố trí với Header/Toolbar trên Form.
+            CreateRoundedGridContainer();
 
             // Nền chung cho cụm KPI, tương tự bản thiết kế.
             _kpiBackPanel = new Panel { BackColor = Color.FromArgb(247, 251, 255) };
@@ -210,10 +232,131 @@ namespace QuanLyCBCS.Forms.MissionForms
 
             // Tự căn lại khi tab/form thay đổi kích thước.
             pnlToolbar.Resize += (s, e) => LayoutToolbar();
+            Resize += (s, e) => LayoutMainContent();
+            LayoutMainContent();
             LayoutToolbar();
 
             CreateEmptyState();
             ResumeLayout(true);
+            LayoutMainContent();
+        }
+
+        private void CreateRoundedGridContainer()
+        {
+            if (_gridContainer != null && !_gridContainer.IsDisposed)
+                return;
+
+            // Gỡ DataGridView và StatusStrip khỏi Form trước khi đưa vào khung riêng.
+            Controls.Remove(dgvMission);
+            Controls.Remove(statusStripMain);
+
+            _gridContainer = new Panel
+            {
+                Name = "pnlMissionGridContainer",
+                Dock = DockStyle.None,
+                Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
+                BackColor = Color.White,
+                Padding = new Padding(1),
+                Margin = Padding.Empty
+            };
+
+            _gridContainer.Resize += (s, e) =>
+            {
+                LayoutRoundedGridChildren();
+                ApplyRoundedGridContainerRegion();
+            };
+            _gridContainer.Paint += (s, e) =>
+            {
+                if (_gridContainer.ClientSize.Width < 4 || _gridContainer.ClientSize.Height < 4)
+                    return;
+
+                e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                Rectangle bounds = new Rectangle(0, 0, _gridContainer.Width - 1, _gridContainer.Height - 1);
+                using var path = RoundedRect(bounds, 12);
+                using var pen = new Pen(Color.FromArgb(190, 218, 243), 1F);
+                e.Graphics.DrawPath(pen, path);
+            };
+
+            // Không dùng TableLayoutPanel/Dock Fill tại đây vì có thể khiến vùng Fill
+            // tính sai chiều cao khi Form được nhúng vào FrmHome.
+            dgvMission.Dock = DockStyle.None;
+            dgvMission.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dgvMission.Margin = Padding.Empty;
+            dgvMission.ScrollBars = ScrollBars.Vertical;
+            dgvMission.ColumnHeadersVisible = true;
+            dgvMission.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+            dgvMission.Region = null;
+
+            statusStripMain.Dock = DockStyle.None;
+            statusStripMain.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            statusStripMain.Margin = Padding.Empty;
+            statusStripMain.AutoSize = false;
+            statusStripMain.Height = 28;
+            statusStripMain.SizingGrip = false;
+
+            _gridContainer.Controls.Add(dgvMission);
+            _gridContainer.Controls.Add(statusStripMain);
+            Controls.Add(_gridContainer);
+
+            // Đưa vùng dữ liệu xuống dưới Header/Toolbar; tọa độ được tính độc lập
+            // nên thứ tự Dock/Z-order không thể đẩy bảng đè lên hai vùng phía trên.
+            _gridContainer.SendToBack();
+            pnlToolbar.BringToFront();
+            pnlHeader.BringToFront();
+
+            LayoutMainContent();
+            ApplyRoundedGridContainerRegion();
+        }
+
+        private void LayoutMainContent()
+        {
+            if (pnlHeader == null || pnlToolbar == null ||
+                _gridContainer == null || _gridContainer.IsDisposed)
+                return;
+
+            const int headerHeight = 92;
+            const int toolbarHeight = 136;
+
+            pnlHeader.SetBounds(0, 0, ClientSize.Width, headerHeight);
+            pnlToolbar.SetBounds(0, headerHeight, ClientSize.Width, toolbarHeight);
+
+            int gridTop = headerHeight + toolbarHeight;
+            int gridHeight = Math.Max(80, ClientSize.Height - gridTop);
+            _gridContainer.SetBounds(0, gridTop, ClientSize.Width, gridHeight);
+
+            LayoutRoundedGridChildren();
+            ApplyRoundedGridContainerRegion();
+            LayoutToolbar();
+        }
+
+        private void LayoutRoundedGridChildren()
+        {
+            if (_gridContainer == null || _gridContainer.IsDisposed ||
+                dgvMission == null || statusStripMain == null)
+                return;
+
+            int width = Math.Max(0, _gridContainer.ClientSize.Width - 2);
+            int height = Math.Max(0, _gridContainer.ClientSize.Height - 2);
+            int statusHeight = Math.Min(28, height);
+
+            dgvMission.SetBounds(1, 1, width, Math.Max(0, height - statusHeight));
+            statusStripMain.SetBounds(1, Math.Max(1, height - statusHeight + 1), width, statusHeight);
+            dgvMission.BringToFront();
+            statusStripMain.BringToFront();
+        }
+
+        private void ApplyRoundedGridContainerRegion()
+        {
+            if (_gridContainer == null || _gridContainer.IsDisposed ||
+                _gridContainer.Width < 4 || _gridContainer.Height < 4)
+                return;
+
+            using var path = RoundedRect(
+                new Rectangle(0, 0, _gridContainer.Width - 1, _gridContainer.Height - 1),
+                12);
+
+            _gridContainer.Region?.Dispose();
+            _gridContainer.Region = new Region(path);
         }
 
         private void LayoutToolbar()
@@ -329,19 +472,6 @@ namespace QuanLyCBCS.Forms.MissionForms
             };
 
             e.Graphics.DrawPath(pen, path);
-        }
-
-        private void ApplyRoundedGridRegion()
-        {
-            if (dgvMission == null || dgvMission.IsDisposed ||
-                dgvMission.Width <= 0 || dgvMission.Height <= 0)
-                return;
-
-            using var path = RoundedRect(
-                new Rectangle(0, 0, dgvMission.Width, dgvMission.Height), 12);
-
-            dgvMission.Region?.Dispose();
-            dgvMission.Region = new Region(path);
         }
 
         /// <summary>
@@ -704,7 +834,16 @@ namespace QuanLyCBCS.Forms.MissionForms
         private void UpdateEmptyState()
         {
             if (_emptyStatePanel == null) return;
-            _emptyStatePanel.Visible = _allMissions.Count == 0;
+            _emptyStatePanel.Visible = _displayedMissions.Count == 0;
+
+            _emptyStateTitle.Text = _allMissions.Count == 0
+                ? "Chưa có dữ liệu công tác"
+                : "Không tìm thấy công tác phù hợp";
+
+            _emptyStateHint.Text = _allMissions.Count == 0
+                ? "Nhấn “Thêm” để tạo công tác mới."
+                : "Thử thay đổi từ khóa tìm kiếm.";
+
             if (_emptyStatePanel.Visible) PositionEmptyState();
         }
 
@@ -715,18 +854,76 @@ namespace QuanLyCBCS.Forms.MissionForms
                 await _missionService
                     .GetAllAsync();
 
-            dgvMission.DataSource =
-                _allMissions;
+            // Giữ nguyên từ khóa hiện tại sau khi thêm, sửa hoặc làm mới dữ liệu.
+            ApplyMissionSearch();
+        }
+
+        /// <summary>
+        /// Tìm kiếm không phân biệt chữ hoa/chữ thường và dấu tiếng Việt.
+        /// Dữ liệu gốc _allMissions luôn được giữ nguyên; chỉ danh sách hiển thị bị lọc.
+        /// </summary>
+        private void txtSearchMission_TextChanged(object? sender, EventArgs e)
+        {
+            ApplyMissionSearch();
+        }
+
+        private void ApplyMissionSearch()
+        {
+            string keyword = VietnameseHelper
+                .RemoveVietnameseSigns(txtSearchMission.Text.Trim())
+                .ToLowerInvariant();
+
+            _displayedMissions = string.IsNullOrWhiteSpace(keyword)
+                ? _allMissions.ToList()
+                : _allMissions.Where(m =>
+                    ContainsMissionKeyword(m.MissionName, keyword) ||
+                    ContainsMissionKeyword(m.MissionType, keyword) ||
+                    ContainsMissionKeyword(m.Location, keyword) ||
+                    ContainsMissionKeyword(m.Description, keyword))
+                  .ToList();
+
+            dgvMission.DataSource = null;
+            dgvMission.DataSource = _displayedMissions;
+            dgvMission.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+            dgvMission.ScrollBars = ScrollBars.Vertical;
 
             CustomizeMissionGrid();
-
             AddSttColumn();
-            ApplyRoundedGridRegion();
 
-            UpdateRecordCount(
-                _allMissions.Count);
+            // Đưa bảng về đầu danh sách sau mỗi lần nạp/lọc dữ liệu,
+            // tránh giữ vị trí cuộn cũ khiến tiêu đề cột và các dòng đầu bị khuất.
+            dgvMission.ColumnHeadersVisible = true;
+            if (dgvMission.Rows.Count > 0)
+            {
+                try
+                {
+                    dgvMission.FirstDisplayedScrollingRowIndex = 0;
+                }
+                catch (InvalidOperationException)
+                {
+                    // Bảng có thể chưa hoàn tất bố trí; lần hiển thị kế tiếp sẽ bắt đầu từ đầu.
+                }
+            }
+            dgvMission.ClearSelection();
 
+            // Cập nhật lại bố cục sau khi nạp dữ liệu để thanh cuộn dọc
+            // xuất hiện tự động khi tổng chiều cao các hàng vượt vùng hiển thị.
+            dgvMission.PerformLayout();
+            dgvMission.Invalidate();
+            UpdateRecordCount(_displayedMissions.Count);
             UpdateEmptyState();
+        }
+
+        private static bool ContainsMissionKeyword(string? value, string keyword)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return false;
+
+            string normalizedValue = VietnameseHelper
+                .RemoveVietnameseSigns(value)
+                .ToLowerInvariant();
+
+            return normalizedValue.Contains(keyword);
         }
 
         private async void
@@ -914,25 +1111,21 @@ namespace QuanLyCBCS.Forms.MissionForms
 
             stt.Visible = true;
             stt.ReadOnly = true;
-            stt.MinimumWidth = 48;
-            stt.AutoSizeMode =
-                DataGridViewAutoSizeColumnMode.None;
+            stt.MinimumWidth = 55;
+            stt.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
             stt.Width = 55;
             stt.Frozen = true;
+            stt.SortMode = DataGridViewColumnSortMode.NotSortable;
+            stt.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            stt.DefaultCellStyle.Padding = Padding.Empty;
 
-            // Đặt lại sau khi Frozen để bảo đảm STT không bị Fill
-            // tự mở rộng khi DataGridView phân bổ chiều rộng các cột.
-            stt.AutoSizeMode =
-                DataGridViewAutoSizeColumnMode.None;
-            stt.Width = 55;
-
-            for (int i = 0;
-                 i < dgvMission.Rows.Count;
-                 i++)
+            // Gán giá trị dự phòng cho các dòng hiện có.
+            // CellFormatting bên dưới tiếp tục sinh STT theo RowIndex,
+            // vì vậy số thứ tự vẫn hiển thị ổn định sau khi lọc/sắp xếp/nạp lại.
+            for (int i = 0; i < dgvMission.Rows.Count; i++)
             {
-                dgvMission.Rows[i]
-                    .Cells["STT"]
-                    .Value = i + 1;
+                if (!dgvMission.Rows[i].IsNewRow)
+                    dgvMission.Rows[i].Cells["STT"].Value = i + 1;
             }
         }
 
@@ -1635,10 +1828,28 @@ namespace QuanLyCBCS.Forms.MissionForms
             DataGridViewCellFormattingEventArgs e)
 
         {
-            if (dgvMission.Columns[e.ColumnIndex].Name != "Priority")
-                return;
+            string columnName = dgvMission.Columns[e.ColumnIndex].Name;
 
-            if (e.Value == null)
+            // Sinh STT trực tiếp khi DataGridView định dạng ô.
+            // Cách này không phụ thuộc vào thời điểm DataSource tạo lại các dòng.
+            if (columnName == "STT")
+            {
+                if (e.RowIndex >= 0)
+                {
+                    e.Value = (e.RowIndex + 1).ToString();
+
+                    if (e.CellStyle != null)
+                    {
+                        e.CellStyle.Alignment =
+                            DataGridViewContentAlignment.MiddleCenter;
+                    }
+
+                    e.FormattingApplied = true;
+                }
+                return;
+            }
+
+            if (columnName != "Priority" || e.Value == null)
                 return;
 
             if (e.CellStyle is null)

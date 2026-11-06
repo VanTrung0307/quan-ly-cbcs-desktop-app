@@ -72,30 +72,33 @@ namespace QuanLyCBCS.Services
             // 4. Kiểm tra trùng thời gian
             //==================================================
 
-            // Nếu công tác này cho phép chồng lịch
-            // thì bỏ qua bước kiểm tra.
+            // Trực chỉ huy và Trực ban là nhiệm vụ thường trực tại đơn vị.
+            // CBCS được phép đồng thời đảm nhiệm các nhiệm vụ này và công tác khác.
+            // Vì vậy:
+            // - Nếu công tác đang phân công là Trực chỉ huy/Trực ban: bỏ qua kiểm tra.
+            // - Nếu công tác đang phân công là công tác thông thường: chỉ kiểm tra
+            //   các công tác thông thường đã giao; bỏ qua Trực chỉ huy/Trực ban.
+            // - Hai công tác thông thường có thời gian giao nhau vẫn bị từ chối.
 
-            if (!mission.AllowOverlap)
+            bool isCurrentMissionDuty =
+                IsDutyMissionType(mission.MissionType);
+
+            if (!isCurrentMissionDuty)
             {
                 bool busy =
                     await db.MissionPersonnel
-                        .Include(x => x.Mission)
                         .AnyAsync(x =>
-
                             x.PersonnelId == personnelId
-
-                            &&
-
-                            mission.StartTime < x.Mission!.EndTime
-
-                            &&
-
-                            mission.EndTime > x.Mission.StartTime);
+                            && x.Mission != null
+                            && mission.StartTime < x.Mission.EndTime
+                            && mission.EndTime > x.Mission.StartTime
+                            && x.Mission.MissionType != "Trực chỉ huy"
+                            && x.Mission.MissionType != "Trực ban");
 
                 if (busy)
                 {
                     throw new Exception(
-                        "CBCS đang tham gia công tác khác trong cùng thời gian.");
+                        "CBCS đang tham gia công tác thông thường khác trong cùng thời gian.");
                 }
             }
 
@@ -114,6 +117,22 @@ namespace QuanLyCBCS.Services
             db.MissionPersonnel.Add(item);
 
             await db.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Xác định hai loại nhiệm vụ thường trực được phép phân công chồng lịch.
+        /// Giá trị phải khớp với các lựa chọn trong FrmMissionDetail.
+        /// </summary>
+        private static bool IsDutyMissionType(string? missionType)
+        {
+            return string.Equals(
+                       missionType?.Trim(),
+                       "Trực chỉ huy",
+                       StringComparison.OrdinalIgnoreCase)
+                   || string.Equals(
+                       missionType?.Trim(),
+                       "Trực ban",
+                       StringComparison.OrdinalIgnoreCase);
         }
 
         public async Task RemoveAsync(

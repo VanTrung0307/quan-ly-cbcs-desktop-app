@@ -47,7 +47,13 @@ namespace QuanLyCBCS.Services
 
                 int groupIndex = 1;
 
-                foreach (var group in groups)
+                if (groups == null || groups.Count == 0)
+                {
+                    sb.AppendLine($"Có {header.AbsentPersonnel} CBCS được xác định đang công tác ngoài đơn vị tại thời điểm báo cáo, nhưng chưa truy xuất được chi tiết phân công.");
+                    sb.AppendLine("Vui lòng kiểm tra dữ liệu phân công CBCS của các công tác đang diễn ra.");
+                }
+
+                foreach (var group in groups ?? new List<MissionGroupDto>())
                 {
                     sb.AppendLine(new string('=', 55));
                     sb.AppendLine();
@@ -60,6 +66,9 @@ namespace QuanLyCBCS.Services
 
                     sb.AppendLine($"Nhiệm vụ      : {group.MissionName}");
                     sb.AppendLine($"Địa điểm      : {group.Location}");
+                    if (group.Personnel.FirstOrDefault()?.StartTime is DateTime startTime &&
+                        group.Personnel.FirstOrDefault()?.EndTime is DateTime endTime)
+                        sb.AppendLine($"Thời gian     : {startTime:dd/MM/yyyy HH:mm} - {endTime:dd/MM/yyyy HH:mm}");
                     sb.AppendLine($"Quân số       : {group.Personnel.Count:00}");
                     sb.AppendLine();
 

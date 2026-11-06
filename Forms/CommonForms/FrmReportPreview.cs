@@ -83,8 +83,8 @@ namespace QuanLyCBCS.Forms.CommonForms
             string total = FindLine(lines, x => StartsWithAny(x, "Tổng quân số", "Tổng quân số:"));
             string present = FindLine(lines, x => StartsWithAny(x, "Có mặt"));
             string absent = FindLine(lines, x => StartsWithAny(x, "Vắng mặt"));
+            // Giữ nguyên tiêu đề nguồn để tìm đúng vị trí trong mảng lines.
             string absentHeading = FindLine(lines, x => x.StartsWith("I.") || x.StartsWith("1."));
-            string absentBody = FindLine(lines, x => x.StartsWith("Không có", StringComparison.OrdinalIgnoreCase));
             // Kết luận phải dùng cùng nguồn số liệu với thanh Tổng quân số.
             // Tránh lấy nhầm một dòng "Có mặt: 0" ở phần khác của nội dung báo cáo.
             string conclusionPresent = present;
@@ -97,15 +97,20 @@ namespace QuanLyCBCS.Forms.CommonForms
             AddStatistics(total, present, absent);
             AddDivider();
 
-            if (absentHeading.Equals("I. DANH SÁCH VẮNG", StringComparison.OrdinalIgnoreCase) ||
-                absentHeading.Equals("I.  DANH SÁCH VẮNG", StringComparison.OrdinalIgnoreCase))
-                absentHeading += " MẶT";
-            AddSectionBar(string.IsNullOrWhiteSpace(absentHeading) ? "I. DANH SÁCH VẮNG MẶT" : absentHeading,
-                "▤");
-            AddBodyText(string.IsNullOrWhiteSpace(absentBody) ? "Không có CBCS vắng mặt." : absentBody);
+            string displayAbsentHeading = absentHeading;
+            if (displayAbsentHeading.Equals("I. DANH SÁCH VẮNG", StringComparison.OrdinalIgnoreCase) ||
+                displayAbsentHeading.Equals("I.  DANH SÁCH VẮNG", StringComparison.OrdinalIgnoreCase))
+                displayAbsentHeading = "I. DANH SÁCH VẮNG MẶT";
 
-            // Các mục khác trong báo cáo (nếu có) được giữ lại, không làm mất dữ liệu.
-            AddRemainingSections(lines, absentHeading, absentBody);
+            AddSectionBar(string.IsNullOrWhiteSpace(displayAbsentHeading)
+                ? "I. DANH SÁCH VẮNG MẶT" : displayAbsentHeading, "▤");
+
+            // Hiển thị toàn bộ nội dung nằm trong mục danh sách vắng.
+            // Chỉ hiện câu "Không có CBCS vắng mặt." khi mục này thực sự không có dữ liệu.
+            AddAbsentSectionContent(lines, absentHeading);
+
+            // Các mục tiếp theo (nếu có) vẫn được giữ lại.
+            AddRemainingSections(lines, absentHeading);
 
             AddDivider();
             AddSectionBar("KẾT LUẬN", "⚑");
@@ -445,61 +450,166 @@ namespace QuanLyCBCS.Forms.CommonForms
 
         private void AddConclusionCard(string present, string absent)
         {
-            Panel card = CreateBlock(66);
+            // Kết luận dùng cùng số liệu với thanh Tổng quân số, nhưng trình bày
+            // trên toàn chiều rộng để không bị cắt nhãn hoặc chữ số ở DPI khác nhau.
+            Panel card = CreateBlock(72);
             card.Name = "pnlConclusionCard";
-            card.Margin = new Padding(20, 0, 0, 0);
-            card.Width = Math.Min(760, Math.Max(620, (int)(_contentFlow.ClientSize.Width * 0.52)));
+            card.Margin = Padding.Empty;
             card.BackColor = Color.FromArgb(244, 248, 255);
             card.Paint += (s, e) =>
             {
                 e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
                 using (GraphicsPath path = RoundedRect(new Rectangle(0, 0, card.Width - 1, card.Height - 1), 8))
-                using (Pen pen = new Pen(borderBlue, 1.2F)) e.Graphics.DrawPath(pen, path);
+                using (Pen pen = new Pen(borderBlue, 1.2F))
+                    e.Graphics.DrawPath(pen, path);
                 using (Pen divider = new Pen(Color.FromArgb(175, 197, 230), 1))
                     e.Graphics.DrawLine(divider, card.Width / 2, 12, card.Width / 2, card.Height - 12);
             };
-            int half = Math.Max(300, card.Width / 2);
-            Control pIcon = CreateStatIcon("Có mặt", Color.FromArgb(0, 177, 92));
-            pIcon.SetBounds(28, 12, 38, 40);
-            Label pt = MakeLabel("Có mặt:", 18F, FontStyle.Regular, navy);
-            pt.SetBounds(72, 10, 92, 44);
-            Label pv = MakeLabel(ExtractValue(present).PadLeft(2, '0'), 18F, FontStyle.Bold, navy);
-            pv.SetBounds(165, 10, 48, 44);
 
-            Control aIcon = CreateStatIcon("Vắng mặt", Color.FromArgb(235, 55, 62));
-            aIcon.SetBounds(half + 28, 12, 38, 40);
-            Label at = MakeLabel("Vắng mặt:", 18F, FontStyle.Regular, navy);
-            at.SetBounds(half + 72, 10, 108, 44);
-            Label av = MakeLabel(ExtractValue(absent).PadLeft(2, '0'), 18F, FontStyle.Bold, navy);
-            av.SetBounds(half + 182, 10, 48, 44);
+            TableLayoutPanel table = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                ColumnCount = 2,
+                RowCount = 1,
+                BackColor = Color.Transparent,
+                Margin = Padding.Empty,
+                Padding = new Padding(8, 0, 8, 0)
+            };
+            table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            table.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            table.Controls.Add(CreateConclusionCell(
+                "Có mặt:", ExtractValue(present).PadLeft(2, '0'),
+                Color.FromArgb(0, 177, 92)), 0, 0);
+            table.Controls.Add(CreateConclusionCell(
+                "Vắng mặt:", ExtractValue(absent).PadLeft(2, '0'),
+                Color.FromArgb(235, 55, 62)), 1, 0);
 
-            card.Controls.Add(pIcon); card.Controls.Add(pt); card.Controls.Add(pv);
-            card.Controls.Add(aIcon); card.Controls.Add(at); card.Controls.Add(av);
+            card.Controls.Add(table);
             _contentFlow.Controls.Add(card);
         }
 
-        private void AddRemainingSections(string[] lines, string heading, string body)
+        private Control CreateConclusionCell(string caption, string value, Color color)
         {
-            int start = Array.FindIndex(lines, x => x == heading);
-            if (start < 0) return;
-            bool afterFirst = false;
+            Panel cell = new Panel
+            {
+                Dock = DockStyle.Fill,
+                BackColor = Color.Transparent,
+                Margin = Padding.Empty
+            };
+
+            Control icon = CreateStatIcon(
+                caption.StartsWith("Có", StringComparison.Ordinal) ? "Có mặt" : "Vắng mặt",
+                color);
+            icon.SetBounds(18, 15, 38, 40);
+
+            Label label = MakeLabel(caption, 18F, FontStyle.Regular, navy);
+            label.SetBounds(66, 13, 150, 44);
+            label.AutoSize = false;
+            label.AutoEllipsis = false;
+
+            Label number = MakeLabel(value, 19F, FontStyle.Bold, navy);
+            number.SetBounds(222, 13, 70, 44);
+            number.AutoSize = false;
+            number.AutoEllipsis = false;
+
+            cell.Controls.Add(icon);
+            cell.Controls.Add(label);
+            cell.Controls.Add(number);
+            return cell;
+        }
+
+        private void AddAbsentSectionContent(string[] lines, string heading)
+        {
+            int start = Array.FindIndex(lines, x =>
+                !string.IsNullOrWhiteSpace(heading) &&
+                string.Equals(x, heading, StringComparison.OrdinalIgnoreCase));
+
+            if (start < 0)
+            {
+                AddBodyText("Không có CBCS vắng mặt.");
+                return;
+            }
+
+            List<string> details = new List<string>();
             for (int i = start + 1; i < lines.Length; i++)
             {
-                string line = lines[i];
-                if (line == body) { afterFirst = true; continue; }
-                if (!afterFirst) continue;
+                string line = lines[i].Trim();
+                if (IsReportSectionBoundary(line)) break;
+                if (string.IsNullOrWhiteSpace(line) || line.Contains("====") ||
+                    line.Contains("----") || line.StartsWith("HẾT", StringComparison.OrdinalIgnoreCase))
+                    continue;
+                details.Add(line);
+            }
+
+            // Nếu có dữ liệu chi tiết thì không được để câu thông báo rỗng che khuất danh sách.
+            bool hasActualDetails = details.Any(x =>
+                !x.StartsWith("Không có CBCS vắng mặt", StringComparison.OrdinalIgnoreCase));
+
+            if (!hasActualDetails)
+            {
+                AddBodyText("Không có CBCS vắng mặt.");
+                return;
+            }
+
+            foreach (string line in details)
+            {
+                if (line.StartsWith("Không có CBCS vắng mặt", StringComparison.OrdinalIgnoreCase))
+                    continue;
+                AddBodyText(line);
+            }
+        }
+
+        private void AddRemainingSections(string[] lines, string absentHeading)
+        {
+            int start = Array.FindIndex(lines, x =>
+                !string.IsNullOrWhiteSpace(absentHeading) &&
+                string.Equals(x, absentHeading, StringComparison.OrdinalIgnoreCase));
+            if (start < 0) return;
+
+            // Bỏ qua toàn bộ mục I; bắt đầu từ mục tiếp theo để tránh lặp danh sách vắng.
+            int nextSection = -1;
+            for (int i = start + 1; i < lines.Length; i++)
+            {
+                if (IsReportSectionBoundary(lines[i]) &&
+                    !lines[i].StartsWith("KẾT LUẬN", StringComparison.OrdinalIgnoreCase))
+                {
+                    nextSection = i;
+                    break;
+                }
+                if (lines[i].StartsWith("KẾT LUẬN", StringComparison.OrdinalIgnoreCase))
+                    return;
+            }
+            if (nextSection < 0) return;
+
+            for (int i = nextSection; i < lines.Length; i++)
+            {
+                string line = lines[i].Trim();
                 if (line.StartsWith("KẾT LUẬN", StringComparison.OrdinalIgnoreCase)) break;
-                if (line.StartsWith("II.") || line.StartsWith("III.") || line.StartsWith("IV.") ||
-                    line.StartsWith("2.") || line.StartsWith("3."))
+                if (IsReportSectionBoundary(line))
                 {
                     AddDivider();
                     AddSectionBar(line, "▤");
                 }
-                else if (!line.Contains("====") && !line.Contains("----") && !line.StartsWith("HẾT", StringComparison.OrdinalIgnoreCase))
+                else if (!string.IsNullOrWhiteSpace(line) && !line.Contains("====") &&
+                         !line.Contains("----") && !line.StartsWith("HẾT", StringComparison.OrdinalIgnoreCase))
                 {
                     AddBodyText(line);
                 }
             }
+        }
+
+        private bool IsReportSectionBoundary(string line)
+        {
+            if (string.IsNullOrWhiteSpace(line)) return false;
+            string value = line.Trim();
+            return value.StartsWith("II.", StringComparison.OrdinalIgnoreCase) ||
+                   value.StartsWith("III.", StringComparison.OrdinalIgnoreCase) ||
+                   value.StartsWith("IV.", StringComparison.OrdinalIgnoreCase) ||
+                   value.StartsWith("V.", StringComparison.OrdinalIgnoreCase) ||
+                   value.StartsWith("2.", StringComparison.OrdinalIgnoreCase) ||
+                   value.StartsWith("3.", StringComparison.OrdinalIgnoreCase) ||
+                   value.StartsWith("KẾT LUẬN", StringComparison.OrdinalIgnoreCase);
         }
 
         private Panel CreateBlock(int height)
@@ -519,18 +629,9 @@ namespace QuanLyCBCS.Forms.CommonForms
             int width = Math.Max(500, _contentFlow.ClientSize.Width - 12);
             foreach (Control control in _contentFlow.Controls)
             {
-                if (control.Name == "pnlConclusionCard")
-                {
-                    // Tính lại theo chiều rộng thực tế sau khi form đã hiển thị;
-                    // tránh card bị giữ ở kích thước tối thiểu do ClientSize ban đầu = 0.
-                    control.Width = Math.Min(
-                        Math.Max(620, (int)(width * 0.52)),
-                        Math.Min(760, Math.Max(300, width - 20)));
-                }
-                else
-                {
-                    control.Width = width;
-                }
+                // Tất cả khối nội dung, bao gồm Kết luận, dùng cùng chiều rộng thực tế.
+                // Không thu hẹp riêng card Kết luận vì sẽ làm nhãn/số liệu dễ bị chồng lấn.
+                control.Width = width;
                 if (control is Panel roundedPanel)
                 {
                     int radius = roundedPanel.Name == "pnlDutyCard" ? 8 :

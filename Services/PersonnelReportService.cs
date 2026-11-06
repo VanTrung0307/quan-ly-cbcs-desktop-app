@@ -29,16 +29,13 @@ namespace QuanLyCBCS.Services
         }
 
         /// <summary>
-        /// Lấy các nhiệm vụ bên ngoài đơn vị có thời gian giao với ngày báo cáo.
-        /// Không lọc IsActive vì IsActive là trạng thái hiện tại của nhiệm vụ,
-        /// không phản ánh trạng thái nhiệm vụ tại một ngày báo cáo trong quá khứ.
+        /// Lấy các phân công bên ngoài đơn vị đang có hiệu lực đúng tại thời điểm lập báo cáo.
+        /// Không lấy toàn bộ nhiệm vụ giao với ngày vì nhiệm vụ đã kết thúc/chưa bắt đầu
+        /// không được tính là CBCS vắng mặt tại thời điểm chụp báo cáo.
         /// </summary>
         private async Task<List<MissionAssignmentDto>> GetMissionAssignmentsAsync(
             DateTime reportDate)
         {
-            DateTime dayStart = reportDate.Date;
-            DateTime nextDay = dayStart.AddDays(1);
-
             using var db = CreateContext();
 
             return await db.MissionPersonnel
@@ -47,8 +44,8 @@ namespace QuanLyCBCS.Services
                 .Include(mp => mp.Mission)
                 .Where(mp =>
                     mp.Mission != null
-                    && mp.Mission.StartTime < nextDay
-                    && mp.Mission.EndTime >= dayStart
+                    && mp.Mission.StartTime <= reportDate
+                    && mp.Mission.EndTime >= reportDate
                     && mp.Mission.MissionType != MissionTypes.DutyCommander
                     && mp.Mission.MissionType != MissionTypes.DutyOfficer)
                 .Select(mp => new MissionAssignmentDto
@@ -57,9 +54,14 @@ namespace QuanLyCBCS.Services
                     PersonnelName = mp.Personnel != null
                         ? mp.Personnel.HoTen
                         : string.Empty,
-                    MissionName = mp.Mission!.MissionName ?? string.Empty,
+                    MissionId = mp.Mission!.MissionId,
+                    MissionType = mp.Mission.MissionType ?? "Khác",
+                    MissionName = mp.Mission.MissionName ?? string.Empty,
                     Location = mp.Mission.Location ?? string.Empty,
-                    Reason = mp.Mission.MissionType ?? "Khác"
+                    Reason = mp.Mission.MissionType ?? "Khác",
+                    StartTime = mp.Mission.StartTime,
+                    EndTime = mp.Mission.EndTime,
+                    IsPresent = false
                 })
                 .ToListAsync();
         }
@@ -133,31 +135,29 @@ namespace QuanLyCBCS.Services
         {
             using var context = CreateContext();
 
-            DateTime dayStart = reportDate.Date;
-            DateTime nextDay = dayStart.AddDays(1);
-
-            // 1. Lấy toàn bộ CBCS.
+            // Báo cáo là ảnh chụp quân số tại một thời điểm cụ thể,
+            // không phải tổng hợp tất cả công tác trong cả ngày.
             List<Personnel> personnels = await context.Personnel
                 .AsNoTracking()
                 .OrderBy(x => x.HoTen)
                 .ToListAsync();
 
-            // 2. Lấy các phân công có thời gian giao với ngày báo cáo.
-            // Không dùng Mission.IsActive vì báo cáo có thể xem lại ngày quá khứ.
-            List<MissionPersonnel> missionPersonnelList =
+            List<MissionPersonnel> activeAssignments =
                 await context.MissionPersonnel
                     .AsNoTracking()
                     .Include(x => x.Mission)
                     .Where(x =>
                         x.Mission != null
-                        && x.Mission.StartTime < nextDay
-                        && x.Mission.EndTime >= dayStart)
+                        && x.Mission.StartTime <= reportDate
+                        && x.Mission.EndTime >= reportDate
+                        && x.Mission.MissionType != MissionTypes.DutyCommander
+                        && x.Mission.MissionType != MissionTypes.DutyOfficer)
                     .ToListAsync();
 
-            // 3. Gom tất cả nhiệm vụ theo CBCS để không phụ thuộc vào
-            // bản ghi đầu tiên được database trả về.
-            Dictionary<int, List<Mission>> missionsByPersonnel =
-                missionPersonnelList
+            // Một CBCS chỉ được tính một lần trong quân số vắng mặt,
+            // kể cả khi dữ liệu có nhiều phân công đang giao nhau.
+            Dictionary<int, Mission> activeMissionByPersonnel =
+                activeAssignments
                     .Where(x => x.Mission != null)
                     .GroupBy(x => x.PersonnelId)
                     .ToDictionary(
@@ -166,34 +166,17 @@ namespace QuanLyCBCS.Services
                             .Select(x => x.Mission!)
                             .OrderBy(x => x.StartTime)
                             .ThenBy(x => x.EndTime)
-                            .ToList());
+                            .First());
 
-            // 4. Tạo báo cáo cho từng CBCS.
             List<PersonnelReportDto> result = new();
 
             foreach (Personnel personnel in personnels)
             {
-                if (!missionsByPersonnel.TryGetValue(
+                if (activeMissionByPersonnel.TryGetValue(
                     personnel.PersonnelID,
-                    out List<Mission>? missions))
+                    out Mission? activeMission))
                 {
-                    result.Add(CreatePresentDto(personnel));
-                    continue;
-                }
-
-                // Nếu CBCS có ít nhất một nhiệm vụ bên ngoài đơn vị
-                // giao với ngày báo cáo thì ghi nhận vắng mặt.
-                // Nhiệm vụ trực chỉ huy/trực ban tại đơn vị không được
-                // dùng để ghi đè một nhiệm vụ bên ngoài.
-                Mission? externalMission = missions
-                    .Where(mission => !IsDutyAtUnit(mission))
-                    .OrderBy(mission => mission.StartTime)
-                    .ThenBy(mission => mission.EndTime)
-                    .FirstOrDefault();
-
-                if (externalMission != null)
-                {
-                    result.Add(CreateAbsentDto(personnel, externalMission));
+                    result.Add(CreateAbsentDto(personnel, activeMission));
                 }
                 else
                 {
