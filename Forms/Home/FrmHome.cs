@@ -7,6 +7,7 @@ using QuanLyCBCS.Forms.PersonnelForms;
 using QuanLyCBCS.Forms.CommonForms;
 using QuanLyCBCS.Forms.MissionForms;
 using QuanLyCBCS.Forms.SystemForms;
+using QuanLyCBCS.Forms.Auth;
 using QuanLyCBCS.Forms.UserForms;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -53,6 +54,9 @@ namespace QuanLyCBCS.Forms.Home
 
         // Giữ một phiên FrmChangePassword để nhúng trực tiếp vào tab Đổi mật khẩu.
         private FrmChangePassword? _changePasswordForm;
+
+        // Giữ một phiên FrmPermissionManagement để nhúng trực tiếp vào tab Phân quyền.
+        private FrmPermissionManagement? _permissionManagementForm;
 
         // Trung tâm thông báo được nhúng vào một panel dropdown, không mở bằng ShowDialog.
         private Button? _btnNotifications;
@@ -599,13 +603,50 @@ namespace QuanLyCBCS.Forms.Home
             // Kiểm tra quyền trước khi đổi trạng thái tab để không làm sai mục đang chọn.
             if (pageName == "Tài khoản" && !PermissionHelper.CanManageUsers)
             {
-                MessageBox.Show(
+                FrmLoginMessage.ShowMessage(
                     this,
-                    "Bạn không có quyền quản lý tài khoản.",
+                    LoginMessageType.Information,
                     "Từ chối truy cập",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
+                    "Bạn không có quyền quản lý tài khoản.");
                 return;
+            }
+
+            // Kiểm tra quyền xem danh sách CBCS ngay tại FrmHome để chặn trước khi
+            // khởi tạo FrmPersonnelList (tránh hiển thị MessageBox cũ từ form con).
+            if (pageName == "Quản lý CBCS")
+            {
+                try
+                {
+                    PermissionHelper.Require("Personnel.View");
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    FrmLoginMessage.ShowMessage(
+                        this,
+                        LoginMessageType.Information,
+                        "Từ chối truy cập",
+                        "Bạn không có quyền xem danh sách CBCS.");
+                    return;
+                }
+            }
+
+            // Kiểm tra quyền phân quyền trước khi đổi tab và hiển thị thông báo
+            // bằng nội dung thân thiện thay vì để lộ mã quyền nội bộ.
+            if (pageName == "Phân quyền")
+            {
+                try
+                {
+                    PermissionHelper.Require("Permission.Manage");
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    FrmLoginMessage.ShowMessage(
+                        this,
+                        LoginMessageType.Information,
+                        "Từ chối truy cập",
+                        "Bạn không có quyền truy cập Quản lý phân quyền.");
+                    return;
+                }
             }
 
             UpdateNavigationHighlight(pageName);
@@ -661,6 +702,12 @@ namespace QuanLyCBCS.Forms.Home
                 return;
             }
 
+            if (pageName == "Phân quyền")
+            {
+                ShowPermissionManagementInContent();
+                return;
+            }
+
             DetachPersonnelListFromContent();
             DetachMissionListFromContent();
             DetachAuditLogListFromContent();
@@ -668,6 +715,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachPersonnelMissionStatisticsFromContent();
             DetachUserListFromContent();
             DetachChangePasswordFromContent();
+            DetachPermissionManagementFromContent();
             pnlContent.Controls.Clear();
             Label lblTitle = new Label
             {
@@ -705,6 +753,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachPersonnelMissionStatisticsFromContent();
             DetachUserListFromContent();
             DetachChangePasswordFromContent();
+            DetachPermissionManagementFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -781,6 +830,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachPersonnelMissionStatisticsFromContent();
             DetachUserListFromContent();
             DetachChangePasswordFromContent();
+            DetachPermissionManagementFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -811,12 +861,11 @@ namespace QuanLyCBCS.Forms.Home
                     _missionListForm = null;
                 }
 
-                MessageBox.Show(
+                FrmLoginMessage.ShowMessage(
                     this,
-                    ex.Message,
-                    "Không có quyền",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
+                    LoginMessageType.Information,
+                    "Từ chối truy cập",
+                    ex.Message);
             }
             catch (Exception ex)
             {
@@ -858,12 +907,11 @@ namespace QuanLyCBCS.Forms.Home
 
             if (!PermissionHelper.IsAdmin)
             {
-                MessageBox.Show(
+                FrmLoginMessage.ShowMessage(
                     this,
-                    "Bạn không có quyền truy cập chức năng Nhật ký.",
+                    LoginMessageType.Information,
                     "Từ chối truy cập",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
+                    "Bạn không có quyền truy cập chức năng Nhật ký.");
                 return;
             }
 
@@ -883,6 +931,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachPersonnelMissionStatisticsFromContent();
             DetachUserListFromContent();
             DetachChangePasswordFromContent();
+            DetachPermissionManagementFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -917,8 +966,11 @@ namespace QuanLyCBCS.Forms.Home
                     _auditLogListForm = null;
                 }
 
-                MessageBox.Show(this, ex.Message, "Không có quyền",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                FrmLoginMessage.ShowMessage(
+                    this,
+                    LoginMessageType.Information,
+                    "Từ chối truy cập",
+                    ex.Message);
             }
             catch (Exception ex)
             {
@@ -974,6 +1026,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachPersonnelMissionStatisticsFromContent();
             DetachUserListFromContent();
             DetachChangePasswordFromContent();
+            DetachPermissionManagementFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -1054,6 +1107,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachPersonnelMissionStatisticsFromContent();
             DetachUserListFromContent();
             DetachChangePasswordFromContent();
+            DetachPermissionManagementFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -1090,8 +1144,11 @@ namespace QuanLyCBCS.Forms.Home
                     _personnelMissionStatisticsForm = null;
                 }
 
-                MessageBox.Show(this, ex.Message, "Không có quyền",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                FrmLoginMessage.ShowMessage(
+                    this,
+                    LoginMessageType.Information,
+                    "Từ chối truy cập",
+                    ex.Message);
             }
             catch (Exception ex)
             {
@@ -1135,12 +1192,11 @@ namespace QuanLyCBCS.Forms.Home
 
             if (!PermissionHelper.CanManageUsers)
             {
-                MessageBox.Show(
+                FrmLoginMessage.ShowMessage(
                     this,
-                    "Bạn không có quyền quản lý tài khoản.",
+                    LoginMessageType.Information,
                     "Từ chối truy cập",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
+                    "Bạn không có quyền quản lý tài khoản.");
                 return;
             }
 
@@ -1160,6 +1216,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachPersonnelMissionStatisticsFromContent();
             DetachUserListFromContent();
             DetachChangePasswordFromContent();
+            DetachPermissionManagementFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -1194,12 +1251,11 @@ namespace QuanLyCBCS.Forms.Home
                     _userListForm = null;
                 }
 
-                MessageBox.Show(
+                FrmLoginMessage.ShowMessage(
                     this,
-                    ex.Message,
-                    "Không có quyền",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
+                    LoginMessageType.Information,
+                    "Từ chối truy cập",
+                    ex.Message);
             }
             catch (Exception ex)
             {
@@ -1256,6 +1312,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachPersonnelMissionStatisticsFromContent();
             DetachUserListFromContent();
             DetachChangePasswordFromContent();
+            DetachPermissionManagementFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -1319,6 +1376,116 @@ namespace QuanLyCBCS.Forms.Home
             }
         }
 
+        // Hiển thị FrmPermissionManagement trực tiếp trong pnlContent của tab Phân quyền.
+        // Giữ nguyên instance khi chuyển tab để bảo toàn tài khoản đang chọn, bộ lọc và undo/redo.
+        private void ShowPermissionManagementInContent()
+        {
+            if (pnlContent == null)
+                return;
+
+            try
+            {
+                // Kiểm tra quyền tại điểm hiển thị, không chỉ dựa vào trạng thái nút điều hướng.
+                PermissionHelper.Require("Permission.Manage");
+
+                if (_permissionManagementForm != null &&
+                    !_permissionManagementForm.IsDisposed &&
+                    ReferenceEquals(_permissionManagementForm.Parent, pnlContent))
+                {
+                    _permissionManagementForm.Visible = true;
+                    _permissionManagementForm.BringToFront();
+                    return;
+                }
+
+                DetachPersonnelListFromContent();
+                DetachMissionListFromContent();
+                DetachAuditLogListFromContent();
+                DetachPersonnelReportFromContent();
+                DetachPersonnelMissionStatisticsFromContent();
+                DetachUserListFromContent();
+                DetachChangePasswordFromContent();
+                DetachPermissionManagementFromContent();
+                pnlContent.Controls.Clear();
+
+                if (_permissionManagementForm == null ||
+                    _permissionManagementForm.IsDisposed)
+                {
+                    _permissionManagementForm = new FrmPermissionManagement
+                    {
+                        TopLevel = false,
+                        FormBorderStyle = FormBorderStyle.None,
+                        ShowInTaskbar = false,
+                        StartPosition = FormStartPosition.Manual,
+                        WindowState = FormWindowState.Normal,
+                        MinimumSize = Size.Empty,
+                        MaximumSize = Size.Empty,
+                        Dock = DockStyle.Fill,
+                        Location = Point.Empty,
+                        Margin = Padding.Empty
+                    };
+
+                    // Nếu người dùng bấm nút Đóng bên trong màn hình phân quyền,
+                    // giải phóng tham chiếu để lần mở tiếp theo tạo một phiên mới.
+                    _permissionManagementForm.FormClosed += (sender, e) =>
+                    {
+                        if (ReferenceEquals(sender, _permissionManagementForm))
+                            _permissionManagementForm = null;
+                    };
+                }
+
+                pnlContent.Controls.Add(_permissionManagementForm);
+                _permissionManagementForm.Show();
+                _permissionManagementForm.Visible = true;
+                _permissionManagementForm.BringToFront();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                if (_permissionManagementForm != null &&
+                    !_permissionManagementForm.IsDisposed)
+                {
+                    _permissionManagementForm.Dispose();
+                    _permissionManagementForm = null;
+                }
+
+                FrmLoginMessage.ShowMessage(
+                    this,
+                    LoginMessageType.Information,
+                    "Từ chối truy cập",
+                    "Bạn không có quyền truy cập Quản lý phân quyền.");
+            }
+            catch (Exception ex)
+            {
+                if (_permissionManagementForm != null &&
+                    !_permissionManagementForm.IsDisposed)
+                {
+                    _permissionManagementForm.Dispose();
+                    _permissionManagementForm = null;
+                }
+
+                MessageBox.Show(
+                    this,
+                    "Không thể hiển thị màn hình Phân quyền trong FrmHome. Chi tiết: " + ex.Message,
+                    "Lỗi hiển thị",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
+        // Tạm tháo FrmPermissionManagement khi chuyển tab, không Dispose để giữ trạng thái chỉnh sửa.
+        private void DetachPermissionManagementFromContent()
+        {
+            if (_permissionManagementForm == null ||
+                _permissionManagementForm.IsDisposed)
+                return;
+
+            if (pnlContent != null &&
+                ReferenceEquals(_permissionManagementForm.Parent, pnlContent))
+            {
+                _permissionManagementForm.Visible = false;
+                pnlContent.Controls.Remove(_permissionManagementForm);
+            }
+        }
+
         // ========================= TRANG CHỦ =========================
         private async Task ShowHomeDashboardAsync()
         {
@@ -1332,6 +1499,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachPersonnelMissionStatisticsFromContent();
             DetachUserListFromContent();
             DetachChangePasswordFromContent();
+            DetachPermissionManagementFromContent();
             pnlContent.SuspendLayout();
             pnlContent.Controls.Clear();
             pnlContent.ResumeLayout(true);
@@ -1953,12 +2121,11 @@ namespace QuanLyCBCS.Forms.Home
                     }
                     catch (UnauthorizedAccessException ex)
                     {
-                        MessageBox.Show(
+                        FrmLoginMessage.ShowMessage(
                             this,
-                            ex.Message,
-                            "Không có quyền",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Warning);
+                            LoginMessageType.Information,
+                            "Từ chối truy cập",
+                            ex.Message);
                     }
                     catch (Exception ex)
                     {

@@ -13,8 +13,7 @@ namespace QuanLyCBCS.Forms.Auth
         InvalidCredentials,
         AccountLocked,
         Information,
-        Success,
-        Confirmation
+        Success
     }
 
     public partial class FrmLoginMessage : Form
@@ -34,15 +33,25 @@ namespace QuanLyCBCS.Forms.Auth
         private Label lblDescription = null!;
         private Button btnOK = null!;
         private Button btnNo = null!;
+        private Button btnCancel = null!;
         private Button btnClose = null!;
+        private MessageBoxButtons _buttons = MessageBoxButtons.OK;
 
-        public FrmLoginMessage(LoginMessageType messageType, string title, string description)
+        public FrmLoginMessage(
+            LoginMessageType messageType,
+            string title,
+            string description,
+            MessageBoxButtons buttons = MessageBoxButtons.OK)
         {
             _messageType = messageType;
-            InitializeDialog(title, description);
+            _buttons = buttons;
+            InitializeDialog(title, description, buttons);
         }
 
-        private void InitializeDialog(string title, string description)
+        private void InitializeDialog(
+            string title,
+            string description,
+            MessageBoxButtons buttons)
         {
             // Hộp thoại nhỏ gọn, căn giữa cửa sổ cha.
             Text = "Quản lý CBCS";
@@ -134,7 +143,15 @@ namespace QuanLyCBCS.Forms.Auth
                     e.Graphics.DrawLine(p, 24, 12, 12, 24);
                 }
             };
-            btnClose.Click += (s, e) => Close();
+            btnClose.Click += (s, e) =>
+            {
+                if (buttons == MessageBoxButtons.YesNoCancel)
+                    DialogResult = DialogResult.Cancel;
+                else if (buttons == MessageBoxButtons.YesNo)
+                    DialogResult = DialogResult.No;
+
+                Close();
+            };
             pnlHeader.Controls.Add(btnClose);
             btnClose.BringToFront();
 
@@ -183,71 +200,102 @@ namespace QuanLyCBCS.Forms.Auth
             };
             Controls.Add(pnlFooter);
 
-            bool isConfirmation = _messageType == LoginMessageType.Confirmation;
-
-            btnOK = new Button
-            {
-                Location = isConfirmation ? new Point(166, 8) : new Point(426, 8),
-                Size = new Size(112, 40),
-                Text = isConfirmation ? "✓  Có" : "✓  OK",
-                Font = new Font("Segoe UI", 12F, FontStyle.Bold),
-                ForeColor = Color.White,
-                BackColor = _blue,
-                FlatStyle = FlatStyle.Flat,
-                Cursor = Cursors.Hand,
-                TabIndex = 0,
-                UseVisualStyleBackColor = false
-            };
-            btnOK.FlatAppearance.BorderSize = 0;
-            btnOK.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 94, 218);
-            btnOK.FlatAppearance.MouseDownBackColor = Color.FromArgb(0, 79, 190);
-            btnOK.Resize += (s, e) => SetButtonRoundRegion(btnOK, 9);
-            SetButtonRoundRegion(btnOK, 9);
+            // Nút chính được dùng cho OK hoặc Có tùy loại hộp thoại.
+            btnOK = CreateDialogButton("✓  OK", Color.FromArgb(0, 112, 243), Color.White);
             btnOK.Click += (s, e) =>
             {
-                DialogResult = isConfirmation ? DialogResult.Yes : DialogResult.OK;
+                DialogResult = buttons == MessageBoxButtons.OK
+                    ? DialogResult.OK
+                    : DialogResult.Yes;
                 Close();
             };
             pnlFooter.Controls.Add(btnOK);
 
-            if (isConfirmation)
+            if (buttons == MessageBoxButtons.YesNo ||
+                buttons == MessageBoxButtons.YesNoCancel)
             {
-                btnNo = new Button
-                {
-                    Location = new Point(292, 8),
-                    Size = new Size(112, 40),
-                    Text = "Không",
-                    Font = new Font("Segoe UI", 12F, FontStyle.Bold),
-                    ForeColor = _navy,
-                    BackColor = Color.White,
-                    FlatStyle = FlatStyle.Flat,
-                    Cursor = Cursors.Hand,
-                    TabIndex = 1,
-                    UseVisualStyleBackColor = false
-                };
-                btnNo.FlatAppearance.BorderColor = _lineColor;
-                btnNo.FlatAppearance.BorderSize = 1;
-                btnNo.FlatAppearance.MouseOverBackColor = Color.FromArgb(242, 247, 253);
-                btnNo.FlatAppearance.MouseDownBackColor = Color.FromArgb(228, 238, 251);
-                btnNo.Resize += (s, e) => SetButtonRoundRegion(btnNo, 9);
-                SetButtonRoundRegion(btnNo, 9);
+                btnOK.Text = "✓  Có";
+                btnOK.Size = new Size(92, 40);
+                btnOK.Location = new Point(
+                    buttons == MessageBoxButtons.YesNo ? 354 : 252, 8);
+
+                btnNo = CreateDialogButton("Không", Color.White, _navy);
+                btnNo.Location = new Point(
+                    buttons == MessageBoxButtons.YesNo ? 454 : 354, 8);
+                btnNo.Size = new Size(92, 40);
                 btnNo.Click += (s, e) =>
                 {
                     DialogResult = DialogResult.No;
                     Close();
                 };
                 pnlFooter.Controls.Add(btnNo);
-                CancelButton = btnNo;
+
+                if (buttons == MessageBoxButtons.YesNoCancel)
+                {
+                    btnCancel = CreateDialogButton("Hủy", Color.White, _navy);
+                    btnCancel.Location = new Point(456, 8);
+                    btnCancel.Size = new Size(92, 40);
+                    btnCancel.Click += (s, e) =>
+                    {
+                        DialogResult = DialogResult.Cancel;
+                        Close();
+                    };
+                    pnlFooter.Controls.Add(btnCancel);
+
+                    CancelButton = btnCancel;
+                }
+                else
+                {
+                    CancelButton = btnNo;
+                }
+
+                AcceptButton = btnOK;
             }
             else
             {
+                btnOK.Location = new Point(426, 8);
+                btnOK.Size = new Size(112, 40);
+                AcceptButton = btnOK;
                 CancelButton = btnClose;
             }
 
-            AcceptButton = btnOK;
             KeyDown += FrmLoginMessage_KeyDown;
 
             ApplyRoundedCorners();
+        }
+
+        private Button CreateDialogButton(
+            string text,
+            Color backColor,
+            Color foreColor)
+        {
+            Button button = new Button
+            {
+                Size = new Size(112, 40),
+                Text = text,
+                Font = new Font("Segoe UI", 10.5F, FontStyle.Bold),
+                ForeColor = foreColor,
+                BackColor = backColor,
+                FlatStyle = FlatStyle.Flat,
+                Cursor = Cursors.Hand,
+                TabStop = true,
+                UseVisualStyleBackColor = false
+            };
+
+            button.FlatAppearance.BorderColor = Color.FromArgb(0, 112, 243);
+            button.FlatAppearance.BorderSize = backColor == Color.White ? 1 : 0;
+            button.FlatAppearance.MouseOverBackColor =
+                backColor == Color.White
+                    ? Color.FromArgb(230, 241, 255)
+                    : Color.FromArgb(0, 94, 218);
+            button.FlatAppearance.MouseDownBackColor =
+                backColor == Color.White
+                    ? Color.FromArgb(211, 231, 255)
+                    : Color.FromArgb(0, 79, 190);
+            button.Resize += (s, e) => SetButtonRoundRegion(button, 9);
+            SetButtonRoundRegion(button, 9);
+
+            return button;
         }
 
         private void PnlHeader_Paint(object? sender, PaintEventArgs e)
@@ -299,15 +347,6 @@ namespace QuanLyCBCS.Forms.Auth
                         g.DrawLine(whitePen, 23, 23, 43, 43);
                         g.DrawLine(whitePen, 43, 23, 23, 43);
                         break;
-                    case LoginMessageType.Confirmation:
-                        using (Font questionFont = new Font("Segoe UI", 35F, FontStyle.Bold))
-                        using (StringFormat questionFormat = new StringFormat
-                        {
-                            Alignment = StringAlignment.Center,
-                            LineAlignment = StringAlignment.Center
-                        })
-                            g.DrawString("?", questionFont, whiteBrush, new RectangleF(7, 2, 52, 58), questionFormat);
-                        break;
                     default:
                         using (Font f = new Font("Segoe UI", 35F, FontStyle.Bold))
                         using (StringFormat sf = new StringFormat
@@ -338,6 +377,11 @@ namespace QuanLyCBCS.Forms.Auth
         {
             if (e.KeyCode == Keys.Escape)
             {
+                if (_buttons == MessageBoxButtons.YesNoCancel)
+                    DialogResult = DialogResult.Cancel;
+                else if (_buttons == MessageBoxButtons.YesNo)
+                    DialogResult = DialogResult.No;
+
                 Close();
                 e.Handled = true;
             }
@@ -410,16 +454,21 @@ namespace QuanLyCBCS.Forms.Auth
             return path;
         }
 
+        /// <summary>
+        /// Hiển thị hộp thoại xác nhận Có/Không và trả về DialogResult.
+        /// Dùng cho các thao tác cần người dùng xác nhận trước khi thực hiện.
+        /// </summary>
         public static DialogResult ShowConfirmation(
             IWin32Window owner,
             string title,
             string description)
         {
-            using (FrmLoginMessage dialog = new FrmLoginMessage(
-                LoginMessageType.Confirmation, title, description))
-            {
-                return owner != null ? dialog.ShowDialog(owner) : dialog.ShowDialog();
-            }
+            return ShowMessage(
+                owner,
+                LoginMessageType.Information,
+                title,
+                description,
+                MessageBoxButtons.YesNo);
         }
 
         public static DialogResult ShowMessage(
@@ -428,8 +477,19 @@ namespace QuanLyCBCS.Forms.Auth
             string title,
             string description)
         {
+            return ShowMessage(
+                owner, messageType, title, description, MessageBoxButtons.OK);
+        }
+
+        public static DialogResult ShowMessage(
+            IWin32Window owner,
+            LoginMessageType messageType,
+            string title,
+            string description,
+            MessageBoxButtons buttons)
+        {
             using (FrmLoginMessage dialog =
-                new FrmLoginMessage(messageType, title, description))
+                new FrmLoginMessage(messageType, title, description, buttons))
             {
                 return owner != null ? dialog.ShowDialog(owner) : dialog.ShowDialog();
             }
