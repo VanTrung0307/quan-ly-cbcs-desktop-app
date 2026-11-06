@@ -19,7 +19,13 @@
     <Compile Update="Forms\CommonForms\FrmReportPreview.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Forms\CommonForms\FrnUpComing.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Forms\DashboardForms\FrmAdminDashboard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\DataForms\FrmBackRestore.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Forms\Home\FrmHome.cs">
