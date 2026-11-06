@@ -228,8 +228,23 @@ public partial class FrmPersonnelMissionStatistics : Form
         summary.Controls.Add(summaryButtons);
         summary.Resize += (_, _) =>
         {
+            // Đồng bộ chiều rộng theo kích thước thực tế của thẻ tổng hợp.
+            // Cột trái có thể bị thu hẹp theo DPI/kích thước cửa sổ; không giữ
+            // chiều rộng cố định 322 px vì sẽ làm tràn và cắt phần số liệu.
+            int contentWidth = Math.Max(120, summary.ClientSize.Width - 26);
+            summaryHeader.Width = summary.ClientSize.Width;
+            summaryTitle.Width = Math.Max(120, summaryHeader.ClientSize.Width - summaryTitle.Left - 12);
+            stat1.Width = contentWidth;
+            stat2.Width = contentWidth;
+            separator.Width = Math.Max(80, summary.ClientSize.Width - 28);
             summaryButtons.Left = Math.Max(0, (summary.ClientSize.Width - summaryButtonsWidth) / 2);
         };
+
+        // Áp dụng ngay cả khi thẻ đã có kích thước trước khi đăng ký Resize.
+        int initialContentWidth = Math.Max(120, summary.ClientSize.Width - 26);
+        stat1.Width = initialContentWidth;
+        stat2.Width = initialContentWidth;
+        separator.Width = Math.Max(80, summary.ClientSize.Width - 28);
 
         // Thanh công cụ và bảng dữ liệu bên phải.
         var right = new TableLayoutPanel
@@ -464,8 +479,9 @@ public partial class FrmPersonnelMissionStatistics : Form
         var title = MakeLabel(caption, 10.5F, FontStyle.Bold, Navy);
         title.SetBounds(61, 3, 205, 50);
         title.TextAlign = ContentAlignment.MiddleLeft;
-        valueLabel = MakeLabel("0", 21F, FontStyle.Bold, Navy);
-        valueLabel.SetBounds(270, 3, 48, 50);
+        valueLabel = MakeLabel("0", 20F, FontStyle.Bold, Navy);
+        // Chừa vùng đủ rộng cho số liệu 2–4 chữ số khi thẻ bị thu hẹp theo DPI.
+        valueLabel.SetBounds(240, 3, 66, 50);
         valueLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         valueLabel.TextAlign = ContentAlignment.MiddleRight;
         panel.Controls.Add(icon);
@@ -475,9 +491,14 @@ public partial class FrmPersonnelMissionStatistics : Form
         Label valueLabelForResize = valueLabel;
         panel.Resize += (_, _) =>
         {
-            valueLabelForResize.Left = panel.ClientSize.Width - 58;
-            title.Width = Math.Max(100, valueLabelForResize.Left - title.Left - 8);
+            // Căn số liệu theo mép phải thực tế của thẻ, không dùng tọa độ cố định.
+            valueLabelForResize.Left = Math.Max(150, panel.ClientSize.Width - valueLabelForResize.Width - 10);
+            title.Width = Math.Max(90, valueLabelForResize.Left - title.Left - 8);
         };
+
+        // Căn lại ngay sau khi tạo, không phụ thuộc lần phát sinh Resize đầu tiên.
+        valueLabelForResize.Left = Math.Max(150, panel.ClientSize.Width - valueLabelForResize.Width - 10);
+        title.Width = Math.Max(90, valueLabelForResize.Left - title.Left - 8);
         panel.Paint += (_, e) =>
         {
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;

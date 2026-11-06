@@ -25,8 +25,34 @@ namespace QuanLyCBCS.Forms.MissionForms
         {
             InitializeComponent();
 
+            // Khôi phục cấu hình giao diện cho các nút trên thanh công cụ.
+            ConfigureToolbarButton(btnExcel, "excel", "Excel");
+            ConfigureToolbarButton(btnRefresh, "refresh", "Làm mới");
+            ConfigureToolbarButton(btnClose, "close", "Đóng");
+
+            // Cấu hình tiêu đề, ánh xạ DTO và tỷ lệ chiều rộng cho 6 cột.
+            ConfigureColumn(colStt, "STT", "", 7F,
+                DataGridViewContentAlignment.MiddleCenter);
+            ConfigureColumn(colNgayPhanCong, "Ngày phân công", "NgayPhanCong", 17F,
+                DataGridViewContentAlignment.MiddleCenter);
+            ConfigureColumn(colTenCongTac, "Tên công tác", "TenCongTac", 23F,
+                DataGridViewContentAlignment.MiddleLeft);
+            ConfigureColumn(colLoaiCongTac, "Loại công tác", "LoaiCongTac", 17F,
+                DataGridViewContentAlignment.MiddleCenter);
+            ConfigureColumn(colGhiChu, "Ghi chú", "GhiChu", 19F,
+                DataGridViewContentAlignment.MiddleLeft);
+            ConfigureColumn(colDiaDiem, "Địa điểm", "DiaDiem", 17F,
+                DataGridViewContentAlignment.MiddleLeft);
+
+            // Đảm bảo tiêu đề và phụ đề luôn hiển thị đầy đủ trong banner.
+            ConfigureHeaderText();
+
             UpdateHeaderBackground();
-            pnlHeader.Resize += (_, _) => UpdateHeaderBackground();
+            pnlHeader.Resize += (_, _) =>
+            {
+                UpdateHeaderBackground();
+                LayoutHeaderText();
+            };
             dgvHistory.Resize += DgvHistory_Resize;
             UpdateHistoryGridRegion();
 
@@ -39,6 +65,37 @@ namespace QuanLyCBCS.Forms.MissionForms
             btnExcel.Click += BtnExcel_Click;
             btnRefresh.Click += BtnRefresh_Click;
             btnClose.Click += (_, _) => Close();
+        }
+
+        private void ConfigureHeaderText()
+        {
+            lblTitle.Text = "LỊCH SỬ CÔNG TÁC CBCS";
+            lblSubtitle.Text = "Tra cứu lịch sử công tác, phân công nhiệm vụ của CBCS";
+
+            foreach (Label label in new[] { lblTitle, lblSubtitle })
+            {
+                label.AutoSize = false;
+                label.AutoEllipsis = false;
+                label.UseMnemonic = false;
+                label.Visible = true;
+                label.BackColor = Color.Transparent;
+                label.TextAlign = ContentAlignment.MiddleLeft;
+            }
+
+            LayoutHeaderText();
+            lblTitle.BringToFront();
+            lblSubtitle.BringToFront();
+        }
+
+        private void LayoutHeaderText()
+        {
+            if (pnlHeader == null || lblTitle == null || lblSubtitle == null)
+                return;
+
+            // Không dùng chiều rộng cố định 2128 px; tính theo kích thước banner thực tế.
+            int availableWidth = Math.Max(100, pnlHeader.ClientSize.Width - lblTitle.Left - 28);
+            lblTitle.Width = availableWidth;
+            lblSubtitle.Width = Math.Max(100, pnlHeader.ClientSize.Width - lblSubtitle.Left - 28);
         }
 
         private async void FrmPersonnelMissionHistory_Load(object? sender, EventArgs e)

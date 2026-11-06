@@ -113,7 +113,9 @@ namespace QuanLyCBCS.Forms.MissionForms
             lblTitle.ForeColor = Color.White;
             lblTitle.Location = new Point(120, 17);
             lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(2128, 42);
+            lblTitle.AutoSize = false;
+            lblTitle.AutoEllipsis = false;
+            lblTitle.Size = new Size(1280, 42);
             lblTitle.TabIndex = 1;
             lblTitle.Text = "LỊCH SỬ CÔNG TÁC CBCS";
             lblTitle.TextAlign = ContentAlignment.MiddleLeft;
@@ -126,7 +128,9 @@ namespace QuanLyCBCS.Forms.MissionForms
             lblSubtitle.ForeColor = Color.FromArgb(235, 245, 255);
             lblSubtitle.Location = new Point(122, 59);
             lblSubtitle.Name = "lblSubtitle";
-            lblSubtitle.Size = new Size(2128, 27);
+            lblSubtitle.AutoSize = false;
+            lblSubtitle.AutoEllipsis = false;
+            lblSubtitle.Size = new Size(1278, 27);
             lblSubtitle.TabIndex = 2;
             lblSubtitle.Text = "Tra cứu lịch sử công tác, phân công nhiệm vụ của CBCS";
             lblSubtitle.TextAlign = ContentAlignment.MiddleLeft;
@@ -266,6 +270,8 @@ namespace QuanLyCBCS.Forms.MissionForms
             // 
             // dgvHistory
             // 
+            // Chỉ sử dụng 6 cột đã thiết kế bên dưới; không để DataGridView tự sinh cột từ DTO.
+            dgvHistory.AutoGenerateColumns = false;
             dgvHistory.AllowUserToAddRows = false;
             dgvHistory.AllowUserToDeleteRows = false;
             dgvHistory.AllowUserToResizeRows = false;
