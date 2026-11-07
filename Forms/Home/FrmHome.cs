@@ -9,6 +9,7 @@ using QuanLyCBCS.Forms.MissionForms;
 using QuanLyCBCS.Forms.SystemForms;
 using QuanLyCBCS.Forms.Auth;
 using QuanLyCBCS.Forms.UserForms;
+using QuanLyCBCS.Forms.DataForms;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -60,6 +61,9 @@ namespace QuanLyCBCS.Forms.Home
 
         // Dùng chung một phiên FrmUpComing cho hai mục Nghỉ phép và Cập nhật ứng dụng.
         private FrnUpComing? _upComingForm;
+
+        // Giữ một phiên FrmBackRestore để nhúng trực tiếp vào tab Sao lưu / Phục hồi.
+        private FrmBackRestore? _backRestoreForm;
 
         // Trung tâm thông báo được nhúng vào một panel dropdown, không mở bằng ShowDialog.
         private Button? _btnNotifications;
@@ -711,6 +715,12 @@ namespace QuanLyCBCS.Forms.Home
                 return;
             }
 
+            if (pageName == "Sao lưu / Phục hồi")
+            {
+                ShowBackRestoreInContent();
+                return;
+            }
+
             if (pageName == "Nghỉ phép" || pageName == "Cập nhật ứng dụng")
             {
                 ShowUpComingInContent();
@@ -725,6 +735,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachUserListFromContent();
             DetachChangePasswordFromContent();
             DetachPermissionManagementFromContent();
+            DetachBackRestoreFromContent();
             DetachUpComingFromContent();
             pnlContent.Controls.Clear();
             Label lblTitle = new Label
@@ -764,6 +775,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachUserListFromContent();
             DetachChangePasswordFromContent();
             DetachPermissionManagementFromContent();
+            DetachBackRestoreFromContent();
             DetachUpComingFromContent();
             pnlContent.Controls.Clear();
 
@@ -842,6 +854,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachUserListFromContent();
             DetachChangePasswordFromContent();
             DetachPermissionManagementFromContent();
+            DetachBackRestoreFromContent();
             DetachUpComingFromContent();
             pnlContent.Controls.Clear();
 
@@ -944,6 +957,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachUserListFromContent();
             DetachChangePasswordFromContent();
             DetachPermissionManagementFromContent();
+            DetachBackRestoreFromContent();
             DetachUpComingFromContent();
             pnlContent.Controls.Clear();
 
@@ -1040,6 +1054,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachUserListFromContent();
             DetachChangePasswordFromContent();
             DetachPermissionManagementFromContent();
+            DetachBackRestoreFromContent();
             DetachUpComingFromContent();
             pnlContent.Controls.Clear();
 
@@ -1122,6 +1137,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachUserListFromContent();
             DetachChangePasswordFromContent();
             DetachPermissionManagementFromContent();
+            DetachBackRestoreFromContent();
             DetachUpComingFromContent();
             pnlContent.Controls.Clear();
 
@@ -1232,6 +1248,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachUserListFromContent();
             DetachChangePasswordFromContent();
             DetachPermissionManagementFromContent();
+            DetachBackRestoreFromContent();
             DetachUpComingFromContent();
             pnlContent.Controls.Clear();
 
@@ -1329,6 +1346,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachUserListFromContent();
             DetachChangePasswordFromContent();
             DetachPermissionManagementFromContent();
+            DetachBackRestoreFromContent();
             DetachUpComingFromContent();
             pnlContent.Controls.Clear();
 
@@ -1422,6 +1440,7 @@ namespace QuanLyCBCS.Forms.Home
                 DetachUserListFromContent();
                 DetachChangePasswordFromContent();
                 DetachPermissionManagementFromContent();
+                DetachBackRestoreFromContent();
                 DetachUpComingFromContent();
                 pnlContent.Controls.Clear();
 
@@ -1504,6 +1523,95 @@ namespace QuanLyCBCS.Forms.Home
             }
         }
 
+        // Nhúng FrmBackRestore trực tiếp vào pnlContent của tab Sao lưu / Phục hồi.
+        // Giữ nguyên một instance khi chuyển tab để bảo toàn trạng thái giao diện.
+        private void ShowBackRestoreInContent()
+        {
+            if (pnlContent == null)
+                return;
+
+            if (_backRestoreForm != null &&
+                !_backRestoreForm.IsDisposed &&
+                ReferenceEquals(_backRestoreForm.Parent, pnlContent))
+            {
+                _backRestoreForm.Visible = true;
+                _backRestoreForm.BringToFront();
+                return;
+            }
+
+            DetachPersonnelListFromContent();
+            DetachMissionListFromContent();
+            DetachAuditLogListFromContent();
+            DetachPersonnelReportFromContent();
+            DetachPersonnelMissionStatisticsFromContent();
+            DetachUserListFromContent();
+            DetachChangePasswordFromContent();
+            DetachPermissionManagementFromContent();
+            DetachBackRestoreFromContent();
+            DetachUpComingFromContent();
+            pnlContent.Controls.Clear();
+
+            try
+            {
+                if (_backRestoreForm == null || _backRestoreForm.IsDisposed)
+                {
+                    _backRestoreForm = new FrmBackRestore
+                    {
+                        TopLevel = false,
+                        FormBorderStyle = FormBorderStyle.None,
+                        ShowInTaskbar = false,
+                        StartPosition = FormStartPosition.Manual,
+                        WindowState = FormWindowState.Normal,
+                        MinimumSize = Size.Empty,
+                        MaximumSize = Size.Empty,
+                        Dock = DockStyle.Fill,
+                        Location = Point.Empty,
+                        Margin = Padding.Empty
+                    };
+
+                    _backRestoreForm.FormClosed += (sender, e) =>
+                    {
+                        if (ReferenceEquals(sender, _backRestoreForm))
+                            _backRestoreForm = null;
+                    };
+                }
+
+                pnlContent.Controls.Add(_backRestoreForm);
+                _backRestoreForm.Show();
+                _backRestoreForm.Visible = true;
+                _backRestoreForm.BringToFront();
+            }
+            catch (Exception ex)
+            {
+                if (_backRestoreForm != null && !_backRestoreForm.IsDisposed)
+                {
+                    _backRestoreForm.Dispose();
+                    _backRestoreForm = null;
+                }
+
+                MessageBox.Show(
+                    this,
+                    "Không thể hiển thị màn hình Sao lưu / Phục hồi trong FrmHome. Chi tiết: " + ex.Message,
+                    "Lỗi hiển thị",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
+        // Tạm tháo FrmBackRestore khi chuyển tab, không Dispose để giữ trạng thái màn hình.
+        private void DetachBackRestoreFromContent()
+        {
+            if (_backRestoreForm == null || _backRestoreForm.IsDisposed)
+                return;
+
+            if (pnlContent != null &&
+                ReferenceEquals(_backRestoreForm.Parent, pnlContent))
+            {
+                _backRestoreForm.Visible = false;
+                pnlContent.Controls.Remove(_backRestoreForm);
+            }
+        }
+
         // Nhúng FrmUpComing vào pnlContent cho cả hai mục Nghỉ phép và Cập nhật ứng dụng.
         // Giữ một instance dùng chung để tránh khởi tạo lặp lại khi chuyển qua lại giữa hai tab.
         private void ShowUpComingInContent()
@@ -1528,6 +1636,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachUserListFromContent();
             DetachChangePasswordFromContent();
             DetachPermissionManagementFromContent();
+            DetachBackRestoreFromContent();
             DetachUpComingFromContent();
             pnlContent.Controls.Clear();
 
@@ -1606,6 +1715,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachUserListFromContent();
             DetachChangePasswordFromContent();
             DetachPermissionManagementFromContent();
+            DetachBackRestoreFromContent();
             DetachUpComingFromContent();
             pnlContent.SuspendLayout();
             pnlContent.Controls.Clear();

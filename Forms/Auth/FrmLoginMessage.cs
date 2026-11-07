@@ -13,6 +13,7 @@ namespace QuanLyCBCS.Forms.Auth
         InvalidCredentials,
         AccountLocked,
         Information,
+        Warning,
         Success
     }
 
@@ -178,7 +179,9 @@ namespace QuanLyCBCS.Forms.Auth
                 Location = new Point(153, 78),
                 Size = new Size(375, 88),
                 Text = description ?? string.Empty,
-                Font = new Font("Segoe UI", 15F, FontStyle.Bold),
+                Font = description != null && description.Length > 90
+                    ? new Font("Segoe UI", 11.5F, FontStyle.Regular)
+                    : new Font("Segoe UI", 15F, FontStyle.Bold),
                 ForeColor = _navy,
                 TextAlign = ContentAlignment.MiddleLeft,
                 AutoSize = false,
@@ -342,6 +345,18 @@ namespace QuanLyCBCS.Forms.Auth
                         g.DrawLine(whitePen, 19, 34, 28, 43);
                         g.DrawLine(whitePen, 28, 43, 47, 23);
                         break;
+                    case LoginMessageType.Warning:
+                        using (Font warningFont = new Font("Segoe UI", 37F, FontStyle.Bold))
+                        using (StringFormat warningFormat = new StringFormat
+                        {
+                            Alignment = StringAlignment.Center,
+                            LineAlignment = StringAlignment.Center
+                        })
+                        {
+                            g.DrawString("!", warningFont, whiteBrush,
+                                new RectangleF(7, 1, 52, 60), warningFormat);
+                        }
+                        break;
                     case LoginMessageType.InvalidCredentials:
                     case LoginMessageType.AccountLocked:
                         g.DrawLine(whitePen, 23, 23, 43, 43);
@@ -414,6 +429,7 @@ namespace QuanLyCBCS.Forms.Auth
                 case LoginMessageType.AccountLocked:
                     return Color.FromArgb(239, 49, 57);
                 case LoginMessageType.InvalidCredentials:
+                case LoginMessageType.Warning:
                     return Color.FromArgb(235, 145, 20);
                 case LoginMessageType.Success:
                     return Color.FromArgb(22, 163, 74);
@@ -430,6 +446,7 @@ namespace QuanLyCBCS.Forms.Auth
                 case LoginMessageType.AccountLocked:
                     return Color.FromArgb(255, 229, 231);
                 case LoginMessageType.InvalidCredentials:
+                case LoginMessageType.Warning:
                     return Color.FromArgb(255, 241, 220);
                 case LoginMessageType.Success:
                     return Color.FromArgb(220, 252, 231);
