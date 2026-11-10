@@ -1,15 +1,32 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
-    <UseWindowsForms>true</UseWindowsForms>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <ApplicationIcon>logoCSCD.ico</ApplicationIcon>
-  </PropertyGroup>
 
-  <ItemGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+
+		<TargetFramework>net8.0-windows</TargetFramework>
+
+		<Nullable>enable</Nullable>
+		<UseWindowsForms>true</UseWindowsForms>
+		<ImplicitUsings>enable</ImplicitUsings>
+
+		<ApplicationIcon>logoCSCD.ico</ApplicationIcon>
+
+		<!-- Application Version -->
+		<Version>3.1.0</Version>
+		<AssemblyVersion>3.1.0.0</AssemblyVersion>
+		<FileVersion>3.1.0.0</FileVersion>
+		<InformationalVersion>3.1.0</InformationalVersion>
+
+		<!-- Deployment -->
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+		<SelfContained>true</SelfContained>
+		<PublishSingleFile>false</PublishSingleFile>
+		<PublishTrimmed>false</PublishTrimmed>
+	</PropertyGroup>
+
+
+	<ItemGroup>
     <Content Include="logoCSCD.ico" />
   </ItemGroup>
 

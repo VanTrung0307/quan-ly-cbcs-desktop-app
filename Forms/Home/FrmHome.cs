@@ -10,6 +10,7 @@ using QuanLyCBCS.Forms.SystemForms;
 using QuanLyCBCS.Forms.Auth;
 using QuanLyCBCS.Forms.UserForms;
 using QuanLyCBCS.Forms.DataForms;
+using QuanLyCBCS.Forms.UpdateForms;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -59,8 +60,11 @@ namespace QuanLyCBCS.Forms.Home
         // Giữ một phiên FrmPermissionManagement để nhúng trực tiếp vào tab Phân quyền.
         private FrmPermissionManagement? _permissionManagementForm;
 
-        // Dùng chung một phiên FrmUpComing cho hai mục Nghỉ phép và Cập nhật ứng dụng.
+        // Giữ một phiên FrmUpComing riêng cho tab Nghỉ phép.
         private FrnUpComing? _upComingForm;
+
+        // Giữ một phiên FrmUpdate riêng cho tab Cập nhật ứng dụng.
+        private FrmUpdate? _updateForm;
 
         // Giữ một phiên FrmBackRestore để nhúng trực tiếp vào tab Sao lưu / Phục hồi.
         private FrmBackRestore? _backRestoreForm;
@@ -721,9 +725,15 @@ namespace QuanLyCBCS.Forms.Home
                 return;
             }
 
-            if (pageName == "Nghỉ phép" || pageName == "Cập nhật ứng dụng")
+            if (pageName == "Nghỉ phép")
             {
                 ShowUpComingInContent();
+                return;
+            }
+
+            if (pageName == "Cập nhật ứng dụng")
+            {
+                ShowUpdateInContent();
                 return;
             }
 
@@ -737,6 +747,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachPermissionManagementFromContent();
             DetachBackRestoreFromContent();
             DetachUpComingFromContent();
+            DetachUpdateFromContent();
             pnlContent.Controls.Clear();
             Label lblTitle = new Label
             {
@@ -777,6 +788,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachPermissionManagementFromContent();
             DetachBackRestoreFromContent();
             DetachUpComingFromContent();
+            DetachUpdateFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -856,6 +868,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachPermissionManagementFromContent();
             DetachBackRestoreFromContent();
             DetachUpComingFromContent();
+            DetachUpdateFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -959,6 +972,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachPermissionManagementFromContent();
             DetachBackRestoreFromContent();
             DetachUpComingFromContent();
+            DetachUpdateFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -1056,6 +1070,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachPermissionManagementFromContent();
             DetachBackRestoreFromContent();
             DetachUpComingFromContent();
+            DetachUpdateFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -1139,6 +1154,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachPermissionManagementFromContent();
             DetachBackRestoreFromContent();
             DetachUpComingFromContent();
+            DetachUpdateFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -1250,6 +1266,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachPermissionManagementFromContent();
             DetachBackRestoreFromContent();
             DetachUpComingFromContent();
+            DetachUpdateFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -1348,6 +1365,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachPermissionManagementFromContent();
             DetachBackRestoreFromContent();
             DetachUpComingFromContent();
+            DetachUpdateFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -1442,6 +1460,7 @@ namespace QuanLyCBCS.Forms.Home
                 DetachPermissionManagementFromContent();
                 DetachBackRestoreFromContent();
                 DetachUpComingFromContent();
+                DetachUpdateFromContent();
                 pnlContent.Controls.Clear();
 
                 if (_permissionManagementForm == null ||
@@ -1549,6 +1568,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachPermissionManagementFromContent();
             DetachBackRestoreFromContent();
             DetachUpComingFromContent();
+            DetachUpdateFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -1612,8 +1632,8 @@ namespace QuanLyCBCS.Forms.Home
             }
         }
 
-        // Nhúng FrmUpComing vào pnlContent cho cả hai mục Nghỉ phép và Cập nhật ứng dụng.
-        // Giữ một instance dùng chung để tránh khởi tạo lặp lại khi chuyển qua lại giữa hai tab.
+        // Nhúng FrmUpComing vào pnlContent của tab Nghỉ phép.
+        // Giữ instance để bảo toàn trạng thái khi chuyển qua lại giữa các tab.
         private void ShowUpComingInContent()
         {
             if (pnlContent == null)
@@ -1638,6 +1658,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachPermissionManagementFromContent();
             DetachBackRestoreFromContent();
             DetachUpComingFromContent();
+            DetachUpdateFromContent();
             pnlContent.Controls.Clear();
 
             try
@@ -1701,6 +1722,97 @@ namespace QuanLyCBCS.Forms.Home
             }
         }
 
+        // Nhúng FrmUpdate trực tiếp vào pnlContent của tab Cập nhật ứng dụng.
+        // Giữ nguyên instance khi chuyển tab để bảo toàn trạng thái kiểm tra/cập nhật.
+        private void ShowUpdateInContent()
+        {
+            if (pnlContent == null)
+                return;
+
+            if (_updateForm != null &&
+                !_updateForm.IsDisposed &&
+                ReferenceEquals(_updateForm.Parent, pnlContent))
+            {
+                _updateForm.Visible = true;
+                _updateForm.BringToFront();
+                return;
+            }
+
+            DetachPersonnelListFromContent();
+            DetachMissionListFromContent();
+            DetachAuditLogListFromContent();
+            DetachPersonnelReportFromContent();
+            DetachPersonnelMissionStatisticsFromContent();
+            DetachUserListFromContent();
+            DetachChangePasswordFromContent();
+            DetachPermissionManagementFromContent();
+            DetachBackRestoreFromContent();
+            DetachUpComingFromContent();
+            DetachUpdateFromContent();
+
+            pnlContent.Controls.Clear();
+
+            try
+            {
+                if (_updateForm == null || _updateForm.IsDisposed)
+                {
+                    _updateForm = new FrmUpdate
+                    {
+                        TopLevel = false,
+                        FormBorderStyle = FormBorderStyle.None,
+                        ShowInTaskbar = false,
+                        StartPosition = FormStartPosition.Manual,
+                        WindowState = FormWindowState.Normal,
+                        MinimumSize = Size.Empty,
+                        MaximumSize = Size.Empty,
+                        Dock = DockStyle.Fill,
+                        Location = Point.Empty,
+                        Margin = Padding.Empty
+                    };
+
+                    _updateForm.FormClosed += (sender, e) =>
+                    {
+                        if (ReferenceEquals(sender, _updateForm))
+                            _updateForm = null;
+                    };
+                }
+
+                pnlContent.Controls.Add(_updateForm);
+                _updateForm.Show();
+                _updateForm.Visible = true;
+                _updateForm.BringToFront();
+            }
+            catch (Exception ex)
+            {
+                if (_updateForm != null && !_updateForm.IsDisposed)
+                {
+                    _updateForm.Dispose();
+                    _updateForm = null;
+                }
+
+                MessageBox.Show(
+                    this,
+                    "Không thể hiển thị màn hình Cập nhật ứng dụng. Chi tiết: " + ex.Message,
+                    "Lỗi hiển thị",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
+        // Tạm tháo FrmUpdate khi chuyển tab, không Dispose để giữ trạng thái màn hình.
+        private void DetachUpdateFromContent()
+        {
+            if (_updateForm == null || _updateForm.IsDisposed)
+                return;
+
+            if (pnlContent != null &&
+                ReferenceEquals(_updateForm.Parent, pnlContent))
+            {
+                _updateForm.Visible = false;
+                pnlContent.Controls.Remove(_updateForm);
+            }
+        }
+
         // ========================= TRANG CHỦ =========================
         private async Task ShowHomeDashboardAsync()
         {
@@ -1717,6 +1829,7 @@ namespace QuanLyCBCS.Forms.Home
             DetachPermissionManagementFromContent();
             DetachBackRestoreFromContent();
             DetachUpComingFromContent();
+            DetachUpdateFromContent();
             pnlContent.SuspendLayout();
             pnlContent.Controls.Clear();
             pnlContent.ResumeLayout(true);

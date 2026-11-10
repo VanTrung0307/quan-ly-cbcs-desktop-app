@@ -1,0 +1,8 @@
+{
+    "version":  "3.1.0",
+    "packageFileName":  "QuanLyCBCS_Release_v3.1.0.zip",
+    "sha256":  "B64394B87EC636B32C438AC04AC1B8E895E5A34634B41EE0A77DD88E12D2BC37",
+    "releaseNotes":  "Phát hành phiên bản 3.1.0.- Hoàn thiện chức năng cập nhật ứng dụng thông qua GitHub.- Cải thiện khả năng kiểm tra phiên bản mới và tải gói cập nhật.- Tối ưu tính ổn định và hiệu suất hoạt động của phần mềm.- Sửa lỗi và cải thiện trải nghiệm sử dụng.",
+    "publishedAtUtc":  "2026-11-10T03:04:23Z",
+    "mandatory":  false
+}

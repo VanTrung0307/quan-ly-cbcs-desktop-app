@@ -27,3 +27,13 @@ _ReSharper*/
 
 # NuGet
 packages/
+
+# Auto Update build artifacts
+artifacts/
+
+# Release packages
+*.zip
+
+# Temporary update files
+*.download
+*.partial
