@@ -2,145 +2,252 @@
 
 # QUẢN LÝ CÁN BỘ, CHIẾN SĨ (CBCS)
 
-**Ứng dụng desktop quản lý hồ sơ nhân sự và công tác**
+**Ứng dụng desktop hỗ trợ quản lý hồ sơ CBCS và hoạt động công tác**
 
-Ứng dụng Windows Forms xây dựng bằng C# nhằm hỗ trợ lưu trữ, tra cứu và quản lý thông tin cán bộ, chiến sĩ; theo dõi công tác, phân công nhân sự và hỗ trợ thống kê, báo cáo.
+Ứng dụng Windows Forms phát triển bằng C#, sử dụng Microsoft SQL Server để lưu trữ dữ liệu.
 
 </div>
 
 ---
 
-## 📌 Giới thiệu
+## 1. Giới thiệu
 
-**Quản lý CBCS** là phần mềm desktop hướng đến việc tập trung hóa thông tin nhân sự và hoạt động công tác trong một giao diện thống nhất. Giao diện được tổ chức theo các nhóm chức năng: hồ sơ CBCS, công tác và phân công, lịch sử/thống kê, tài khoản và phân quyền, quản trị hệ thống, thông báo và báo cáo.
+**Quản lý CBCS** là ứng dụng desktop hỗ trợ quản lý tập trung thông tin cán bộ, chiến sĩ và các hoạt động công tác. Ứng dụng tổ chức các nghiệp vụ theo từng màn hình, đồng thời cung cấp các chức năng báo cáo, quản trị tài khoản, phân quyền, sao lưu/phục hồi dữ liệu và cập nhật phần mềm.
 
-> Các ảnh dưới đây minh họa giao diện thiết kế của ứng dụng. Tính năng thực tế có thể phụ thuộc vào cấu hình cơ sở dữ liệu, tài khoản đăng nhập và phiên bản đang triển khai.
+## 2. Các nhóm chức năng
 
-## ✨ Chức năng chính
+### 2.1. Đăng nhập và trang chủ
+- Đăng nhập bằng tài khoản được cấp.
+- Hiển thị trang chủ và các thông tin tổng quan theo quyền truy cập.
 
-- **Quản lý hồ sơ CBCS:** xem danh sách, tìm kiếm và thao tác quản lý hồ sơ.
-- **Quản lý công tác:** tạo/cập nhật thông tin công tác, loại công tác, địa điểm, thời gian, mức độ ưu tiên và mô tả.
-- **Phân công CBCS:** phân công nhân sự vào công tác và theo dõi danh sách đã/chưa phân công.
-- **Lịch sử và thống kê công tác:** xem lịch sử tham gia, tổng hợp số lượt công tác và xuất dữ liệu khi chức năng được cấu hình.
-- **Quản lý tài khoản:** tạo/cập nhật tài khoản, đổi mật khẩu và quản lý quyền truy cập theo vai trò.
-- **Khu vực quản trị:** tổng quan số liệu, nhật ký hệ thống, trung tâm thông báo và màn hình báo cáo.
+### 2.2. Quản lý cán bộ, chiến sĩ
+- Xem và tra cứu danh sách CBCS.
+- Thêm, chỉnh sửa và quản lý thông tin hồ sơ CBCS.
+- Xem thông tin chi tiết của từng CBCS.
 
-## 🖥️ Ảnh giao diện
+### 2.3. Quản lý công tác
+- Quản lý danh sách công tác.
+- Xem và chỉnh sửa thông tin chi tiết công tác.
+- Phân công CBCS tham gia công tác.
+- Theo dõi lịch sử tham gia công tác.
 
-Ảnh được lưu trong thư mục [`assets/`](assets/). Các ảnh sử dụng bố cục **hai cột** và đặt chiều rộng cố định để GitHub hiển thị cân đối hơn. Trên màn hình nhỏ, bảng có thể tự co theo vùng hiển thị.
+### 2.4. Thống kê và báo cáo
+- Dashboard công tác và bảng điều khiển quản trị.
+- Thống kê công tác CBCS.
+- Báo cáo quân số.
+- Xem trước báo cáo trước khi thực hiện thao tác tiếp theo.
 
-### Khởi động và đăng nhập
+### 2.5. Nhật ký hệ thống
+- Theo dõi lịch sử thao tác được ghi nhận trong hệ thống.
 
-<table>
-  <tr>
-    <td align="center" width="50%"><strong>Khởi tạo hệ thống</strong><br><img src="assets/loading.png" width="400" alt="Màn hình khởi tạo hệ thống"></td>
-    <td align="center" width="50%"><strong>Đăng nhập</strong><br><img src="assets/login.png" width="400" alt="Màn hình đăng nhập"></td>
-  </tr>
-</table>
+### 2.6. Quản lý tài khoản và bảo mật
+- Xem danh sách tài khoản.
+- Thêm hoặc chỉnh sửa thông tin tài khoản.
+- Đổi mật khẩu.
+- Thiết lập quyền truy cập theo tài khoản.
 
-### Hồ sơ CBCS và quản lý công tác
+### 2.7. Sao lưu và phục hồi dữ liệu
+- Chọn thư mục lưu trữ và tạo bản sao lưu cơ sở dữ liệu.
+- Xem danh sách bản sao lưu, thời gian, dung lượng và đường dẫn.
+- Chọn file sao lưu để phục hồi.
+- Theo dõi lịch sử thao tác sao lưu, phục hồi và xóa bản sao lưu.
 
-<table>
-  <tr>
-    <td align="center" width="50%"><strong>Danh sách hồ sơ CBCS</strong><br><img src="assets/personnel-list.png" width="400" alt="Danh sách hồ sơ CBCS"></td>
-    <td align="center" width="50%"><strong>Thông tin công tác</strong><br><img src="assets/mission-detail.png" width="400" alt="Màn hình thông tin công tác"></td>
-  </tr>
-  <tr>
-    <td align="center" width="50%"><strong>Phân công CBCS</strong><br><img src="assets/mission-assignment.png" width="400" alt="Màn hình phân công CBCS"></td>
-    <td align="center" width="50%"><strong>Lịch sử công tác</strong><br><img src="assets/personnel-mission-history.png" width="400" alt="Màn hình lịch sử công tác"></td>
-  </tr>
-  <tr>
-    <td align="center" width="50%"><strong>Thống kê công tác</strong><br><img src="assets/personnel-mission-statistics.png" width="400" alt="Màn hình thống kê công tác"></td>
-    <td align="center" width="50%"><strong>Dashboard công tác</strong><br><img src="assets/mission-dashboard.png" width="400" alt="Dashboard công tác"></td>
-  </tr>
-  <tr>
-    <td align="center" width="50%"><strong>Thống kê hồ sơ / báo cáo</strong><br><img src="assets/personnel-report.png" width="400" alt="Thống kê hồ sơ và báo cáo"></td>
-    <td align="center" width="50%"><strong>Màn hình xem báo cáo</strong><br><img src="assets/report-viewer.png" width="400" alt="Màn hình xem báo cáo"></td>
-  </tr>
-</table>
+**Lưu ý:** Phục hồi dữ liệu có thể ghi đè cơ sở dữ liệu hiện tại. Cần xác minh đúng file sao lưu và sao lưu trạng thái hiện tại trước khi phục hồi.
 
-### Tài khoản, phân quyền và quản trị
+### 2.8. Cập nhật ứng dụng
+- Kiểm tra phiên bản hiện tại và phiên bản mới.
+- Xem nội dung thay đổi của bản cập nhật.
+- Thiết lập các tùy chọn kiểm tra/thông báo cập nhật.
+- Tải gói cập nhật và hiển thị tiến trình tải, xác minh.
 
-<table>
-  <tr>
-    <td align="center" width="50%"><strong>Danh sách tài khoản</strong><br><img src="assets/user-list.png" width="400" alt="Danh sách tài khoản"></td>
-    <td align="center" width="50%"><strong>Thông tin tài khoản</strong><br><img src="assets/user-detail.png" width="400" alt="Thông tin tài khoản"></td>
-  </tr>
-  <tr>
-    <td align="center" width="50%"><strong>Đổi mật khẩu</strong><br><img src="assets/change-password.png" width="400" alt="Màn hình đổi mật khẩu"></td>
-    <td align="center" width="50%"><strong>Quản lý phân quyền</strong><br><img src="assets/permissions.png" width="400" alt="Màn hình quản lý phân quyền"></td>
-  </tr>
-  <tr>
-    <td align="center" width="50%"><strong>Bảng điều khiển quản trị</strong><br><img src="assets/admin-dashboard.png" width="400" alt="Bảng điều khiển quản trị"></td>
-    <td align="center" width="50%"><strong>Nhật ký hệ thống</strong><br><img src="assets/audit-log.png" width="400" alt="Màn hình nhật ký hệ thống"></td>
-  </tr>
-  <tr>
-    <td align="center" width="50%"><strong>Trung tâm thông báo</strong><br><img src="assets/notifications.png" width="400" alt="Trung tâm thông báo"></td>
-    <td align="center" width="50%"><strong>Màn hình quản lý tài khoản</strong><br><img src="assets/user-list.png" width="400" alt="Màn hình quản lý tài khoản"></td>
-  </tr>
-</table>
+### 2.9. Chức năng đang phát triển
+- **Nghỉ phép:** tab hiện hiển thị thông báo chức năng sẽ được cập nhật sau. Nghiệp vụ quản lý nghỉ phép chưa được xem là chức năng hoàn thiện của phiên bản hiện tại.
 
-## 🧰 Công nghệ
+## 3. Hình ảnh giao diện
 
-Dựa trên cấu hình và mã nguồn của dự án, các công nghệ sử dụng gồm:
+Các ảnh giao diện đầy đủ được lưu trong thư mục [`assets/`](assets/). Ảnh được sắp xếp theo nhóm nghiệp vụ; tên file được đánh số để dễ đối chiếu.
 
-- **Ngôn ngữ:** C#
-- **Giao diện desktop:** Windows Forms (WinForms)
-- **Nền tảng mục tiêu:** .NET Framework 4.8 *(hãy xác nhận lại trong Project Properties nếu đã đổi target framework)*
+### 3.1. Đăng nhập và trang chủ
+
+<p align="center">
+  <img src="assets/01-login.jpg" width="900" alt="Màn hình đăng nhập"/>
+</p>
+
+<p align="center">
+  <img src="assets/02-home-dashboard.jpg" width="900" alt="Trang chủ và dashboard tổng quan"/>
+</p>
+
+### 3.2. Dashboard công tác và bảng điều khiển quản trị
+
+<p align="center">
+  <img src="assets/03-mission-dashboard.jpg" width="900" alt="Dashboard công tác"/>
+</p>
+
+<p align="center">
+  <img src="assets/04-admin-dashboard.jpg" width="900" alt="Bảng điều khiển quản trị"/>
+</p>
+
+### 3.3. Quản lý CBCS
+
+<p align="center">
+  <img src="assets/05-personnel-list.jpg" width="900" alt="Danh sách CBCS"/>
+</p>
+
+<p align="center">
+  <img src="assets/06-personnel-detail.jpg" width="900" alt="Thông tin chi tiết CBCS"/>
+</p>
+
+### 3.4. Quản lý công tác và phân công CBCS
+
+<p align="center">
+  <img src="assets/07-mission-list.jpg" width="900" alt="Danh sách công tác"/>
+</p>
+
+<p align="center">
+  <img src="assets/08-mission-detail.jpg" width="900" alt="Thông tin chi tiết công tác"/>
+</p>
+
+<p align="center">
+  <img src="assets/09-mission-assignment.jpg" width="900" alt="Phân công CBCS"/>
+</p>
+
+<p align="center">
+  <img src="assets/14-personnel-mission-history.jpg" width="900" alt="Lịch sử công tác CBCS"/>
+</p>
+
+### 3.5. Nhật ký hệ thống
+
+<p align="center">
+  <img src="assets/10-audit-log.jpg" width="900" alt="Nhật ký hệ thống"/>
+</p>
+
+### 3.6. Thống kê và báo cáo
+
+<p align="center">
+  <img src="assets/13-mission-statistics.jpg" width="900" alt="Thống kê công tác CBCS"/>
+</p>
+
+<p align="center">
+  <img src="assets/11-personnel-report.jpg" width="900" alt="Báo cáo quân số"/>
+</p>
+
+<p align="center">
+  <img src="assets/12-report-preview.jpg" width="900" alt="Xem trước báo cáo"/>
+</p>
+
+### 3.7. Tài khoản, mật khẩu và phân quyền
+
+<p align="center">
+  <img src="assets/15-user-list.jpg" width="900" alt="Danh sách tài khoản"/>
+</p>
+
+<p align="center">
+  <img src="assets/16-user-detail.jpg" width="900" alt="Thông tin tài khoản"/>
+</p>
+
+<p align="center">
+  <img src="assets/17-change-password.jpg" width="900" alt="Đổi mật khẩu"/>
+</p>
+
+<p align="center">
+  <img src="assets/18-permission-management.jpg" width="900" alt="Quản lý phân quyền"/>
+</p>
+
+### 3.8. Sao lưu và phục hồi dữ liệu
+
+<p align="center">
+  <img src="assets/19-backup-restore.jpg" width="900" alt="Sao lưu và phục hồi dữ liệu"/>
+</p>
+
+### 3.9. Cập nhật ứng dụng
+
+<p align="center">
+  <img src="assets/21-app-update.jpg" width="900" alt="Màn hình cập nhật ứng dụng"/>
+</p>
+
+<p align="center">
+  <img src="assets/22-update-download-progress.png" width="900" alt="Tiến trình tải và xác minh gói cập nhật"/>
+</p>
+
+### 3.10. Tab Nghỉ phép
+
+<p align="center">
+  <img src="assets/20-leave-coming-soon.jpg" width="900" alt="Thông báo chức năng Nghỉ phép sẽ được cập nhật sau"/>
+</p>
+
+Tab Nghỉ phép hiện là màn hình thông báo đang phát triển, chưa cung cấp nghiệp vụ quản lý nghỉ phép hoàn chỉnh.
+
+## 4. Công nghệ sử dụng
+
+- **Ngôn ngữ lập trình:** C#
+- **Nền tảng giao diện:** Windows Forms (WinForms)
+- **Nền tảng chạy ứng dụng:** .NET 8
 - **Cơ sở dữ liệu:** Microsoft SQL Server
 - **Môi trường phát triển:** Visual Studio
+- **Nguồn phát hành cập nhật:** GitHub Releases theo cấu hình dự án.
 
-## ⚙️ Yêu cầu triển khai
+## 5. Yêu cầu triển khai
 
-- Máy tính Windows tương thích với phiên bản .NET mục tiêu của ứng dụng.
-- SQL Server Database Engine đã được cài đặt và đang hoạt động.
-- Cơ sở dữ liệu của ứng dụng đã được khôi phục/tạo và chuỗi kết nối trong cấu hình được cập nhật chính xác.
-- Tài khoản đăng nhập hợp lệ đã được thiết lập trong cơ sở dữ liệu.
+- Máy tính sử dụng hệ điều hành Windows tương thích với bản publish.
+- .NET 8 Runtime phù hợp nếu bản publish không đóng gói sẵn runtime.
+- Máy chủ SQL Server hoạt động và cho phép máy chạy ứng dụng kết nối.
+- Cơ sở dữ liệu được tạo hoặc khôi phục theo cấu trúc mà ứng dụng yêu cầu.
+- Chuỗi kết nối cơ sở dữ liệu được cấu hình chính xác.
+- Tài khoản đăng nhập hợp lệ và được cấp quyền phù hợp.
 
-> **Lưu ý bảo mật:** Không đưa mật khẩu SQL Server, mật khẩu tài khoản, chuỗi kết nối chứa thông tin nhạy cảm hoặc bản sao dữ liệu CBCS thật lên GitHub. Nếu dự án dùng `App.config`, hãy kiểm tra và loại bỏ thông tin bí mật trước khi public repository.
+## 6. Build và chạy ứng dụng
 
-## 🚀 Build và chạy
+1. Mở solution của dự án bằng Visual Studio.
+2. Kiểm tra cấu hình build, package phụ thuộc và chuỗi kết nối SQL Server.
+3. Chọn cấu hình `Release`.
+4. Thực hiện **Build → Rebuild Solution**.
+5. Kiểm tra kết nối SQL Server và cơ sở dữ liệu.
+6. Chạy ứng dụng từ Visual Studio hoặc sử dụng thư mục publish đã tạo.
 
-1. Mở solution bằng Visual Studio.
-2. Kiểm tra `Target Framework`, các package và chuỗi kết nối trong cấu hình.
-3. Chọn cấu hình `Release`, sau đó chạy **Build → Rebuild Solution**.
-4. Đảm bảo SQL Server và cơ sở dữ liệu đã sẵn sàng.
-5. Chạy ứng dụng từ Visual Studio hoặc sử dụng bản publish đã được tạo.
+Đường dẫn publish và cách đóng gói runtime cần căn cứ vào cấu hình thực tế của solution.
 
-Các bước trên là hướng dẫn tổng quát; đường dẫn publish và cấu hình kết nối phụ thuộc vào thiết lập hiện tại của solution.
+## 7. Lưu ý về dữ liệu và bảo mật
 
-## 🗂️ Thư mục ảnh
+- Không đưa mật khẩu SQL Server, mật khẩu tài khoản hoặc chuỗi kết nối có thông tin xác thực lên GitHub.
+- Không công khai dữ liệu CBCS thật, dữ liệu cá nhân hoặc file sao lưu cơ sở dữ liệu.
+- Cấp quyền tài khoản theo đúng phạm vi công việc.
+- Trước khi phục hồi cơ sở dữ liệu, cần xác minh file sao lưu và cân nhắc sao lưu trạng thái hiện tại.
+- Không tắt ứng dụng khi quy trình cập nhật đang yêu cầu chờ hoàn tất.
+
+## 8. Cấu trúc thư mục
 
 ```text
-assets/
-├── admin-dashboard.png
-├── audit-log.png
-├── change-password.png
-├── loading.png
-├── login.png
-├── mission-assignment.png
-├── mission-dashboard.png
-├── mission-detail.png
-├── mission-list.png
-├── notifications.png
-├── permissions.png
-├── personnel-list.png
-├── personnel-mission-history.png
-├── personnel-mission-statistics.png
-├── personnel-report.png
-├── report-viewer.png
-├── user-detail.png
-└── user-list.png
+QuanLyCBCS/
+├── README.md
+└── assets/
+    ├── 01-login.jpg
+    ├── 02-home-dashboard.jpg
+    ├── 03-mission-dashboard.jpg
+    ├── 04-admin-dashboard.jpg
+    ├── 05-personnel-list.jpg
+    ├── 06-personnel-detail.jpg
+    ├── 07-mission-list.jpg
+    ├── 08-mission-detail.jpg
+    ├── 09-mission-assignment.jpg
+    ├── 10-audit-log.jpg
+    ├── 11-personnel-report.jpg
+    ├── 12-report-preview.jpg
+    ├── 13-mission-statistics.jpg
+    ├── 14-personnel-mission-history.jpg
+    ├── 15-user-list.jpg
+    ├── 16-user-detail.jpg
+    ├── 17-change-password.jpg
+    ├── 18-permission-management.jpg
+    ├── 19-backup-restore.jpg
+    ├── 20-leave-coming-soon.jpg
+    ├── 21-app-update.jpg
+    └── 22-update-download-progress.png
 ```
-
-## 📍 Trạng thái dự án
-
-README này mô tả các nhóm chức năng thể hiện trên giao diện đã cung cấp. Trước khi phát hành chính thức, nên kiểm thử từng chức năng với cơ sở dữ liệu thực tế, xác minh phân quyền theo vai trò, kiểm tra sao lưu/khôi phục và xác nhận các màn hình báo cáo xuất ra dữ liệu đúng.
 
 ---
 
 <div align="center">
 
-**Quản lý CBCS — Desktop Application**
+**QUẢN LÝ CBCS — DESKTOP APPLICATION**
 
 </div>
