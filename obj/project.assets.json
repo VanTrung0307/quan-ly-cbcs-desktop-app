@@ -5917,7 +5917,7 @@
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
-    "version": "3.1.0",
+    "version": "3.1.1",
     "restore": {
       "projectUniqueName": "E:\\QuanLyCBCS\\QuanLyCBCS.csproj",
       "projectName": "QuanLyCBCS",
